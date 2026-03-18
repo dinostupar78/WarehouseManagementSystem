@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"D:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\.github\\hooks\\log_hook.ps1\" PROMPT"
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"D:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\.github\\hooks\\log_hook.ps1\" TOOL"
+      }
+    ]
+  }
+}
