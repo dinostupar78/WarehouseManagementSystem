@@ -1,5 +1,90 @@
-PROMPT: Bok provjeri hooks jel radi
-TOOL: {"timestamp":"2026-03-18T19:48:50.895Z","hook_event_name":"PreToolUse","session_id":"82babec2-ff1e-4b1b-bbbc-4390c85709c1","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\82babec2-ff1e-4b1b-bbbc-4390c85709c1.jsonl","tool_name":"read_file","tool_input":{"filePath":"copilot-skill:/agent-customization/SKILL.md","startLine":1,"endLine":120},"tool_use_id":"call_JDTIKT1dlYaAiyAXfImzeY3x__vscode-1773861792790","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
-TOOL: {"timestamp":"2026-03-18T19:48:55.555Z","hook_event_name":"PreToolUse","session_id":"82babec2-ff1e-4b1b-bbbc-4390c85709c1","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\82babec2-ff1e-4b1b-bbbc-4390c85709c1.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\.github\\hooks\\log_hook.ps1","startLine":1,"endLine":260},"tool_use_id":"call_0ubJtD1poKW8Uh5RuEKSofYU__vscode-1773861792792","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
-TOOL: {"timestamp":"2026-03-18T19:48:56.000Z","hook_event_name":"PreToolUse","session_id":"82babec2-ff1e-4b1b-bbbc-4390c85709c1","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\82babec2-ff1e-4b1b-bbbc-4390c85709c1.jsonl","tool_name":"run_in_terminal","tool_input":{"command":"Get-Content -LiteralPath lab-1/agent_log.txt -Tail 12","explanation":"Reads latest hook log lines to verify recent prompt/tool events are being recorded.","goal":"Check current hook output","isBackground":false,"timeout":120000},"tool_use_id":"call_O21gq07aseobx0PtnM7vKbiC__vscode-1773861792793","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
-PROMPT: znaci to je to, radi kak treba?
+PROMPT: Radim 1. labos iz ASP.NET MVC kolegija. Tema projekta je Warehouse Manafment System.
+
+Trebam definirati objektni model za aplikaciju.
+
+Zahtjevi:
+- najmanje 7 klasa
+- barem 4 kompletne klase (vise od 5 svojstava)
+- barem jedan enum
+- barem jedan DateTime
+- moram imati 1-N i N-N relacije
+
+Pomogni mi u osmisljanju rjesenja, nemoj mi dati gotovo rjesenje vec pomozi da ga sam osmislim
+
+PROMPT: Kreirao sam solution s dva projekta:
+- ASP.NET web projekt
+- Class library projekt
+
+U class library projektu planiram drzati sve domenske klase o kojima smo pricali
+
+Je li takav pristup ispravan za organizaciju projekta?
+
+PROMPT: Ovakve su moje ideje za moj model, sto mislis o ovih 8 klasa?
+
+- Warehouse
+- Location
+- Product
+- Category
+- Inventory
+- Supplier
+- PurchaseOrder
+- PurchaseOrderItem
+
+Enum bi bio OrderStatus gdje pratim faze narudzbe
+
+PROMPT: Mozes li mi pomoci sastaviti svojstva unutar svake klase, da sve bude smisleno i prati moju temu projektnog zadatka. Nemoj mi dati kompletno rjesenje vec pomozi da ga sam smislim
+
+PROMPT: Napravio sam klasu Warehouse i OrderStatus, mozes pogledati ima li smisla te je li prihvatljivo rjesenje? 
+
+PROMPT: Kako popraviti string svojstva i postavit kroz validaciju ili guard za capacity?
+
+PROMPT: Dodao sam prema tvojim uputama, mozes li objasniti sto znaci [Required, MaxLength(Neka vrijednost)] i zasto se koristi.
+
+Za string empty sam pretpostavio da postavimo vrijednost na empty, sto znaci da uvijek ima vrijednost
+
+PROMPT: Napravio sam 3 klase (zasad) radim cijeli model WMS-a, pa me zanima jesam li dobro krenuo, ima li mjesta za poboljsanje?
+TOOL: {"timestamp":"2026-03-24T20:56:13.595Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\Location.cs","startLine":1,"endLine":250},"tool_use_id":"call_YU28unjCpk7hRSiBAZ7jJVSS__vscode-1774385057005","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+
+PROMPT: Dodao sam i Category klasu, povezao prema shemi koju sam kreirao sa Product klasom, ali mi nije jasno cemu sluze linije npr ove:
+
+public int CategoryId { get; set; }
+public Category Category { get; set; } = null!;
+
+PROMPT: Kako trenutno izgledaju klase koje sam kreirao, negdje sam na pola puta, ima mjesta za poboljsanjem ili?
+
+PROMPT: kj ovo znaci? Category nema Products kolekciju
+
+PROMPT: kad bi ovak nes dodao u category bil to rijesilo problem? public List<Product> Products { get; set; } = new();
+
+PROMPT: dodao sam products u Category klasi, mozes provjerit jel to to?
+
+PROMPT: Dodao sam i u Warehouse klasi Locations, jel to sada oke?
+TOOL: {"timestamp":"2026-03-24T21:14:34.575Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\Warehouse.cs","startLine":1,"endLine":220},"tool_use_id":"call_d9JRTOCBv7tELdOA0DHXwYmA__vscode-1774385057010","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+
+PROMPT: Napravio sam Inventory klasu, kako ti se cini, ima li mjesta za poboljsanjem?
+
+PROMPT: Napravio sam 2 nove klase: PurchaseOrder i Supplier. Kako ti se cini struktura klasa, jesu li svojstva u redu, ima li mjesta poboljsanju?
+
+PROMPT: Ispravio sam klase Supplier i PurchaseOrder prema tvojim uputama, kako ti se sad cini, ima li mjesta poboljsanju?
+
+PROMPT: Mozes opet provjerit, nisam spremio promjene
+TOOL: {"timestamp":"2026-03-24T21:34:23.963Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\PurchaseOrder.cs","startLine":1,"endLine":250},"tool_use_id":"call_6YhYIF45luc6mFg9VN6n66wl__vscode-1774385057012","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+TOOL: {"timestamp":"2026-03-24T21:34:23.967Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\Supplier.cs","startLine":1,"endLine":250},"tool_use_id":"call_qbpqwTpKGxRXx1gD1oifan0I__vscode-1774385057011","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+
+PROMPT: U redu, na kraju mi je ostala klasa PurchaseOrderItem koja je relacija n:m izmedu PurchaseOrder i Product. Koji je ispravan nacin za implementaciju te klase?
+
+PROMPT: Napravio sam klasu PurchaseOrderItem prema tvojim uputama + neke moje ideje, kako ti se cini, ima li mjesta za poboljsanjem?
+TOOL: {"timestamp":"2026-03-24T21:39:59.734Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\Product.cs","startLine":1,"endLine":250},"tool_use_id":"call_ecnFiHZSsy1XPdO6LU5mtT98__vscode-1774385057015","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+
+PROMPT: Konkretno, reci sto moram napravit da ta klasa bude najbolja moguca implementacija?
+
+PROMPT: Jel dobar Product ovakav kakav je?
+
+PROMPT: PurchaseOrderItem je relacija n:m izmedu Product i PurchaseOrder
+
+PROMPT: Mozes provjerit sve klase, zanemari validacije i to, za sad su samo svojstva bitna, napravio sam cijeli WMS u MySQL Workbench tako da su sve relacije uzete od tamo, jesu li ispravne ili ima mjesta za poboljsanjem same logike Warehouse Management Systema?
+
+PROMPT: Ispravio sam sve prema tvojim uputama i implementirao predlozena poboljsanja. Mozes li jos jednom, za finalnu provjeru, potvrditi je li sve u redu?
+TOOL: {"timestamp":"2026-03-24T22:04:34.434Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\Inventory.cs","startLine":1,"endLine":260},"tool_use_id":"call_QOT9chsrlwV6b45j180C1HIp__vscode-1774385057035","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+TOOL: {"timestamp":"2026-03-24T22:04:34.445Z","hook_event_name":"PreToolUse","session_id":"111d3ebd-7cd6-4adc-8764-32b4e235dbc0","transcript_path":"c:\\Users\\dinos\\AppData\\Roaming\\Code\\User\\workspaceStorage\\de62a365be07f60565f3f8a1615c2b7d\\GitHub.copilot-chat\\transcripts\\111d3ebd-7cd6-4adc-8764-32b4e235dbc0.jsonl","tool_name":"read_file","tool_input":{"filePath":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem\\WarehouseManagementSystem.Model\\PurchaseOrderItem.cs","startLine":1,"endLine":260},"tool_use_id":"call_sJVK3wKnEwQ1O23Z4GQHtsFh__vscode-1774385057040","cwd":"d:\\Program Files\\Microsoft Visual Studio\\Projects\\WarehouseManagementSystem"}
+
