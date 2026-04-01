@@ -12,10 +12,10 @@ namespace WarehouseManagementSystem.Model
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
-        public string Code { get; set; } = string.Empty;
+        public string Code { get; set; }
 
         [Required, MaxLength(45)]
-        public string Zone { get; set; } = string.Empty;
+        public string Zone { get; set; }
 
         public int ShelfNumber { get; set; }
 

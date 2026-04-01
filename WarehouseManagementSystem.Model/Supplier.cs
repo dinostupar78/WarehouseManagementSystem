@@ -11,19 +11,19 @@ namespace WarehouseManagementSystem.Model
     {
         public int Id { get; set; }
         [Required, MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
         
         [Required, MaxLength(100)]
-        public string ContactPerson { get; set; } = string.Empty;
+        public string ContactPerson { get; set; } 
 
         [Required, EmailAddress, MaxLength(200)]
-        public string ContactEmail { get; set; } = string.Empty;
+        public string ContactEmail { get; set; } 
         
         [Required, Phone, MaxLength(100)]
-        public string ContactPhone { get; set; } = string.Empty;
+        public string ContactPhone { get; set; } 
         
         [Required, MaxLength(100)]
-        public string ContactAddress { get; set; } = string.Empty;
+        public string ContactAddress { get; set; } 
 
         public List<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
     }

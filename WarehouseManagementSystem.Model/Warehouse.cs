@@ -13,16 +13,16 @@ namespace WarehouseManagementSystem.Model
         public int Id { get; set; }
         
         [Required, MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } 
         
         [Required, MaxLength(200)]
-        public string Address { get; set; } = string.Empty;
+        public string Address { get; set; } 
         
         [Required, MaxLength(200)]
-        public string City { get; set; } = string.Empty;
+        public string City { get; set; } 
         
         [Required, MaxLength(100)]
-        public string Country { get; set; } = string.Empty;
+        public string Country { get; set; } 
 
         public int Capacity { get; set; }
 
