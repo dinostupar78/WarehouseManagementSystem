@@ -1,4 +1,4 @@
-using WarehouseManagementSystem.Model;
+using WarehouseManagementSystem.Models;
 
 public class Program
 {
