@@ -1,5 +1,5 @@
 ---
-name: UX/UI Agent for WarehouseManagementSystem
+name: UX/UI Agent
 description: "Use when: creating or refining MVC UI/UX, non-standard visual style, layout hierarchy, navigation flows, breadcrumbs, responsive pages, and accessibility polish for WarehouseManagementSystem."
 tools: [read, edit, search]
 model: Gemini 3.1 Pro (Preview) (copilot)
