@@ -1,0 +1,54 @@
+﻿@model IReadOnlyList<WarehouseManagementSystem.Models.PurchaseOrderItem>
+@{
+    ViewData["Title"] = "Purchase Order Items";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; PO ITEMS
+</div>
+<h1 class="page-title">Order Items List</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Product</th>
+                <th>Purchase Order</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-primary fw-bolder small">POI-@item.Id.ToString("0000")</td>
+                        <td>
+                            <div class="fw-bolder">@(item.Product?.Name ?? "Unknown Product")</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">PO-@item.PurchaseOrderId.ToString("0000")</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">@item.Quantity Units</div>
+                        </td>
+                        <td>
+                            <div class="text-success fw-bold">@item.UnitPrice.ToString("C")</div>
+                        </td>
+                        <td>
+                            <a class="action-btn" asp-action="Details" asp-route-id="@item.Id">DETAILS</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6" class="text-center py-4 text-muted border-0">No order items found.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

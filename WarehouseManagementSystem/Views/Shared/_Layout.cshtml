@@ -3,44 +3,61 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WarehouseManagementSystem</title>
+    <title>@ViewData["Title"] - WMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WarehouseManagementSystem.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WarehouseManagementSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    <nav class="wms-sidebar">
+        <div class="d-flex justify-content-between align-items-center px-3 mb-3">
+            <div class="wms-sidebar-brand text-primary fw-bolder mb-0" style="font-size: 1.8rem; padding: 0; line-height: 1;">
+                WMS <span class="text-muted ms-1" style="font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; vertical-align: middle;">v1.0</span>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+            <button class="btn btn-link d-md-none text-primary p-0" type="button" data-bs-toggle="collapse" data-bs-target="#wmsMobileNav" aria-expanded="false" aria-controls="wmsMobileNav">
+                <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+            </button>
+        </div>
+        <div class="collapse d-md-block" id="wmsMobileNav">
+            <div class="wms-nav-items">
+            <a class="wms-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M2 3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2zm0 8a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H2zm8-8a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-3zm0 8a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-3z"/></svg> Dashboard
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Warehouse" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.629V5.5a.5.5 0 0 1 .342-.474l4-1.5A.5.5 0 0 1 10.5 4h.5V1.5A.5.5 0 0 1 11.237.07l3.5-1zM2 11h3v4H2v-4zm4-4h3v8H6V7zm4-4h3v12h-3V3z"/></svg> Warehouses
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Product" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.958l-7.19 2.875a1.5 1.5 0 0 1-1.162 0l-7.19-2.875A1 1 0 0 1 0 12.162V3.5a.5.5 0 0 1 .314-.464z"/></svg> Products
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Inventory" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg> Inventory
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Supplier" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/></svg> Suppliers
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="PurchaseOrder" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M14 14.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5h7.382a.5.5 0 0 1 .353.146l3.618 3.618a.5.5 0 0 1 .146.354V14.5zM4.5 4a.5.5 0 1 0 0 1h3a.5.5 0 1 0 0-1h-3zm0 3a.5.5 0 1 0 0 1h7a.5.5 0 1 0 0-1h-7zm0 3a.5.5 0 1 0 0 1h7a.5.5 0 1 0 0-1h-7zm0 3a.5.5 0 1 0 0 1h7a.5.5 0 1 0 0-1h-7z"/></svg> Purchase Orders
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="PurchaseOrderItem" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm0-2a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm0-2a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm0-2a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/><path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/></svg> Purchase Order Items
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Location" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg> Locations
+            </a>
+            <a class="wms-nav-link" asp-area="" asp-controller="Category" asp-action="Index">
+                <svg width="18" height="18" fill="currentColor" class="me-3" viewBox="0 0 16 16"><path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/><path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z"/></svg> Categories
+            </a>
+        </div>
+        </div>
+    </nav>
+
+    <div class="wms-main-content">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WarehouseManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

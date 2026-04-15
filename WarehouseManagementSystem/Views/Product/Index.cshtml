@@ -1,0 +1,44 @@
+﻿@model IReadOnlyList<Product>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; PRODUCTS
+</div>
+<h1 class="page-title">Product Index</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name / Description</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var product in Model)
+                {
+                    <tr>
+                        <td class="text-primary fw-bolder small">PRD-@product.Id.ToString("0000")</td>
+                        <td>
+                            <div class="fw-bolder">@product.Name</div>
+                            <div class="small text-muted">@product.Description</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-success">@product.Price.ToString("C")</div>
+                        </td>
+                        <td>
+                            <a class="action-btn" asp-action="Details" asp-route-id="@product.Id">DETAILS</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+

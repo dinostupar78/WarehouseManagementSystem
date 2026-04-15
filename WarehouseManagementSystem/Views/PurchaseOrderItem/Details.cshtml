@@ -1,0 +1,65 @@
+﻿@model WarehouseManagementSystem.Models.PurchaseOrderItem
+@{
+    ViewData["Title"] = "Purchase Order Item Details";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; 
+    <a asp-action="Index">PO ITEMS</a> &gt; 
+    POI-@Model?.Id.ToString("0000")
+</div>
+<h1 class="page-title">Item Info POI-@Model?.Id.ToString("0000")</h1>
+
+@if (Model == null)
+{
+    <div class="alert alert-secondary">Item not found.</div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="detail-card border-0 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded p-3 me-3">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 13.5 1h-11zM2 2.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11z"/><path d="M5.5 4a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"/></svg>
+                    </div>
+                    <div>
+                        <h5 class="fw-bolder mb-1 text-uppercase text-muted">Item Data</h5>
+                        <h4 class="fw-bolder">@(Model.Product?.Name ?? "Unknown Product")</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-sm-6 mb-3">
+                        <div class="text-muted small fw-bold text-uppercase">Tracking Code</div>
+                        <div class="fw-bolder text-primary fs-5">POI-@Model.Id.ToString("0000")</div>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="text-muted small fw-bold text-uppercase">Linked Order</div>
+                        <div class="fw-bolder text-dark fs-5">PO-@Model.PurchaseOrderId.ToString("0000")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="detail-card border-0 h-100">
+                <h5 class="text-muted small fw-bold text-uppercase mb-3">Financial Allocation</h5>
+                <div class="mb-4">
+                    <div class="text-muted small fw-bold text-uppercase">Quantity</div>
+                    <div class="fs-4 fw-bolder text-dark">@Model.Quantity <span class="fs-6 text-muted ms-1">Units</span></div>
+                    
+                    <div class="text-muted small fw-bold text-uppercase mt-3">Unit Price</div>
+                    <div class="fw-bolder text-info fs-5">@Model.UnitPrice.ToString("C")</div>
+                    
+                    <div class="text-muted small fw-bold text-uppercase mt-3">Subtotal</div>
+                    <div class="fw-bolder text-success fs-3">@((Model.Quantity * Model.UnitPrice).ToString("C"))</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="mt-5">
+    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Items List</a>
+</div>

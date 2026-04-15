@@ -1,0 +1,54 @@
+﻿@model IReadOnlyList<PurchaseOrder>
+@{
+    ViewData["Title"] = "Purchase Orders";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; PURCHASE ORDERS
+</div>
+<h1 class="page-title">Purchase Orders</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Supplier Information</th>
+                <th>Date Issued</th>
+                <th>Current Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var order in Model)
+                {
+                    <tr>
+                        <td class="text-primary fw-bolder small">PO-@order.Id.ToString("0000")</td>
+                        <td>
+                            <div class="fw-bolder">@(order.Supplier?.Name ?? "External Sub-vendor")</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">@order.OrderDate.ToString("MMM dd, yyyy")</div>
+                        </td>
+                        <td>
+                            @{
+                                var statusStr = order.Status.ToString();
+                                var bgClass = statusStr.ToLower().Contains("pending") ? "bg-warning text-dark" : "bg-success text-white";
+                            }
+                            <span class="badge rounded-pill @bgClass px-2 py-1">@order.Status</span>
+                        </td>
+                        <td>
+                            <a class="action-btn" asp-action="Details" asp-route-id="@order.Id">DETAILS</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" class="text-center py-4 text-muted border-0">No purchase records found.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

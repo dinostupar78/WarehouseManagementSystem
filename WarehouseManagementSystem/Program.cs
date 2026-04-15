@@ -1,4 +1,5 @@
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Repositories;
 
 public class Program
 {
@@ -19,6 +20,14 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddSingleton<IWarehouseRepository, WarehouseMockRepository>();
+        builder.Services.AddSingleton<ILocationRepository, LocationMockRepository>();
+        builder.Services.AddSingleton<ICategoryRepository, CategoryMockRepository>();
+        builder.Services.AddSingleton<IProductRepository, ProductMockRepository>();
+        builder.Services.AddSingleton<IInventoryRepository, InventoryMockRepository>();
+        builder.Services.AddSingleton<ISupplierRepository, SupplierMockRepository>();
+        builder.Services.AddSingleton<IPurchaseOrderRepository, PurchaseOrderMockRepository>();
+        builder.Services.AddSingleton<IPurchaseOrderItemRepository, PurchaseOrderItemMockRepository>();
 
         var app = builder.Build();
 
@@ -38,6 +47,8 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        _ = app.Services.GetRequiredService<IPurchaseOrderItemRepository>();
 
         app.Run();
     }
@@ -112,7 +123,7 @@ public class Program
                 ShelfNumber = 6,
                 Warehouse = warehouses[1],
                 WarehouseId = warehouses[1].Id,
-            },
+            }
         };
 
         foreach (var warehouse in warehouses)

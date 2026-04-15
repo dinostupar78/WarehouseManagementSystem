@@ -1,0 +1,59 @@
+﻿@model IReadOnlyList<Inventory>
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; INVENTORY
+</div>
+<h1 class="page-title">Inventory Control</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Product Information</th>
+                <th>Location Details</th>
+                <th>Stock / Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-primary fw-bolder small">#INV-@item.Id.ToString("0000")</td>
+                        <td>
+                            <div class="fw-bolder">@(item.Product?.Name ?? "Unknown Product")</div>
+                            <div class="small text-muted">ID: @item.ProductId</div>
+                        </td>
+                        <td>
+                            <div class="fw-bolder">@(item.Location?.Code ?? "General Storage")</div>
+                            <div class="small text-muted">Z: @(item.Location?.Zone ?? item.LocationId.ToString())</div>
+                        </td>
+                        <td>
+                            @{
+                                var isLow = item.Quantity <= 10;
+                                var bgClass = isLow ? "bg-warning text-dark" : "bg-success text-white";
+                                var statusTxt = isLow ? "LOW STOCK" : "IN STOCK";
+                            }
+                            <span class="badge rounded-pill @bgClass px-2 py-1 mb-1">@statusTxt</span>
+                            <div class="fw-bolder text-muted small mt-1">@item.Quantity Units</div>
+                        </td>
+                        <td>
+                            <a class="action-btn" asp-action="Details" asp-route-id="@item.Id">DETAILS</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" class="text-center py-4 text-muted border-0">No active inventory found.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+

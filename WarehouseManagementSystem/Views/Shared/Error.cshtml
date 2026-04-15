@@ -1,25 +1,38 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "System Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body p-5">
+                <h1 class="text-danger display-5 fw-bold">Oops! Something went wrong.</h1>
+                <p class="text-muted fs-5">An unexpected error occurred while processing your request.</p>
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+                @if (Model.ShowRequestId)
+                {
+                    <div class="alert alert-secondary mt-4 d-inline-block">
+                        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                    </div>
+                }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+                <div class="mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-danger px-4 me-2">
+                        Return to Home
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary px-4" onclick="window.history.back();">
+                        Go Back
+                    </button>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-start border-top-0 text-muted small py-3">
+                <h6 class="mb-1 text-secondary">Development Notes</h6>
+                <p class="mb-0">
+                    Swapping to the <strong>Development</strong> environment displays detailed information. 
+                    This should not be enabled in deployed applications due to security risks.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

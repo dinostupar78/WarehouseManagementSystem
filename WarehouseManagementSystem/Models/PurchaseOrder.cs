@@ -25,5 +25,6 @@ namespace WarehouseManagementSystem.Models
         public Warehouse Warehouse { get; set; } = null!;
 
         public List<PurchaseOrderItem> Items { get; set; } = new List<PurchaseOrderItem>();
+        public object PurchaseOrderItems { get; internal set; }
     }
 }

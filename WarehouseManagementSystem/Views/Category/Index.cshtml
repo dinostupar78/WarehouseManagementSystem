@@ -1,0 +1,46 @@
+﻿@model IReadOnlyList<Category>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; CATEGORIES
+</div>
+<h1 class="page-title">Category Management</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Classification Name</th>
+                <th>Operational Requirements</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var category in Model)
+                {
+                    <tr>
+                        <td class="text-primary fw-bolder small">CAT-@category.Id.ToString("0000")</td>
+                        <td>
+                            <div class="fw-bolder">@category.Name</div>
+                        </td>
+                        <td>
+                            <div class="small text-muted">@category.Description</div>
+                        </td>
+                        <td>
+                            <a class="action-btn" asp-action="Details" asp-route-id="@category.Id">DETAILS</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-center py-4 text-muted border-0">No categories mapped.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
