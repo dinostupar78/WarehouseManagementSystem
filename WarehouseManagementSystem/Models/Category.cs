@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Models
 {

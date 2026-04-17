@@ -1,6 +1,4 @@
-﻿using WarehouseManagementSystem.Model;
-
-namespace WarehouseManagementSystem.Models
+﻿namespace WarehouseManagementSystem.Models
 {
     public class PurchaseOrder
     {
