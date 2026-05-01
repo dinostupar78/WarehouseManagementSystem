@@ -43,5 +43,5 @@ if (-not $text) {
 	}
 }
 
-$logPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\lab-2\sub-agent_log.txt"
+$logPath = Join-Path -Path $PSScriptRoot -ChildPath "..\..\lab-3\agent_log.txt"
 Add-Content -LiteralPath $logPath -Value ("{0}: {1}" -f $type, $text)
