@@ -20,14 +20,14 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
-        builder.Services.AddSingleton<IWarehouseRepository, WarehouseMockRepository>();
-        builder.Services.AddSingleton<ILocationRepository, LocationMockRepository>();
-        builder.Services.AddSingleton<ICategoryRepository, CategoryMockRepository>();
-        builder.Services.AddSingleton<IProductRepository, ProductMockRepository>();
-        builder.Services.AddSingleton<IInventoryRepository, InventoryMockRepository>();
-        builder.Services.AddSingleton<ISupplierRepository, SupplierMockRepository>();
-        builder.Services.AddSingleton<IPurchaseOrderRepository, PurchaseOrderMockRepository>();
-        builder.Services.AddSingleton<IPurchaseOrderItemRepository, PurchaseOrderItemMockRepository>();
+        builder.Services.AddSingleton<WarehouseMockRepository>();
+        builder.Services.AddSingleton<LocationMockRepository>();
+        builder.Services.AddSingleton<CategoryMockRepository>();
+        builder.Services.AddSingleton<ProductMockRepository>();
+        builder.Services.AddSingleton<InventoryMockRepository>();
+        builder.Services.AddSingleton<SupplierMockRepository>();
+        builder.Services.AddSingleton<PurchaseOrderMockRepository>();
+        builder.Services.AddSingleton<PurchaseOrderItemMockRepository>();
 
         var app = builder.Build();
 
@@ -48,7 +48,7 @@ public class Program
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        _ = app.Services.GetRequiredService<IPurchaseOrderItemRepository>();
+        _ = app.Services.GetRequiredService<PurchaseOrderItemMockRepository>();
 
         app.Run();
     }

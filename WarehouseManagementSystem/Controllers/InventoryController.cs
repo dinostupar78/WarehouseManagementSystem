@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class InventoryController : Controller
     {
-        private readonly IInventoryRepository _inventoryRepository;
+        private readonly InventoryMockRepository _inventoryRepository;
 
-        public InventoryController(IInventoryRepository inventoryRepository)
+        public InventoryController(InventoryMockRepository inventoryRepository)
         {
             _inventoryRepository = inventoryRepository;
         }

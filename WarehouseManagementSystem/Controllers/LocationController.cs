@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class LocationController : Controller
     {
-        private readonly ILocationRepository _locationRepository;
+        private readonly LocationMockRepository _locationRepository;
 
-        public LocationController(ILocationRepository locationRepository)
+        public LocationController(LocationMockRepository locationRepository)
         {
             _locationRepository = locationRepository;
         }

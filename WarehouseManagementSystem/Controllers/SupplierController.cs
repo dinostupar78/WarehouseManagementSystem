@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class SupplierController : Controller
     {
-        private readonly ISupplierRepository _supplierRepository;
+        private readonly SupplierMockRepository _supplierRepository;
 
-        public SupplierController(ISupplierRepository supplierRepository)
+        public SupplierController(SupplierMockRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
         }

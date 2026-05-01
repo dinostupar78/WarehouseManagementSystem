@@ -2,7 +2,7 @@
 
 namespace WarehouseManagementSystem.Repositories
 {
-    public class WarehouseMockRepository : IWarehouseRepository
+    public class WarehouseMockRepository
     {
 
         private readonly List<Warehouse> _warehouses;

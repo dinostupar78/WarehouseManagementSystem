@@ -2,7 +2,7 @@
 
 namespace WarehouseManagementSystem.Repositories
 {
-    public class SupplierMockRepository : ISupplierRepository
+    public class SupplierMockRepository
     {
         private readonly List<Supplier> _suppliers;
 

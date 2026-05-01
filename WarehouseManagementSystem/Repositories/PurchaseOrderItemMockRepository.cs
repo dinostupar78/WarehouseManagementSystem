@@ -2,11 +2,11 @@
 
 namespace WarehouseManagementSystem.Repositories
 {
-    public class PurchaseOrderItemMockRepository : IPurchaseOrderItemRepository
+    public class PurchaseOrderItemMockRepository
     {
         private readonly List<PurchaseOrderItem> _purchaseOrderItems;
 
-        public PurchaseOrderItemMockRepository(IProductRepository productRepository, IPurchaseOrderRepository purchaseOrderRepository)
+        public PurchaseOrderItemMockRepository(ProductMockRepository productRepository, PurchaseOrderMockRepository purchaseOrderRepository)
         {
             var productsById = productRepository.GetAll().ToDictionary(p => p.Id);
             var purchaseOrdersById = purchaseOrderRepository.GetAll().ToDictionary(po => po.Id);

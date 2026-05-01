@@ -2,11 +2,11 @@
 
 namespace WarehouseManagementSystem.Repositories
 {
-    public class ProductMockRepository : IProductRepository
+    public class ProductMockRepository
     {
         private readonly List<Product> _products;
 
-        public ProductMockRepository(ICategoryRepository categoryRepository)
+        public ProductMockRepository(CategoryMockRepository categoryRepository)
         {
             var categoriesById = categoryRepository.GetAll().ToDictionary(c => c.Id);
 

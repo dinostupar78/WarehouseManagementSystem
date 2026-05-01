@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class PurchaseOrderItemController : Controller
     {
-        private readonly IPurchaseOrderItemRepository _purchaseOrderItemRepository;
+        private readonly PurchaseOrderItemMockRepository _purchaseOrderItemRepository;
 
-        public PurchaseOrderItemController(IPurchaseOrderItemRepository purchaseOrderItemRepository)
+        public PurchaseOrderItemController(PurchaseOrderItemMockRepository purchaseOrderItemRepository)
         {
             _purchaseOrderItemRepository = purchaseOrderItemRepository;
         }

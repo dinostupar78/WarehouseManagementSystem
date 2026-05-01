@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IProductRepository _productRepository;
+        private readonly ProductMockRepository _productRepository;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(ProductMockRepository productRepository)
         {
             _productRepository = productRepository;
         }

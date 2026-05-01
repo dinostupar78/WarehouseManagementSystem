@@ -7,9 +7,9 @@ namespace WarehouseManagementSystem.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly CategoryMockRepository _categoryRepository;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(CategoryMockRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }

@@ -1,10 +1,10 @@
 ﻿using WarehouseManagementSystem.Models;
 namespace WarehouseManagementSystem.Repositories
 {
-    public class LocationMockRepository : ILocationRepository
+    public class LocationMockRepository
     {
         private readonly List<Location> _locations;
-        public LocationMockRepository(IWarehouseRepository warehouseRepository)
+        public LocationMockRepository(WarehouseMockRepository warehouseRepository)
         {
             var warehousesById = warehouseRepository.GetAll().ToDictionary(w => w.Id);
 

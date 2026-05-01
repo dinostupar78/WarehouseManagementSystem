@@ -2,11 +2,11 @@
 
 namespace WarehouseManagementSystem.Repositories
 {
-    public class InventoryMockRepository : IInventoryRepository
+    public class InventoryMockRepository
     {
         private readonly List<Inventory> _inventories;
 
-        public InventoryMockRepository(IProductRepository productRepository, ILocationRepository locationRepository)
+        public InventoryMockRepository(ProductMockRepository productRepository, LocationMockRepository locationRepository)
         {
             var productsById = productRepository.GetAll().ToDictionary(p => p.Id);
             var locationsById = locationRepository.GetAll().ToDictionary(l => l.Id);
