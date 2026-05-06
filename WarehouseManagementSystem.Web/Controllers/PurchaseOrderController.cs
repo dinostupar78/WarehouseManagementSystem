@@ -1,45 +1,64 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using WarehouseManagementSystem.Model;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
+    [Route("purchase-orders")]
     public class PurchaseOrderController : Controller
     {
-        private readonly PurchaseOrderMockRepository _purchaseOrderRepository;
+        private readonly PurchaseOrderRepository _purchaseOrderRepository;
+        private readonly ILogger<PurchaseOrderController> _logger;
 
-        public PurchaseOrderController(PurchaseOrderMockRepository purchaseOrderRepository)
+        public PurchaseOrderController(PurchaseOrderRepository purchaseOrderRepository, ILogger<PurchaseOrderController> logger)
         {
             _purchaseOrderRepository = purchaseOrderRepository;
+            _logger = logger;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var purchaseOrders = _purchaseOrderRepository.GetAll();
             return View(purchaseOrders);
         }
 
+        [HttpGet("{id:int}")]   
         public IActionResult Details(int id)
         {
             if (id <= 0)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Invalid purchase order ID: {PurchaseOrderId}", id);
+                return BadRequest();
             }
 
             var purchaseOrder = _purchaseOrderRepository.GetById(id);
+
             if (purchaseOrder == null)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Purchase order not found with ID: {PurchaseOrderId}", id);
+                return NotFound();
             }
 
             return View(purchaseOrder);
 
         }
-
-        public IActionResult Error()
+        [HttpGet("status/{status}")]
+        public IActionResult FindByOrderStatus(string status)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (!Enum.TryParse<OrderStatus>(status, true, out var parsedStatus))
+            {
+                return BadRequest("Invalid status.");
+            }
+
+            var purchaseOrders = _purchaseOrderRepository.GetAll()
+                .Where(po => po.Status == parsedStatus)
+                .ToList();
+
+            ViewBag.Status = parsedStatus;
+
+            return View("Index", purchaseOrders);
         }
+
     }
 }

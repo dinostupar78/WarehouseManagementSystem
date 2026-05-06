@@ -1,44 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
+    [Route("inventories")]
     public class InventoryController : Controller
     {
-        private readonly InventoryMockRepository _inventoryRepository;
+        private readonly InventoryRepository _inventoryRepository;
+        private readonly ILogger<InventoryController> _logger;
 
-        public InventoryController(InventoryMockRepository inventoryRepository)
+        public InventoryController(InventoryRepository inventoryRepository, ILogger<InventoryController> logger)
         {
             _inventoryRepository = inventoryRepository;
+            _logger = logger;
+
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var inventories = _inventoryRepository.GetAll();
             return View(inventories);
         }
 
+        [HttpGet("{id:int}")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Invalid inventory ID: {InventoryId}", id);
+                return BadRequest();
             }
 
             var inventory = _inventoryRepository.GetById(id);
+
             if (inventory == null)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Inventory not found for ID: {InventoryId}", id);
+                return NotFound();
             }
 
             return View(inventory);
         }
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

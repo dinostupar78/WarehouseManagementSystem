@@ -1,44 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
+    [Route("purchase-order-items")]
     public class PurchaseOrderItemController : Controller
     {
-        private readonly PurchaseOrderItemMockRepository _purchaseOrderItemRepository;
+        private readonly PurchaseOrderItemRepository _purchaseOrderItemRepository;
+        private readonly ILogger<PurchaseOrderItemController> _logger;
 
-        public PurchaseOrderItemController(PurchaseOrderItemMockRepository purchaseOrderItemRepository)
+        public PurchaseOrderItemController(PurchaseOrderItemRepository purchaseOrderItemRepository, ILogger<PurchaseOrderItemController> logger)
         {
             _purchaseOrderItemRepository = purchaseOrderItemRepository;
+            _logger = logger;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var purchaseOrderItems = _purchaseOrderItemRepository.GetAll();
             return View(purchaseOrderItems);
         }
 
+        [HttpGet("{id:int}")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Invalid purchase order item ID: {PurchaseOrderItemId}", id);
+                return BadRequest();
             }
 
             var purchaseOrderItem = _purchaseOrderItemRepository.GetById(id);
+
             if (purchaseOrderItem == null)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Purchase order item not found with ID: {PurchaseOrderItemId}", id);
+                return NotFound();
             }
 
             return View(purchaseOrderItem);
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -1,45 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
+    [Route("suppliers")]
     public class SupplierController : Controller
     {
-        private readonly SupplierMockRepository _supplierRepository;
+        private readonly SupplierRepository _supplierRepository;
+        private readonly ILogger<SupplierController> _logger;
 
-        public SupplierController(SupplierMockRepository supplierRepository)
+        public SupplierController(SupplierRepository supplierRepository, ILogger<SupplierController> logger)
         {
             _supplierRepository = supplierRepository;
+            _logger = logger;
         }
 
+        [HttpGet("")]
         public IActionResult Index()
         {
             var suppliers = _supplierRepository.GetAll();
             return View(suppliers);
         }
 
+        [HttpGet("{id:int}")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Invalid supplier ID: {SupplierId}", id);
+                return BadRequest();
             }
 
             var supplier = _supplierRepository.GetById(id);
+
             if (supplier == null)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Supplier not found with ID: {SupplierId}", id);
+                return NotFound();
             }
 
             return View(supplier);
-        }
-
-        public IActionResult Error()
-        {
-
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

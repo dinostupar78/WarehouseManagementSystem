@@ -1,47 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
+    [Route("categories")]
     public class CategoryController : Controller
     {
-        private readonly CategoryMockRepository _categoryRepository;
+        private readonly CategoryRepository _categoryRepository;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(CategoryMockRepository categoryRepository)
+        public CategoryController(CategoryRepository categoryRepository, ILogger<CategoryController> logger)
         {
             _categoryRepository = categoryRepository;
+            _logger = logger;
         }
 
-        public ActionResult Index()
+        [HttpGet("")]
+        public IActionResult Index()
         {
             var categories = _categoryRepository.GetAll();
             return View(categories);
         }
 
-        public ActionResult Details(int id)
+        [HttpGet("{id:int}")]
+        public IActionResult Details(int id)
         {
             if (id <= 0)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Invalid category ID: {CategoryId}", id);
+                return BadRequest();
+
             }
 
             var category = _categoryRepository.GetById(id);
 
             if (category == null)
             {
-                return RedirectToAction("Error", "Home");
+                _logger.LogWarning("Category not found: {CategoryId}", id);
+                return NotFound();
             }
 
             return View(category);
-
         }
-
-        public ActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
     }
 }
