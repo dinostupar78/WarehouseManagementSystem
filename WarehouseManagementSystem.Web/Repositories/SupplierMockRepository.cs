@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -45,7 +45,7 @@ namespace WarehouseManagementSystem.Repositories
             return _suppliers;
         }
 
-        public Supplier GetById(int id)
+        public Supplier? GetById(int id)
         {
             return _suppliers.FirstOrDefault(s => s.Id == id);
         }

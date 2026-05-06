@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -11,6 +11,7 @@ namespace WarehouseManagementSystem.Repositories
         {
             var suppliersById = supplierRepository.GetAll().ToDictionary(s => s.Id);
             var warehousesById = warehouseRepository.GetAll().ToDictionary(w => w.Id);
+
             _purchaseOrders = new List<PurchaseOrder>
             {
                 new PurchaseOrder
@@ -51,10 +52,12 @@ namespace WarehouseManagementSystem.Repositories
                 {
                     throw new InvalidOperationException($"SupplierId {purchaseOrder.SupplierId} does not exist in supplier seed data.");
                 }
+
                 if (!warehousesById.TryGetValue(purchaseOrder.WarehouseId, out var warehouse))
                 {
                     throw new InvalidOperationException($"WarehouseId {purchaseOrder.WarehouseId} does not exist in warehouse seed data.");
                 }
+
                 purchaseOrder.Supplier = supplier;
                 purchaseOrder.Warehouse = warehouse;
                 supplier.PurchaseOrders.Add(purchaseOrder);
@@ -67,7 +70,7 @@ namespace WarehouseManagementSystem.Repositories
             return _purchaseOrders;
         }
 
-        public PurchaseOrder GetById(int id)
+        public PurchaseOrder? GetById(int id)
         {
             return _purchaseOrders.FirstOrDefault(po => po.Id == id);
         }

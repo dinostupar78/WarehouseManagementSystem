@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -10,6 +10,7 @@ namespace WarehouseManagementSystem.Repositories
         {
             var productsById = productRepository.GetAll().ToDictionary(p => p.Id);
             var purchaseOrdersById = purchaseOrderRepository.GetAll().ToDictionary(po => po.Id);
+
             _purchaseOrderItems = new List<PurchaseOrderItem>
             {
                 new PurchaseOrderItem
@@ -68,20 +69,22 @@ namespace WarehouseManagementSystem.Repositories
                 {
                     throw new InvalidOperationException($"ProductId {purchaseOrderItem.ProductId} does not exist in product seed data.");
                 }
+
                 if(!purchaseOrdersById.TryGetValue(purchaseOrderItem.PurchaseOrderId, out var purchaseOrder))
                 {
                     throw new InvalidOperationException($"PurchaseOrderId {purchaseOrderItem.PurchaseOrderId} does not exist in purchase order seed data.");
                 }
+
                 purchaseOrderItem.Product = product;
                 purchaseOrderItem.PurchaseOrder = purchaseOrder;
                 product.PurchaseOrderItems.Add(purchaseOrderItem);
-                purchaseOrder.Items.Add(purchaseOrderItem);
+                purchaseOrder.PurchaseOrderItems.Add(purchaseOrderItem);
 
             }
 
             foreach (var purchaseOrder in purchaseOrdersById.Values)
             {
-                purchaseOrder.TotalAmount = purchaseOrder.Items.Sum(i => i.Quantity * i.UnitPrice);
+                purchaseOrder.TotalAmount = purchaseOrder.PurchaseOrderItems.Sum(i => i.Quantity * i.UnitPrice);
             }
         }
 
@@ -90,7 +93,7 @@ namespace WarehouseManagementSystem.Repositories
             return _purchaseOrderItems;
         }
 
-        public PurchaseOrderItem GetById(int id)
+        public PurchaseOrderItem? GetById(int id)
         {
             return _purchaseOrderItems.FirstOrDefault(i => i.Id == id);
         }

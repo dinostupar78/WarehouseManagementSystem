@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -69,10 +69,12 @@ namespace WarehouseManagementSystem.Repositories
                 {
                     throw new InvalidOperationException($"ProductId {inventory.ProductId} does not exist in product seed data.");
                 }
+
                 if (!locationsById.TryGetValue(inventory.LocationId, out var location))
                 {
                     throw new InvalidOperationException($"LocationId {inventory.LocationId} does not exist in location seed data.");
                 }
+
                 inventory.Product = product;
                 inventory.Location = location;
                 product.Inventories.Add(inventory);
@@ -85,7 +87,7 @@ namespace WarehouseManagementSystem.Repositories
             return _inventories;
         }
 
-        public Inventory GetById(int id)
+        public Inventory? GetById(int id)
         {
             return _inventories.FirstOrDefault(i => i.Id == id);
         }

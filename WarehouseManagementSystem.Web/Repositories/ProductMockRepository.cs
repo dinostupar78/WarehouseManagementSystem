@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -80,6 +80,7 @@ namespace WarehouseManagementSystem.Repositories
                 {
                     throw new InvalidOperationException($"CategoryId {product.CategoryId} does not exist in category seed data.");
                 }
+
                 product.Category = category;
                 category.Products.Add(product);
             }
@@ -91,7 +92,7 @@ namespace WarehouseManagementSystem.Repositories
             return _products;
         }
 
-        public Product GetById(int id)
+        public Product? GetById(int id)
         {
             return _products.FirstOrDefault(p => p.Id == id);
 

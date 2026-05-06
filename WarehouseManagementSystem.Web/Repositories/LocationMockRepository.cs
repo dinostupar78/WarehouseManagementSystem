@@ -1,9 +1,10 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 namespace WarehouseManagementSystem.Repositories
 {
     public class LocationMockRepository
     {
         private readonly List<Location> _locations;
+
         public LocationMockRepository(WarehouseMockRepository warehouseRepository)
         {
             var warehousesById = warehouseRepository.GetAll().ToDictionary(w => w.Id);
@@ -59,7 +60,8 @@ namespace WarehouseManagementSystem.Repositories
         {
             return _locations;
         }
-        public Location GetById(int id)
+
+        public Location? GetById(int id)
         {
             return _locations.FirstOrDefault(l => l.Id == id);
         }

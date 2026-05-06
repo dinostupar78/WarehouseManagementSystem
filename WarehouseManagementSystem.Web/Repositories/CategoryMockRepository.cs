@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -36,7 +36,7 @@ namespace WarehouseManagementSystem.Repositories
             return _categories;
         }
 
-        public Category GetById(int id)
+        public Category? GetById(int id)
         {
             return _categories.FirstOrDefault(c => c.Id == id);
         }

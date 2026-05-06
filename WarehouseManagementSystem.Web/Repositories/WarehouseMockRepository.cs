@@ -1,4 +1,4 @@
-﻿using WarehouseManagementSystem.Models;
+﻿using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.Repositories
 {
@@ -41,14 +41,13 @@ namespace WarehouseManagementSystem.Repositories
             };
         }
 
-
         public IReadOnlyList<Warehouse> GetAll()
         {
             return _warehouses;
            
         }
 
-        public Warehouse GetById(int id)
+        public Warehouse? GetById(int id)
         {
             return _warehouses.FirstOrDefault(w => w.Id == id);
 
