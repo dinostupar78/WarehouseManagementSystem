@@ -5,6 +5,10 @@ VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagementSystem.Web", "WarehouseManagementSystem.Web\WarehouseManagementSystem.Web.csproj", "{8C420B3F-A3E1-D4C4-A9F3-BF70DB106061}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagementSystem.DAL", "WarehouseManagementSystem.DAL\WarehouseManagementSystem.DAL.csproj", "{569F6E8B-81E3-419C-9CAB-80C69AF74BD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagementSystem.Model", "WarehouseManagementSystem.Model\WarehouseManagementSystem.Model.csproj", "{0FC61831-E220-4418-96FD-68767D02AB79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{8C420B3F-A3E1-D4C4-A9F3-BF70DB106061}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C420B3F-A3E1-D4C4-A9F3-BF70DB106061}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C420B3F-A3E1-D4C4-A9F3-BF70DB106061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569F6E8B-81E3-419C-9CAB-80C69AF74BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569F6E8B-81E3-419C-9CAB-80C69AF74BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569F6E8B-81E3-419C-9CAB-80C69AF74BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569F6E8B-81E3-419C-9CAB-80C69AF74BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FC61831-E220-4418-96FD-68767D02AB79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FC61831-E220-4418-96FD-68767D02AB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FC61831-E220-4418-96FD-68767D02AB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FC61831-E220-4418-96FD-68767D02AB79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
