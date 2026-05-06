@@ -1,4 +1,4 @@
-﻿@model WarehouseManagementSystem.Models.PurchaseOrder
+﻿@model WarehouseManagementSystem.Model.PurchaseOrder
 @{
     ViewData["Title"] = "Purchase Order Details";
 }
@@ -58,5 +58,9 @@ else
 }
 
 <div class="mt-5">
+    @if (Model != null)
+    {
+        <a asp-action="FindByOrderStatus" asp-route-status="@Model.Status.ToString().ToLower()" class="btn btn-outline-info px-4 fw-bold rounded-pill me-3">View all @Model.Status orders</a>
+    }
     <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Order Book</a>
 </div>

@@ -1,4 +1,4 @@
-@model WarehouseManagementSystem.Models.Warehouse
+@model WarehouseManagementSystem.Model.Warehouse
 @{
     ViewData["Title"] = "Warehouse Details";
 }
@@ -62,5 +62,7 @@ else
 }
 
 <div class="mt-5">
+    <a asp-action="FindByCity" asp-route-city="@Model.City" class="btn btn-outline-info px-4 fw-bold rounded-pill me-3">View Warehouses in @Model.City</a>
+    <a asp-action="CapacityAbove" asp-route-minCapacity="@Model.Capacity" class="btn btn-outline-primary px-4 fw-bold rounded-pill me-3">View Warehouses with Similar Capacity</a>
     <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Active Warehouses</a>
 </div>
