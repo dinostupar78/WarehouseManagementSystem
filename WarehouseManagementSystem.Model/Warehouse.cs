@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WarehouseManagementSystem.Models
+namespace WarehouseManagementSystem.Model
 {
     public class Warehouse
     {
+        [Key]
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
@@ -20,10 +21,9 @@ namespace WarehouseManagementSystem.Models
 
         public int Capacity { get; set; }
 
-        public List<Location> Locations { get; set; } = new List<Location>();
+        public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
 
         // Opcionalno za sad, ali može biti korisno za praćenje zaliha i narudžbi
-        public List<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
-
+        public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
     }
 }

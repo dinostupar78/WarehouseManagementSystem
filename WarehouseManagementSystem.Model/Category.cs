@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WarehouseManagementSystem.Models
+namespace WarehouseManagementSystem.Model
 {
     public class Category
     {
+        [Key]
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
@@ -12,7 +13,6 @@ namespace WarehouseManagementSystem.Models
         [Required, MaxLength(255)]
         public string Description { get; set; }
 
-        public List<Product> Products { get; set; } = new List<Product>();
-
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

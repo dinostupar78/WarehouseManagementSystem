@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WarehouseManagementSystem.Models
+namespace WarehouseManagementSystem.Model
 {
     public class Supplier
     {
+        [Key]
         public int Id { get; set; }
+
         [Required, MaxLength(100)]
         public string Name { get; set; }
 
@@ -20,6 +22,6 @@ namespace WarehouseManagementSystem.Models
         [Required, MaxLength(100)]
         public string ContactAddress { get; set; }
 
-        public List<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+        public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
     }
 }

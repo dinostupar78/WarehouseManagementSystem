@@ -1,4 +1,4 @@
-﻿namespace WarehouseManagementSystem.Models
+﻿namespace WarehouseManagementSystem.Model
 {
     public enum OrderStatus
     {
