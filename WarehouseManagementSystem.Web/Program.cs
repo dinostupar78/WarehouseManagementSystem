@@ -1,5 +1,7 @@
-using WarehouseManagementSystem.Models;
-using WarehouseManagementSystem.Repositories;
+using Microsoft.EntityFrameworkCore;
+using WarehouseManagementSystem.DAL.Data;
+using WarehouseManagementSystem.Model;
+using WarehouseManagementSystem.Web.Repositories;
 
 public class Program
 {
@@ -18,16 +20,32 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // Dodaj DbContext sa PostgreSQL
+        var connectionString = builder.Configuration.GetConnectionString("WarehouseManagementSystemDbContext");
+
+        builder.Services.AddDbContext<WarehouseManagementSystemDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
         // Add services to the container.
         builder.Services.AddControllersWithViews();
-        builder.Services.AddSingleton<WarehouseMockRepository>();
-        builder.Services.AddSingleton<LocationMockRepository>();
-        builder.Services.AddSingleton<CategoryMockRepository>();
-        builder.Services.AddSingleton<ProductMockRepository>();
-        builder.Services.AddSingleton<InventoryMockRepository>();
-        builder.Services.AddSingleton<SupplierMockRepository>();
-        builder.Services.AddSingleton<PurchaseOrderMockRepository>();
-        builder.Services.AddSingleton<PurchaseOrderItemMockRepository>();
+
+        // builder.Services.AddSingleton<WarehouseMockRepository>();
+        // builder.Services.AddSingleton<LocationMockRepository>();
+        // builder.Services.AddSingleton<CategoryMockRepository>();
+        // builder.Services.AddSingleton<ProductMockRepository>();
+        // builder.Services.AddSingleton<InventoryMockRepository>();
+        // builder.Services.AddSingleton<SupplierMockRepository>();
+        // builder.Services.AddSingleton<PurchaseOrderMockRepository>();
+        // builder.Services.AddSingleton<PurchaseOrderItemMockRepository>();
+
+        builder.Services.AddScoped<WarehouseRepository>();
+        builder.Services.AddScoped<LocationRepository>();
+        builder.Services.AddScoped<CategoryRepository>();
+        builder.Services.AddScoped<ProductRepository>();
+        builder.Services.AddScoped<InventoryRepository>();
+        builder.Services.AddScoped<SupplierRepository>();
+        builder.Services.AddScoped<PurchaseOrderRepository>();
+        builder.Services.AddScoped<PurchaseOrderItemRepository>();
 
         var app = builder.Build();
 
@@ -47,8 +65,6 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
-        _ = app.Services.GetRequiredService<PurchaseOrderItemMockRepository>();
 
         app.Run();
     }
@@ -128,7 +144,10 @@ public class Program
 
         foreach (var warehouse in warehouses)
         {
-            warehouse.Locations.AddRange(locations.Where(location => location.WarehouseId == warehouse.Id));
+            foreach (var location in locations.Where(location => location.WarehouseId == warehouse.Id))
+            {
+                warehouse.Locations.Add(location);
+            }
         }
 
         var categories = new List<Category>
@@ -225,7 +244,10 @@ public class Program
 
         foreach (var category in categories)
         {
-            category.Products.AddRange(products.Where(product => product.CategoryId == category.Id));
+            foreach (var product in products.Where(product => product.CategoryId == category.Id))
+            {
+                category.Products.Add(product);
+            }
         }
 
         var inventories = new List<Inventory>
@@ -441,13 +463,13 @@ public class Program
 
         foreach (var orderItem in orderItems)
         {
-            orderItem.PurchaseOrder.Items.Add(orderItem);
+            orderItem.PurchaseOrder.PurchaseOrderItems.Add(orderItem);
             orderItem.Product.PurchaseOrderItems.Add(orderItem);
         }
 
         foreach (var order in purchaseOrders)
         {
-            order.TotalAmount = order.Items.Sum(i => i.Quantity * i.UnitPrice);
+            order.TotalAmount = order.PurchaseOrderItems.Sum(i => i.Quantity * i.UnitPrice);
         }
 
 
@@ -518,7 +540,7 @@ public class Program
             .Select(supplier => new
             {
                 supplier.Name,
-                TotalOrderValue = supplier.PurchaseOrders.Sum(order => order.Items.Sum(i => i.Quantity * i.UnitPrice))
+                TotalOrderValue = supplier.PurchaseOrders.Sum(order => order.PurchaseOrderItems.Sum(i => i.Quantity * i.UnitPrice))
             })
             .OrderByDescending(supplier => supplier.TotalOrderValue)
             .FirstOrDefault();
