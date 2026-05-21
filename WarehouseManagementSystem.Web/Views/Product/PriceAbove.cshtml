@@ -1,14 +1,14 @@
 @model IReadOnlyList<WarehouseManagementSystem.Model.Product>
 @{
-    ViewData["Title"] = $"Products priced above {ViewBag.MinPrice:C}";
+    ViewData["Title"] = $"Products priced above ${ViewBag.MinPrice}";
 }
 
 <div class="wms-breadcrumbs">
     <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; 
     <a asp-action="Index">PRODUCTS</a> &gt; 
-    Price Above @ViewBag.MinPrice:C
+    Price Above $@ViewBag.MinPrice
 </div>
-<h1 class="page-title">Products priced above @ViewBag.MinPrice:C</h1>
+<h1 class="page-title">Products priced above $@ViewBag.MinPrice</h1>
 
 <div class="row mb-4">
     <div class="col-md-3">
@@ -21,7 +21,7 @@
 
 @if (Model == null || Model.Count == 0)
 {
-    <div class="alert alert-secondary">No products found priced above @ViewBag.MinPrice:C.</div>
+    <div class="alert alert-secondary">No products found priced above $@ViewBag.MinPrice.</div>
 }
 else
 {

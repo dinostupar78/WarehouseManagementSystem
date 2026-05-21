@@ -156,7 +156,7 @@ namespace WarehouseManagementSystem.Controllers
 
             ViewBag.Status = parsedStatus;
 
-            return View("Index", purchaseOrders);
+            return View(purchaseOrders);
         }
 
         [HttpGet("search")]
