@@ -116,6 +116,7 @@ body {
     border-radius: 12px;
     border: 1px solid var(--border-color);
     overflow-x: auto;
+    position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
@@ -159,6 +160,613 @@ body {
 .action-btn:hover {
     background-color: var(--brand-blue);
     color: white;
+}
+
+/* Validation */
+.wms-main-content .alert-danger {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.06);
+    overflow-wrap: anywhere;
+}
+
+.wms-main-content .validation-summary-errors ul,
+.wms-main-content .alert-danger ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wms-main-content .validation-summary-errors li,
+.wms-main-content .alert-danger li {
+    position: relative;
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.wms-main-content .validation-summary-errors li + li,
+.wms-main-content .alert-danger li + li {
+    margin-top: 0.4rem;
+}
+
+.wms-main-content .validation-summary-errors li::before,
+.wms-main-content .alert-danger li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #dc2626;
+    transform: translateY(-50%);
+}
+
+.wms-main-content .field-validation-error,
+.wms-main-content .text-danger {
+    color: #b91c1c !important;
+    display: block;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 0.4rem;
+    overflow-wrap: anywhere;
+}
+
+/* Hide empty valid validation containers */
+.validation-summary-valid {
+    display: none !important;
+}
+
+.field-validation-valid {
+    display: none !important;
+}
+
+/* Invalid input styling */
+.input-validation-error {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.12) !important;
+}
+
+/* Valid input styling */
+.form-control.valid,
+.form-select.valid {
+    border-color: #16a34a;
+}
+
+    .form-control.valid:focus,
+    .form-select.valid:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.12);
+    }
+
+/* Validation message spacing */
+.wms-validation-message {
+    color: #b91c1c !important;
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 0.4rem;
+    overflow-wrap: anywhere;
+}
+
+/* Custom validation summary class, if you use it instead of alert-danger */
+.wms-validation-summary {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #dc2626;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.06);
+    overflow-wrap: anywhere;
+}
+
+.wms-validation-summary ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wms-validation-summary li {
+    position: relative;
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.wms-validation-summary li + li {
+    margin-top: 0.4rem;
+}
+
+.wms-validation-summary li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #dc2626;
+    transform: translateY(-50%);
+}
+
+/* Autocomplete dropdown */
+.wms-autocomplete {
+    position: relative;
+}
+
+.wms-autocomplete-menu {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
+    padding: 0.35rem;
+}
+
+.wms-autocomplete-option {
+    width: 100%;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-primary);
+    display: block;
+    padding: 0.75rem 0.85rem;
+    text-align: left;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.wms-autocomplete-option:hover,
+.wms-autocomplete-option:focus {
+    background: #e0e7ff;
+    color: var(--brand-blue);
+    outline: none;
+}
+
+.wms-autocomplete-option-title {
+    display: block;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.wms-autocomplete-option-subtitle {
+    color: var(--text-muted);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 0.2rem;
+}
+
+.wms-autocomplete-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.8rem 0.9rem;
+}
+
+/* Custom date and time picker */
+.wms-datetime-picker {
+    position: relative;
+}
+
+.wms-datetime-menu {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
+    left: 0;
+    padding: 0.85rem;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.35rem);
+    z-index: 1050;
+}
+
+.wms-datetime-header {
+    align-items: center;
+    display: flex;
+    gap: 0.65rem;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.wms-datetime-title {
+    color: var(--text-primary);
+    flex: 1;
+    font-weight: 800;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.wms-datetime-nav {
+    align-items: center;
+    background: #e0e7ff;
+    border: 0;
+    border-radius: 999px;
+    color: var(--brand-blue);
+    display: inline-flex;
+    font-weight: 900;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+}
+
+.wms-datetime-nav:hover,
+.wms-datetime-nav:focus {
+    background: var(--brand-blue);
+    color: #ffffff;
+    outline: none;
+}
+
+.wms-datetime-weekdays,
+.wms-datetime-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+}
+
+.wms-datetime-weekdays {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.wms-datetime-day,
+.wms-datetime-empty-day {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+}
+
+.wms-datetime-day {
+    background: transparent;
+    border: 0;
+    color: var(--text-primary);
+    font-weight: 800;
+}
+
+.wms-datetime-day:hover,
+.wms-datetime-day:focus {
+    background: #e0e7ff;
+    color: var(--brand-blue);
+    outline: none;
+}
+
+.wms-datetime-day.is-selected {
+    background: var(--brand-blue);
+    color: #ffffff;
+}
+
+.wms-datetime-time {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 0.85rem;
+}
+
+.wms-datetime-time label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.wms-datetime-time input {
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin-top: 0.25rem;
+    padding: 0.45rem 0.75rem;
+    width: 100%;
+}
+
+.wms-datetime-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.85rem;
+}
+
+/* Useful UI animations */
+.wms-list-fade-out {
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+}
+
+.wms-list-fade-in {
+    animation: wmsFadeInUp 0.32s ease both;
+}
+
+.wms-search-loading .wms-table {
+    opacity: 0.72;
+    transition: opacity 0.25s ease;
+}
+
+.wms-table-container.wms-search-loading {
+    overflow: hidden;
+}
+
+.wms-skeleton-overlay {
+    left: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 4;
+}
+
+.wms-skeleton-bar {
+    display: block;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #e2e8f0 0%, #f8fafc 50%, #e2e8f0 100%);
+    background-size: 220% 100%;
+    animation: wmsSkeleton 2.8s ease-in-out infinite;
+}
+
+.wms-autocomplete-selected .wms-autocomplete-input {
+    animation: wmsSelectPulse 0.8s ease;
+}
+
+.wms-autocomplete-invalid .wms-autocomplete-input,
+.input-validation-error {
+    animation: wmsValidationShake 0.28s ease;
+}
+
+.field-validation-error {
+    animation: wmsValidationMessage 0.2s ease both;
+}
+
+.wms-status-badge,
+.wms-stock-badge {
+    animation: wmsBadgeLivePulse 3s ease-in-out infinite;
+    letter-spacing: 0.04em;
+    padding: 0.45rem 0.75rem;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.wms-badge-primary {
+    --wms-pulse-rgb: 29, 78, 216;
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.wms-badge-info {
+    --wms-pulse-rgb: 14, 116, 144;
+    background: #cffafe;
+    color: #0e7490;
+}
+
+.wms-badge-success {
+    --wms-pulse-rgb: 21, 128, 61;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.wms-badge-warning {
+    --wms-pulse-rgb: 146, 64, 14;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.wms-badge-danger {
+    --wms-pulse-rgb: 185, 28, 28;
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.wms-badge-pop {
+    animation: wmsBadgePulse 0.75s ease;
+}
+
+.wms-toast-container {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 2000;
+}
+
+.wms-toast {
+    align-items: flex-start;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.18);
+    display: flex;
+    gap: 0.85rem;
+    min-width: 280px;
+    max-width: 360px;
+    opacity: 0;
+    padding: 1rem;
+    transform: translateY(-12px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.wms-toast-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.wms-toast-icon {
+    align-items: center;
+    background: #dbeafe;
+    border-radius: 999px;
+    color: #1d4ed8;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-weight: 800;
+    height: 1.75rem;
+    justify-content: center;
+    min-width: 1.75rem;
+    padding: 0 0.45rem;
+}
+
+.wms-toast-create {
+    border-color: #bbf7d0;
+    border-left-color: #16a34a;
+}
+
+.wms-toast-create .wms-toast-icon {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.wms-toast-edit {
+    border-color: #bfdbfe;
+    border-left-color: #2563eb;
+}
+
+.wms-toast-edit .wms-toast-icon {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.wms-toast-delete {
+    border-color: #fecaca;
+    border-left-color: #dc2626;
+}
+
+.wms-toast-delete .wms-toast-icon {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.wms-toast-title {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.wms-toast-message {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 0.15rem;
+}
+
+.wms-toast-close {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-left: auto;
+    padding: 0;
+}
+
+@keyframes wmsFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wmsSkeleton {
+    from {
+        background-position: 180% 0;
+    }
+    to {
+        background-position: -180% 0;
+    }
+}
+
+@keyframes wmsSelectPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.25);
+    }
+    45% {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.25rem rgba(22, 163, 74, 0.16);
+    }
+    100% {
+        box-shadow: none;
+    }
+}
+
+@keyframes wmsValidationShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    30% {
+        transform: translateX(-4px);
+    }
+    60% {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes wmsValidationMessage {
+    from {
+        opacity: 0;
+        transform: translateY(-3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wmsBadgePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(var(--wms-pulse-rgb, 37, 99, 235), 0.22);
+        transform: scale(1);
+    }
+    35% {
+        box-shadow: 0 0 0 0.28rem rgba(var(--wms-pulse-rgb, 37, 99, 235), 0.14);
+        transform: scale(1.07);
+    }
+    70% {
+        box-shadow: 0 0 0 0.12rem rgba(var(--wms-pulse-rgb, 37, 99, 235), 0.08);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: none;
+        transform: scale(1);
+    }
+}
+
+@keyframes wmsBadgeLivePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(var(--wms-pulse-rgb, 37, 99, 235), 0);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 0.18rem rgba(var(--wms-pulse-rgb, 37, 99, 235), 0.12);
+        transform: scale(1.025);
+    }
 }
 
 /* Responsive Overrides */
