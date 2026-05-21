@@ -1,0 +1,29 @@
+﻿@model IReadOnlyList<Location>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var loc in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">LOC-@loc.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@loc.Code</div>
+                <div class="small text-muted">Shelf: @loc.ShelfNumber</div>
+            </td>
+            <td>
+                <div class="fw-bold text-dark">@(loc.Warehouse?.Name ?? "Unassigned")</div>
+                <div class="small text-muted">ID: @loc.WarehouseId</div>
+            </td>
+            <td>
+                <span class="badge rounded-pill bg-primary text-white px-2 py-1">ZONE @loc.Zone.ToUpper()</span>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@loc.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr><td colspan="5" class="text-center py-4 text-muted border-0">No location infrastructure found.</td></tr>
+}

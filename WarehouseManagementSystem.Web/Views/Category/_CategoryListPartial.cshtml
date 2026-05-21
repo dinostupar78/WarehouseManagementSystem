@@ -1,0 +1,24 @@
+﻿@model IReadOnlyList<Category>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var category in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">CAT-@category.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@category.Name</div>
+            </td>
+            <td>
+                <div class="small text-muted">@category.Description</div>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@category.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr><td colspan="4" class="text-center py-4 text-muted border-0">No categories mapped.</td></tr>
+}

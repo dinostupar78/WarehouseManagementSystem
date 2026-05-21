@@ -1,0 +1,29 @@
+﻿@model IReadOnlyList<Supplier>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var supplier in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">VND-@supplier.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@supplier.Name</div>
+                <div class="small text-muted">@supplier.ContactAddress</div>
+            </td>
+            <td>
+                <div class="fw-bold text-dark">@supplier.ContactPerson</div>
+                <div class="small text-muted">@supplier.ContactPhone</div>
+            </td>
+            <td>
+                <div class="text-muted fw-bold">@supplier.ContactEmail</div>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@supplier.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr><td colspan="5" class="text-center py-4 text-muted border-0">No active suppliers found.</td></tr>
+}

@@ -40,7 +40,7 @@ else
                 @foreach (var order in Model)
                 {
                     <tr>
-                        <td class="text-primary fw-bolder small">PO-@order.Id.ToString("0000")</td>
+                        <td class="text-primary fw-bolder small">PO-@order.OrderNumber.ToString("0000")</td>
                         <td>
                             <div class="fw-bolder">@(order.Supplier?.Name ?? "External Supplier")</div>
                         </td>
@@ -49,10 +49,16 @@ else
                         </td>
                         <td>
                             @{
-                                var statusStr = order.Status.ToString();
-                                var bgClass = statusStr.ToLower().Contains("pending") ? "bg-warning text-dark" : "bg-success text-white";
+                                var bgClass = order.Status switch
+                                {
+                                    OrderStatus.Approved => "wms-badge-primary",
+                                    OrderStatus.Shipped => "wms-badge-info",
+                                    OrderStatus.Delivered => "wms-badge-success",
+                                    OrderStatus.Cancelled => "wms-badge-danger",
+                                    _ => "wms-badge-warning"
+                                };
                             }
-                            <span class="badge rounded-pill @bgClass px-2 py-1">@statusStr</span>
+                            <span class="badge rounded-pill wms-status-badge @bgClass">@order.Status</span>
                         </td>
                         <td>
                             <a class="action-btn" asp-action="Details" asp-route-id="@order.Id">DETAILS</a>

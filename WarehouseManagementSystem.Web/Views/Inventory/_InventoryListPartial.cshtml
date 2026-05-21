@@ -1,0 +1,36 @@
+﻿@model IReadOnlyList<Inventory>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">#INV-@item.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@(item.Product?.Name ?? "Unknown Product")</div>
+                <div class="small text-muted">ID: @item.ProductId</div>
+            </td>
+            <td>
+                <div class="fw-bolder">@(item.Location?.Code ?? "General Storage")</div>
+                <div class="small text-muted">Z: @(item.Location?.Zone ?? item.LocationId.ToString())</div>
+            </td>
+            <td>
+                @{
+                    var isLow = item.Quantity <= 10;
+                    var isEmpty = item.Quantity <= 0;
+                    var bgClass = isEmpty ? "wms-badge-danger" : isLow ? "wms-badge-warning" : "wms-badge-success";
+                    var statusTxt = isEmpty ? "OUT OF STOCK" : isLow ? "LOW STOCK" : "IN STOCK";
+                }
+                <span class="badge rounded-pill wms-stock-badge @bgClass mb-1">@statusTxt</span>
+                <div class="fw-bolder text-muted small mt-1">@item.Quantity Units</div>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@item.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr><td colspan="5" class="text-center py-4 text-muted border-0">No active inventory found.</td></tr>
+}

@@ -1,0 +1,35 @@
+﻿@model IReadOnlyList<Product>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var product in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">PRD-@product.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@product.Name</div>
+                <div class="small text-muted">@product.Description</div>
+            </td>
+            <td>
+                <div class="fw-bold text-success">@product.Price.ToString("C")</div>
+            </td>
+            <td>
+                <div class="fw-bold">@product.Weight.ToString("0.0")kg</div>
+            </td>
+            <td>
+                <div class="fw-bold text-dark">@product.ProductReceivedAt.ToString("yyyy-MM-dd HH:mm")</div>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@product.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="6" class="text-center py-4 text-muted border-0">
+            No products found.
+        </td>
+    </tr>
+}

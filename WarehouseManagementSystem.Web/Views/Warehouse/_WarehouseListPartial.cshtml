@@ -1,0 +1,34 @@
+@model IReadOnlyList<Warehouse>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var warehouse in Model)
+    {
+        <tr>
+            <td class="text-primary fw-bolder small">WH-@warehouse.Id.ToString("0000")</td>
+            <td>
+                <div class="fw-bolder">@warehouse.Name</div>
+                <div class="small text-muted">@warehouse.Address</div>
+            </td>
+            <td>
+                <div class="fw-bold">@warehouse.City</div>
+                <div class="small text-muted">@warehouse.Country</div>
+            </td>
+            <td>
+                <div class="fw-bold">@warehouse.Capacity</div>
+                <small class="text-muted">Total Units</small>
+            </td>
+            <td>
+                <a class="action-btn" asp-action="Details" asp-route-id="@warehouse.Id">DETAILS</a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="5" class="text-center py-4 text-muted border-0">
+            No warehouses found.
+        </td>
+    </tr>
+}
