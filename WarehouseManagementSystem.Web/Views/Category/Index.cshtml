@@ -8,6 +8,22 @@
 </div>
 <h1 class="page-title">Category Management</h1>
 
+<div class="mb-4 d-flex justify-content-end">
+    <a asp-action="Create"
+       class="btn btn-primary px-4 py-3 fw-bold rounded-pill shadow-sm">
+        + Create Category Item
+    </a>
+</div>
+
+<div class="mb-3">
+    <input id="category-search"
+           class="form-control rounded-pill px-4"
+           data-ajax-search
+           data-search-url="/categories/search"
+           data-target="#category-table-body"
+           placeholder="Search categories by name or description..." />
+</div>
+
 <div class="wms-table-container mt-4">
     <table class="table wms-table table-hover">
         <thead>
@@ -18,29 +34,9 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var category in Model)
-                {
-                    <tr>
-                        <td class="text-primary fw-bolder small">CAT-@category.Id.ToString("0000")</td>
-                        <td>
-                            <div class="fw-bolder">@category.Name</div>
-                        </td>
-                        <td>
-                            <div class="small text-muted">@category.Description</div>
-                        </td>
-                        <td>
-                            <a class="action-btn" asp-action="Details" asp-route-id="@category.Id">DETAILS</a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="4" class="text-center py-4 text-muted border-0">No categories mapped.</td></tr>
-            }
+        <tbody id="category-table-body">
+            <partial name="_CategoryListPartial" model="Model" />
         </tbody>
     </table>
 </div>
+

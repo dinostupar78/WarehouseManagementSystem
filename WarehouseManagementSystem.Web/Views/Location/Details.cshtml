@@ -57,6 +57,25 @@ else
     </div>
 }
 
-<div class="mt-5">
-    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Allocations</a>
-</div>
+@if (Model != null)
+{
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-primary px-4 fw-bold rounded-pill">
+            Edit Location
+        </a>
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+            Delete Location
+        </a>
+
+        <a asp-action="Index" 
+        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Allocations
+        </a>
+
+    </div>
+}

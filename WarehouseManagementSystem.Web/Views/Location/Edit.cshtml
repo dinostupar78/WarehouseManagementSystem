@@ -1,0 +1,124 @@
+﻿@using WarehouseManagementSystem.Web.Models
+
+@model WarehouseManagementSystem.Model.Location
+
+@{
+    ViewData["Title"] = "Edit Location";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">LOCATIONS</a> &gt;
+    <a asp-action="Details" asp-route-id="@Model.Id">@Model.Code</a> &gt;
+    Edit
+</div>
+
+<h1 class="page-title">Edit Location @Model.Code</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="detail-card border-0 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded p-3 me-3">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bolder mb-1 text-uppercase text-muted" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                            Infrastructure Data
+                        </h5>
+                        <h4 class="fw-bolder">@Model.Code</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-sm-6 mb-3">
+                        <div class="text-muted small fw-bold text-uppercase">Location Identifier</div>
+                        <div class="fw-bolder text-primary fs-5">LOC-@Model.Id.ToString("0000")</div>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="Code" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="Code" class="form-control rounded-pill px-4" />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="Zone" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="Zone" class="form-control rounded-pill px-4" />
+                        <span asp-validation-for="Zone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="ShelfNumber" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="ShelfNumber" class="form-control rounded-pill px-4" placeholder="Example: 3" />
+                        <span asp-validation-for="ShelfNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="detail-card border-0 h-100">
+                <h5 class="text-muted small fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                    Parent Allocation
+                </h5>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        FieldName = "WarehouseId",
+                        Label = "Warehouse",
+                        Prefix = "WH",
+                        SearchUrl = Url.Action("Autocomplete", "Warehouse") ?? "/warehouses/autocomplete",
+                        Placeholder = "Search warehouse by name or city...",
+                        SelectedValue = Model.WarehouseId > 0 ? Model.WarehouseId.ToString() : string.Empty,
+                        SelectedText = Model.Warehouse?.Name
+                    })
+                </div>
+
+                <div class="text-muted small fw-bold text-uppercase mt-3">
+                    Current Warehouse
+                </div>
+
+                <div class="fs-4 fw-bolder text-info">
+                    @(Model.Warehouse?.Name ?? "Unassigned")
+                </div>
+
+                <div class="small text-muted fw-bold mt-2">
+                    Search and select a warehouse to reassign this location.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
+            Save Changes
+        </button>
+
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info px-4 fw-bold rounded-pill">
+            View Details
+        </a>
+
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Allocations
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

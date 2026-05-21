@@ -1,0 +1,162 @@
+﻿@using WarehouseManagementSystem.Web.Models
+
+@model WarehouseManagementSystem.Model.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">PRODUCTS</a> &gt;
+    <a asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a> &gt;
+    Edit
+</div>
+
+<h1 class="page-title">Edit Product @Model.Name</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="detail-card border-0 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded p-3 me-3">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923z" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bolder mb-1 text-uppercase text-muted" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                            Product Data
+                        </h5>
+                        <h4 class="fw-bolder">@Model.Name</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-sm-6 mb-3">
+                        <div class="text-muted small fw-bold text-uppercase">
+                            Tracking ID
+                        </div>
+                        <div class="fw-bolder text-primary fs-5">
+                            PRD-@Model.Id.ToString("0000")
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="Name" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="Name"
+                               class="form-control rounded-pill px-4" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Description" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <textarea asp-for="Description"
+                                  class="form-control rounded-4 px-4 py-3"
+                                  rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="detail-card border-0 h-100">
+                <h5 class="text-muted small fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                    Financial Value
+                </h5>
+
+                <div class="mb-4">
+                    <label asp-for="Price" class="form-label text-muted small fw-bold text-uppercase">
+                        Unit Price
+                    </label>
+
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start-pill fw-bold text-muted">€</span>
+                        <input asp-for="Price"
+                               class="form-control rounded-end-pill px-4 fs-4 fw-bolder text-success" />
+                    </div>
+
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Weight" class="form-label text-muted small fw-bold text-uppercase">
+                        Weight
+                    </label>
+
+                    <div class="input-group">
+                        <input asp-for="Weight"
+                               class="form-control rounded-start-pill px-4 fw-bolder" />
+                        <span class="input-group-text rounded-end-pill fw-bold text-muted">kg</span>
+                    </div>
+
+                    <span asp-validation-for="Weight" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_DateTimePicker", new DateTimePickerModel
+                    {
+                        FieldName = "ProductReceivedAt",
+                        Label = "Received At",
+                        Value = Model.ProductReceivedAt
+                    })
+                </div>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        FieldName = "CategoryId",
+                        Label = "Category",
+                        Prefix = "CAT",
+                        SearchUrl = Url.Action("Autocomplete", "Category") ?? "/categories/autocomplete",
+                        Placeholder = "Search category by name...",
+                        SelectedValue = Model.CategoryId > 0 ? Model.CategoryId.ToString() : string.Empty,
+                        SelectedText = Model.Category?.Name
+                    })
+                </div>
+
+                <div class="text-muted small fw-bold text-uppercase mt-3">
+                    Current Category
+                </div>
+
+                <div class="fs-4 fw-bolder text-primary">
+                    @(Model.Category?.Name ?? "Uncategorized")
+                </div>
+
+                <div class="small text-muted fw-bold mt-2">
+                    Search and select a category to reassign this product.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
+            Save Changes
+        </button>
+
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary px-4 fw-bold rounded-pill">
+            View Details
+        </a>
+
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Products
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

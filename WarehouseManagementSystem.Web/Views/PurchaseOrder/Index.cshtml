@@ -8,6 +8,22 @@
 </div>
 <h1 class="page-title">Purchase Orders</h1>
 
+<div class="mb-4 d-flex justify-content-end">
+    <a asp-action="Create"
+       class="btn btn-primary px-4 py-3 fw-bold rounded-pill shadow-sm">
+        + Create Purchase Order
+    </a>
+</div>
+
+<div class="mb-3">
+    <input id="purchaseOrder-search"
+           class="form-control rounded-pill px-4"
+           data-ajax-search
+           data-search-url="/purchase-orders/search"
+           data-target="#purchaseOrder-table-body"
+           placeholder="Search purchase orders by total amount, status, supplier or warehouse... " />
+</div>
+
 <div class="wms-table-container mt-4">
     <table class="table wms-table table-hover">
         <thead>
@@ -19,36 +35,9 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var order in Model)
-                {
-                    <tr>
-                        <td class="text-primary fw-bolder small">PO-@order.Id.ToString("0000")</td>
-                        <td>
-                            <div class="fw-bolder">@(order.Supplier?.Name ?? "External Sub-vendor")</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark">@order.OrderDate.ToString("MMM dd, yyyy")</div>
-                        </td>
-                        <td>
-                            @{
-                                var statusStr = order.Status.ToString();
-                                var bgClass = statusStr.ToLower().Contains("pending") ? "bg-warning text-dark" : "bg-success text-white";
-                            }
-                            <span class="badge rounded-pill @bgClass px-2 py-1">@order.Status</span>
-                        </td>
-                        <td>
-                            <a class="action-btn" asp-action="Details" asp-route-id="@order.Id">DETAILS</a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="5" class="text-center py-4 text-muted border-0">No purchase records found.</td></tr>
-            }
+        <tbody id="purchaseOrder-table-body">
+            <partial name="_PurchaseOrderListPartial" model="Model" />
         </tbody>
     </table>
 </div>
+

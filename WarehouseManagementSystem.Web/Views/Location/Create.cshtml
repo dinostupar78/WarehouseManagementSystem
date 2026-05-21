@@ -1,0 +1,104 @@
+﻿@using WarehouseManagementSystem.Web.Models
+
+@model WarehouseManagementSystem.Model.Location
+
+@{
+    ViewData["Title"] = "Create Location";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">LOCATIONS</a> &gt;
+    Create
+</div>
+
+<h1 class="page-title">Create Location</h1>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="detail-card border-0 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded p-3 me-3">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bolder mb-1 text-uppercase text-muted" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                            Infrastructure Data
+                        </h5>
+                        <h4 class="fw-bolder">New Location</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-md-12 mb-3">
+                        <label asp-for="Code" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="Code" class="form-control rounded-pill px-4" placeholder="Example: A-01-S03" />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="Zone" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="Zone" class="form-control rounded-pill px-4" placeholder="Example: A" />
+                        <span asp-validation-for="Zone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="ShelfNumber" class="form-label text-muted small fw-bold text-uppercase"></label>
+                        <input asp-for="ShelfNumber" class="form-control rounded-pill px-4" placeholder="Example: 3" />
+                        <span asp-validation-for="ShelfNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="detail-card border-0 h-100">
+                <h5 class="text-muted small fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                    Parent Allocation
+                </h5>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        FieldName = "WarehouseId",
+                        Label = "Warehouse",
+                        Prefix = "WH",
+                        SearchUrl = Url.Action("Autocomplete", "Warehouse") ?? "/warehouses/autocomplete",
+                        Placeholder = "Search warehouse by name or city...",
+                        SelectedValue = Model != null && Model.WarehouseId > 0 ? Model.WarehouseId.ToString() : string.Empty,
+                        SelectedText = Model?.Warehouse?.Name
+                    })
+                </div>
+
+                <div class="alert alert-secondary small fw-bold mb-0 rounded-4">
+                    Assign this location to an existing warehouse by searching and selecting it from the dropdown.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
+            Create Location
+        </button>
+
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Allocations
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

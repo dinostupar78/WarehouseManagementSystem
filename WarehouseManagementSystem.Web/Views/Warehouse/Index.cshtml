@@ -8,55 +8,49 @@
 </div>
 <h1 class="page-title">Warehouse Index</h1>
 
-<div class="row mb-4">
+<div class="row mb-4 align-items-stretch">
     <div class="col-md-3">
-        <div class="metric-card border-start border-4 border-primary">
-            <div class="text-muted small fw-bold text-uppercase mb-2">Total Warehouses</div>
-            <div class="fs-4 fw-bolder text-primary">@(Model?.Count ?? 0) Active Units</div>
+        <div class="metric-card border-start border-4 border-primary h-100">
+            <div class="text-muted small fw-bold text-uppercase mb-2">
+                Total Warehouses
+            </div>
+            <div class="fs-4 fw-bolder text-primary">
+                @(Model?.Count ?? 0) Active Units
+            </div>
         </div>
+    </div>
+
+    <div class="col-md-9 d-flex justify-content-md-end align-items-center mt-3 mt-md-0">
+        <a asp-action="Create"
+           class="btn btn-primary px-4 py-3 fw-bold rounded-pill shadow-sm">
+            + Create Warehouse Item
+        </a>
     </div>
 </div>
 
-@if (Model == null || Model.Count == 0)
-{
-    <div class="alert alert-secondary">No warehouses found.</div>
-}
-else
-{
-    <div class="wms-table-container">
-        <table class="table wms-table table-hover">
-            <thead>
-                <tr>
-                    <th>Warehouse ID</th>
-                    <th>Warehouse Name</th>
-                    <th>City / Country</th>
-                    <th>Capacity Usage</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var warehouse in Model)
-                {
-                    <tr>
-                        <td class="text-primary fw-bolder small">WH-@warehouse.Id.ToString("0000")</td>
-                        <td>
-                            <div class="fw-bolder">@warehouse.Name</div>
-                            <div class="small text-muted">@warehouse.Address</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold">@warehouse.City</div>
-                            <div class="small text-muted">@warehouse.Country</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold">@warehouse.Capacity</div>
-                            <small class="text-muted">Total Units</small>
-                        </td>
-                        <td>
-                            <a class="action-btn" asp-action="Details" asp-route-id="@warehouse.Id">DETAILS</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
+<div class="mb-3">
+    <input id="warehouse-search"
+           class="form-control rounded-pill px-4"
+           data-ajax-search
+           data-search-url="/warehouses/search"
+           data-target="#warehouse-table-body"
+           placeholder="Search warehouses by name, address, city, country or capacity..." />
+</div>
+
+<div class="wms-table-container">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Warehouse ID</th>
+                <th>Warehouse Name</th>
+                <th>City / Country</th>
+                <th>Capacity Usage</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="warehouse-table-body">
+            <partial name="_WarehouseListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+

@@ -8,6 +8,22 @@
 </div>
 <h1 class="page-title">Order Items List</h1>
 
+<div class="mb-4 d-flex justify-content-end">
+    <a asp-action="Create"
+       class="btn btn-primary px-4 py-3 fw-bold rounded-pill shadow-sm">
+        + Create Purchase Order Item
+    </a>
+</div>
+
+<div class="mb-3">
+    <input id="purchaseOrderItem-search"
+           class="form-control rounded-pill px-4"
+           data-ajax-search
+           data-search-url="/purchase-order-items/search"
+           data-target="#purchaseOrderItem-table-body"
+           placeholder="Search purchase order items by quantity, unit price, purchase order or product..." />
+</div>
+
 <div class="wms-table-container mt-4">
     <table class="table wms-table table-hover">
         <thead>
@@ -20,35 +36,9 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="text-primary fw-bolder small">POI-@item.Id.ToString("0000")</td>
-                        <td>
-                            <div class="fw-bolder">@(item.Product?.Name ?? "Unknown Product")</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark">PO-@item.PurchaseOrderId.ToString("0000")</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold">@item.Quantity Units</div>
-                        </td>
-                        <td>
-                            <div class="text-success fw-bold">@item.UnitPrice.ToString("C")</div>
-                        </td>
-                        <td>
-                            <a class="action-btn" asp-action="Details" asp-route-id="@item.Id">DETAILS</a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="6" class="text-center py-4 text-muted border-0">No order items found.</td></tr>
-            }
+        <tbody id="purchaseOrderItem-table-body">
+            <partial name="_PurchaseOrderItemListPartial" model="Model" />
         </tbody>
     </table>
 </div>
+

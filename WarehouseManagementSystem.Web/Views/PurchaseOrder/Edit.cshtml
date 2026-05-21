@@ -1,0 +1,170 @@
+﻿@using WarehouseManagementSystem.Web.Models
+
+@model WarehouseManagementSystem.Model.PurchaseOrder
+
+@{
+    ViewData["Title"] = "Edit Purchase Order";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">PURCHASE ORDERS</a> &gt;
+    <a asp-action="Details" asp-route-id="@Model.Id">PO-@Model.OrderNumber.ToString("0000")</a> &gt;
+    Edit
+</div>
+
+<h1 class="page-title">Edit Purchase Order PO-@Model.OrderNumber.ToString("0000")</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="detail-card border-0 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary text-white rounded p-3 me-3">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bolder mb-1 text-uppercase text-muted" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                            Purchase Receipt
+                        </h5>
+                        <h4 class="fw-bolder">@(Model.Supplier?.Name ?? "External Supplier")</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                    <div class="col-sm-6 mb-3">
+                        <div class="text-muted small fw-bold text-uppercase">
+                            Order Number
+                        </div>
+                        <div class="fw-bolder text-primary fs-5">
+                            PO-@Model.OrderNumber.ToString("0000")
+                        </div>
+                        <div class="small text-muted fw-bold">
+                            Assigned automatically
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label asp-for="Status" class="form-label text-muted small fw-bold text-uppercase">
+                            Current Resolution
+                        </label>
+                        <select asp-for="Status"
+                                asp-items="Html.GetEnumSelectList<WarehouseManagementSystem.Model.OrderStatus>()"
+                                class="form-select rounded-pill px-4 fw-bolder text-info"
+                                data-status-input>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+
+                        <div class="mt-3">
+                            <span class="badge rounded-pill wms-status-badge" data-status-preview>
+                                @Model.Status
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        @await Html.PartialAsync("_DateTimePicker", new DateTimePickerModel
+                        {
+                            FieldName = "OrderDate",
+                            Label = "Order Date",
+                            Value = Model.OrderDate
+                        })
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        @await Html.PartialAsync("_DateTimePicker", new DateTimePickerModel
+                        {
+                            FieldName = "ExpectedDeliveryDate",
+                            Label = "Expected Delivery",
+                            Value = Model.ExpectedDeliveryDate
+                        })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="detail-card border-0 h-100">
+                <h5 class="text-muted small fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em; font-size: 0.8rem;">
+                    Order Allocation
+                </h5>
+
+                <div class="mb-4">
+                    <label asp-for="TotalAmount" class="form-label text-muted small fw-bold text-uppercase">
+                        Total Amount
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start-pill fw-bold text-muted">€</span>
+                        <input asp-for="TotalAmount"
+                               class="form-control rounded-end-pill px-4 fw-bolder"
+                               placeholder="0.00" />
+                    </div>
+                    <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        FieldName = "SupplierId",
+                        Label = "Supplier",
+                        Prefix = "VND",
+                        SearchUrl = Url.Action("Autocomplete", "Supplier") ?? "/suppliers/autocomplete",
+                        Placeholder = "Search supplier by name, contact or email...",
+                        SelectedValue = Model.SupplierId > 0 ? Model.SupplierId.ToString() : string.Empty,
+                        SelectedText = Model.Supplier?.Name
+                    })
+                </div>
+
+                <div class="mb-4">
+                    @await Html.PartialAsync("_AutocompleteDropdown", new AutocompleteDropdownModel
+                    {
+                        FieldName = "WarehouseId",
+                        Label = "Warehouse",
+                        Prefix = "WH",
+                        SearchUrl = Url.Action("Autocomplete", "Warehouse") ?? "/warehouses/autocomplete",
+                        Placeholder = "Search warehouse by name or city...",
+                        SelectedValue = Model.WarehouseId > 0 ? Model.WarehouseId.ToString() : string.Empty,
+                        SelectedText = Model.Warehouse?.Name
+                    })
+                </div>
+
+                <div class="small text-muted fw-bold">
+                    Current warehouse: @(Model.Warehouse?.Name ?? "Pending Allocation")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill">
+            Save Changes
+        </button>
+
+        <a asp-action="Details"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-info px-4 fw-bold rounded-pill">
+            View Details
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Order Book
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

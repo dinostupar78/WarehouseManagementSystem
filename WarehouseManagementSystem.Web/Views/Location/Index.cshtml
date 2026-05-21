@@ -8,6 +8,22 @@
 </div>
 <h1 class="page-title">Allocated Locations</h1>
 
+<div class="mb-4 d-flex justify-content-end">
+    <a asp-action="Create"
+       class="btn btn-primary px-4 py-3 fw-bold rounded-pill shadow-sm">
+        + Create Location Item
+    </a>
+</div>
+
+<div class="mb-3">
+    <input id="location-search"
+           class="form-control rounded-pill px-4"
+           data-ajax-search
+           data-search-url="/locations/search"
+           data-target="#location-table-body"
+           placeholder="Search locations by code, zone or shelf number..." />
+</div>
+
 <div class="wms-table-container mt-4">
     <table class="table wms-table table-hover">
         <thead>
@@ -19,34 +35,8 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var loc in Model)
-                {
-                    <tr>
-                        <td class="text-primary fw-bolder small">LOC-@loc.Id.ToString("0000")</td>
-                        <td>
-                            <div class="fw-bolder">@loc.Code</div>
-                            <div class="small text-muted">Shelf: @loc.ShelfNumber</div>
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark">@(loc.Warehouse?.Name ?? "Unassigned")</div>
-                            <div class="small text-muted">ID: @loc.WarehouseId</div>
-                        </td>
-                        <td>
-                            <span class="badge rounded-pill bg-primary text-white px-2 py-1">ZONE @loc.Zone.ToUpper()</span>
-                        </td>
-                        <td>
-                            <a class="action-btn" asp-action="Details" asp-route-id="@loc.Id">DETAILS</a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td colspan="5" class="text-center py-4 text-muted border-0">No location infrastructure found.</td></tr>
-            }
+        <tbody id="location-table-body">
+            <partial name="_LocationListPartial" model="Model" />
         </tbody>
     </table>
 </div>

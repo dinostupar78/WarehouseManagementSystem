@@ -50,6 +50,15 @@ else
                 <h5 class="text-muted small fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em; font-size: 0.8rem;">Stock Metrics</h5>
                 <div class="mb-4">
                     <div class="text-muted small fw-bold text-uppercase">Current Quantity</div>
+                    @{
+                        var isOutOfStock = Model.Quantity <= 0;
+                        var isLowStock = Model.Quantity <= 10;
+                        var stockBadgeClass = isOutOfStock ? "wms-badge-danger" : isLowStock ? "wms-badge-warning" : "wms-badge-success";
+                        var stockText = isOutOfStock ? "OUT OF STOCK" : isLowStock ? "LOW STOCK" : "IN STOCK";
+                    }
+                    <span class="badge rounded-pill wms-stock-badge @stockBadgeClass mb-3">
+                        @stockText
+                    </span>
                     <div class="fs-1 fw-bolder text-info">@Model.Quantity <span class="fs-6 text-muted ms-1">Units</span></div>
                 </div>
                 <div class="small text-muted fw-bold">Last Updated: @Model.LastUpdated.ToString("yyyy-MM-dd HH:mm")</div>
@@ -58,6 +67,24 @@ else
     </div>
 }
 
-<div class="mt-5">
-    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Active Index</a>
-</div>
+@if (Model != null)
+{
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-primary px-4 fw-bold rounded-pill">
+            Edit Inventory
+        </a>
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+            Delete Inventory
+        </a>
+
+        <a asp-action="Index" 
+        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Active Index
+        </a>
+    </div>
+}

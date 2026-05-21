@@ -51,6 +51,9 @@ else
                     
                     <div class="text-muted small fw-bold text-uppercase mt-3">Phone Line</div>
                     <div class="fw-bolder text-dark">@Model.ContactPhone</div>
+
+                    <div class="text-muted small fw-bold text-uppercase mt-3">Contact Address</div>
+                    <div class="fw-bolder text-dark">@Model.ContactAddress</div>
                 </div>
             </div>
         </div>
@@ -58,5 +61,26 @@ else
 }
 
 <div class="mt-5">
-    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">&larr; Back to Suppliers</a>
 </div>
+
+@if (Model != null)
+{
+    <div class="mt-5 d-flex flex-wrap gap-3">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-primary px-4 fw-bold rounded-pill">
+            Edit Supplier
+        </a>
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+            Delete Supplier
+        </a>
+
+        <a asp-action="Index" 
+        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Suppliers
+        </a>
+    </div>
+}
