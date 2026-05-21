@@ -1,0 +1,84 @@
+@model WarehouseManagementSystem.Web.Models.DateTimePickerModel
+
+@{
+    var displayId = $"{Model.FieldName}_DateTimeDisplay";
+    var menuId = $"{Model.FieldName}_DateTimeMenu";
+    var modelState = ViewData.ModelState[Model.FieldName];
+    var serverError = modelState?.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty;
+    var validationClass = string.IsNullOrWhiteSpace(serverError) ? "field-validation-valid" : "field-validation-error";
+    var attemptedValue = modelState?.AttemptedValue;
+    var pickerValue = !string.IsNullOrWhiteSpace(attemptedValue)
+        ? attemptedValue
+        : Model.Value.HasValue && Model.Value.Value > DateTime.MinValue
+            ? Model.Value.Value.ToString("yyyy-MM-ddTHH:mm")
+            : string.Empty;
+}
+
+<div class="wms-datetime-picker"
+     data-datetime-picker
+     data-required="@Model.IsRequired.ToString().ToLowerInvariant()"
+     data-empty-message="@($"{Model.Label} is required.")"
+     data-invalid-message="@($"Enter a valid {Model.Label.ToLower()} date and time.")">
+    <label for="@displayId" class="form-label text-muted small fw-bold text-uppercase">
+        @Model.Label
+    </label>
+
+    <input type="hidden"
+           id="@Model.FieldName"
+           name="@Model.FieldName"
+           value="@pickerValue"
+           data-datetime-value />
+
+    <div class="input-group">
+        <input type="text"
+               id="@displayId"
+               class="form-control rounded-start-pill px-4 wms-datetime-input"
+               placeholder="@Model.Placeholder"
+               autocomplete="off"
+               aria-expanded="false"
+               aria-controls="@menuId"
+               data-datetime-display />
+
+        <button type="button"
+                class="btn btn-outline-secondary rounded-end-pill px-3 fw-bold"
+                data-datetime-toggle>
+            Pick
+        </button>
+    </div>
+
+    <div id="@menuId"
+         class="wms-datetime-menu"
+         data-datetime-menu
+         hidden>
+        <div class="wms-datetime-header">
+            <button type="button" class="wms-datetime-nav" data-datetime-prev aria-label="Previous month">&lt;</button>
+            <div class="wms-datetime-title" data-datetime-title></div>
+            <button type="button" class="wms-datetime-nav" data-datetime-next aria-label="Next month">&gt;</button>
+        </div>
+
+        <div class="wms-datetime-weekdays" data-datetime-weekdays></div>
+        <div class="wms-datetime-days" data-datetime-days></div>
+
+        <div class="wms-datetime-time">
+            <label>
+                <span>Hour</span>
+                <input type="number" min="0" max="23" step="1" data-datetime-hour />
+            </label>
+            <label>
+                <span>Minute</span>
+                <input type="number" min="0" max="59" step="1" data-datetime-minute />
+            </label>
+        </div>
+
+        <div class="wms-datetime-actions">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" data-datetime-today>Today</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" data-datetime-clear>Clear</button>
+            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" data-datetime-apply>Apply</button>
+        </div>
+    </div>
+
+    <span class="text-danger small @validationClass"
+          data-valmsg-for="@Model.FieldName"
+          data-valmsg-replace="true"
+          data-datetime-error>@serverError</span>
+</div>

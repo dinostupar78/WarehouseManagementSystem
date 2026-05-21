@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using WarehouseManagementSystem.DAL.Data;
 using WarehouseManagementSystem.Model;
 using WarehouseManagementSystem.Web.Repositories;
@@ -56,6 +58,19 @@ public class Program
             // The default HSTS value is 30 days.
             app.UseHsts();
         }
+
+        var supportedCultures = new[]
+        {
+            new CultureInfo("hr-HR"),
+            new CultureInfo("en-US")
+        };
+
+        app.UseRequestLocalization(new RequestLocalizationOptions
+        {
+            DefaultRequestCulture = new RequestCulture("hr-HR"),
+            SupportedCultures = supportedCultures,
+            SupportedUICultures = supportedCultures
+        });
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
