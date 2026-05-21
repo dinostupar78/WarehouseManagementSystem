@@ -48,7 +48,6 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Create()
         {
             return View();
-
         }
 
         [HttpPost("create")]
