@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 namespace WarehouseManagementSystem.Model
 {
     public class Category
@@ -13,6 +15,7 @@ namespace WarehouseManagementSystem.Model
         [Required, MaxLength(255)]
         public string Description { get; set; }
 
+        [ValidateNever]
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

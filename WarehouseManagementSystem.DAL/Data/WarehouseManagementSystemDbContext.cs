@@ -9,6 +9,18 @@ namespace WarehouseManagementSystem.DAL.Data
             : base(options)
         {}
 
+        public override int SaveChanges()
+        {
+            NormalizeDateTimesForPostgres();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            NormalizeDateTimesForPostgres();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
         public DbSet<Warehouse> Warehouses { get; set; }
 
         public DbSet<Location> Locations { get; set; }
@@ -24,6 +36,29 @@ namespace WarehouseManagementSystem.DAL.Data
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+
+        private void NormalizeDateTimesForPostgres()
+        {
+            foreach (var entry in ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+            {
+                foreach (var property in entry.Properties
+                    .Where(p => p.Metadata.ClrType == typeof(DateTime)))
+                {
+                    if (property.CurrentValue is not DateTime value)
+                    {
+                        continue;
+                    }
+
+                    property.CurrentValue = value.Kind switch
+                    {
+                        DateTimeKind.Utc => value,
+                        DateTimeKind.Local => value.ToUniversalTime(),
+                        _ => DateTime.SpecifyKind(value, DateTimeKind.Local).ToUniversalTime()
+                    };
+                }
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

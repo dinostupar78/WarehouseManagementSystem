@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 namespace WarehouseManagementSystem.Model
 {
     public class Supplier
@@ -22,6 +24,7 @@ namespace WarehouseManagementSystem.Model
         [Required, MaxLength(100)]
         public string ContactAddress { get; set; }
 
+        [ValidateNever]
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
     }
 }
