@@ -10,6 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="wms-page-loader" data-page-loader hidden aria-live="polite" aria-label="Loading page">
+        <div class="wms-page-loader-panel">
+            <span class="wms-page-spinner" aria-hidden="true"></span>
+            <span>
+                <span class="wms-page-loader-title">Loading</span>
+                <span class="wms-page-loader-text">Preparing the next view...</span>
+            </span>
+        </div>
+    </div>
+
     <nav class="wms-sidebar">
         <div class="d-flex justify-content-between align-items-center px-3 mb-3">
             <div class="wms-sidebar-brand text-primary fw-bolder mb-0" style="font-size: 1.8rem; padding: 0; line-height: 1;">

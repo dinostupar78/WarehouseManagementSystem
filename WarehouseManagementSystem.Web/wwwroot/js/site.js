@@ -29,8 +29,90 @@ $(function () {
         }
     });
 
+    const pageLoaderDelay = 180;
+
+    function showPageLoader() {
+        const $loader = $("[data-page-loader]");
+
+        if (!$loader.length || $loader.hasClass("is-visible")) {
+            return;
+        }
+
+        $loader.prop("hidden", false);
+
+        requestAnimationFrame(function () {
+            $loader.addClass("is-visible");
+        });
+    }
+
+    function hidePageLoader() {
+        const $loader = $("[data-page-loader]");
+
+        $loader.removeClass("is-visible").prop("hidden", true);
+    }
+
+    function shouldShowPageLoader(link, event) {
+        const href = link.getAttribute("href");
+        const target = link.getAttribute("target");
+
+        if (event.isDefaultPrevented() || event.which > 1 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return false;
+        }
+
+        if (!href || href.startsWith("#") || href.startsWith("javascript:") || href.startsWith("mailto:") || href.startsWith("tel:")) {
+            return false;
+        }
+
+        if (target && target.toLowerCase() !== "_self") {
+            return false;
+        }
+
+        if (link.hasAttribute("download") || link.hasAttribute("data-no-page-loader")) {
+            return false;
+        }
+
+        const url = new URL(href, window.location.href);
+
+        if (url.origin !== window.location.origin) {
+            return false;
+        }
+
+        return url.pathname !== window.location.pathname ||
+            url.search !== window.location.search ||
+            url.hash === "";
+    }
+
+    $(window).on("pageshow", hidePageLoader);
+
+    $(document).on("click", "a[href]", function (event) {
+        if (shouldShowPageLoader(this, event)) {
+            event.preventDefault();
+            showPageLoader();
+
+            const nextUrl = this.href;
+            setTimeout(function () {
+                window.location.href = nextUrl;
+            }, pageLoaderDelay);
+        }
+    });
+
     function getTableColumnCount($target) {
         return $target.closest("table").find("thead th").length || 1;
+    }
+
+    function buildSearchSkeletonRows() {
+        const $rows = $("<div>").addClass("wms-skeleton-rows");
+
+        for (let i = 0; i < 3; i++) {
+            $("<div>")
+                .addClass("wms-skeleton-row")
+                .append($("<span>").addClass("wms-skeleton-cell wms-skeleton-cell-wide"))
+                .append($("<span>").addClass("wms-skeleton-cell wms-skeleton-cell-medium"))
+                .append($("<span>").addClass("wms-skeleton-cell wms-skeleton-cell-small"))
+                .appendTo($rows);
+        }
+
+        return $rows;
     }
 
     function showSearchSkeleton($target) {
@@ -45,7 +127,13 @@ $(function () {
         if (!$container.find(".wms-skeleton-overlay").length) {
             $("<div>")
                 .addClass("wms-skeleton-overlay")
-                .append($("<span>").addClass("wms-skeleton-bar"))
+                .append(
+                    $("<div>")
+                        .addClass("wms-skeleton-status")
+                        .append($("<span>").addClass("wms-loading-spinner"))
+                        .append($("<span>").text("Loading results..."))
+                )
+                .append(buildSearchSkeletonRows())
                 .appendTo($container);
         }
     }
@@ -59,17 +147,32 @@ $(function () {
             .remove();
     }
 
+    function animateSearchRows($target) {
+        const $rows = $target.find("tr");
+
+        $rows.each(function () {
+            const $row = $(this);
+
+            if ($row.find("td[colspan]").length) {
+                $row.addClass("wms-empty-row");
+            }
+        });
+
+        $rows.addClass("wms-table-row-enter");
+
+        setTimeout(function () {
+            $rows.removeClass("wms-table-row-enter");
+        }, 420);
+    }
+
     function showSearchResults($target, html) {
         hideSearchSkeleton($target);
 
         $target
             .html(html)
-            .removeClass("wms-list-fade-out")
-            .addClass("wms-list-fade-in");
+            .removeClass("wms-list-fade-out");
 
-        setTimeout(function () {
-            $target.removeClass("wms-list-fade-in");
-        }, 220);
+        animateSearchRows($target);
     }
 
     function runAjaxSearch($input) {
@@ -104,6 +207,8 @@ $(function () {
                     $target
                         .removeClass("wms-list-fade-out")
                         .html("<tr><td colspan=\"" + columnCount + "\" class=\"text-center py-4 text-danger border-0 fw-bold\">Search failed. Try again.</td></tr>");
+
+                    animateSearchRows($target);
                 }
             });
 
@@ -114,8 +219,7 @@ $(function () {
             }
 
             showSearchSkeleton($target);
-            $target.removeClass("wms-list-fade-out").addClass("wms-list-fade-in");
-        }, 420));
+        }, 260));
     }
 
     $("[data-ajax-search]").on("input", function () {
@@ -189,7 +293,7 @@ $(function () {
                 .text("No matches found.")
                 .appendTo($results);
         } else {
-            items.forEach(function (item) {
+            items.forEach(function (item, index) {
                 const optionText = item.text || item.id;
                 const optionSubtitle = item.subtitle || item.description || "";
 
@@ -197,6 +301,7 @@ $(function () {
                     .attr("type", "button")
                     .attr("role", "option")
                     .addClass("wms-autocomplete-option")
+                    .css("--wms-option-index", index)
                     .data("id", item.id)
                     .data("text", optionText);
 
@@ -281,21 +386,31 @@ $(function () {
         const $option = $(this);
         const $widget = $option.closest("[data-autocomplete]");
 
+        $widget.data("is-selecting", true);
+        $option.addClass("is-selected");
         $widget.find("[data-autocomplete-value]").val($option.data("id")).trigger("change");
         $widget.find("[data-autocomplete-input]").val($option.data("text"));
 
-        clearAutocompleteError($widget);
+        validateAutocomplete($widget);
         $widget.addClass("wms-autocomplete-selected");
         setTimeout(function () {
             $widget.removeClass("wms-autocomplete-selected");
         }, 800);
-        closeAutocomplete($widget);
+
+        setTimeout(function () {
+            closeAutocomplete($widget);
+            $widget.data("is-selecting", false);
+        }, 180);
     });
 
     $(document).on("blur", "[data-autocomplete-input]", function () {
         const $widget = $(this).closest("[data-autocomplete]");
 
         setTimeout(function () {
+            if ($widget.data("is-selecting")) {
+                return;
+            }
+
             if (!$widget.find(":focus").length) {
                 validateAutocomplete($widget);
                 closeAutocomplete($widget);
@@ -304,22 +419,42 @@ $(function () {
     });
 
     $("form").on("submit", function (event) {
+        const $form = $(this);
         let isValid = true;
 
-        $(this).find("[data-autocomplete]").each(function () {
+        if ($form.data("page-loader-submitted")) {
+            return;
+        }
+
+        $form.find("[data-autocomplete]").each(function () {
             if (!validateAutocomplete($(this))) {
                 isValid = false;
             }
         });
 
-        $(this).find("[data-datetime-picker]").each(function () {
+        $form.find("[data-datetime-picker]").each(function () {
             if (!validateDateTimePicker($(this))) {
                 isValid = false;
             }
         });
 
+        if ($form.data("validator") && !$form.valid()) {
+            isValid = false;
+        }
+
         if (!isValid) {
             event.preventDefault();
+            return;
+        }
+
+        if (!$form.is("[data-no-page-loader]")) {
+            event.preventDefault();
+            showPageLoader();
+
+            $form.data("page-loader-submitted", true);
+            setTimeout(function () {
+                $form[0].submit();
+            }, pageLoaderDelay);
         }
     });
 
