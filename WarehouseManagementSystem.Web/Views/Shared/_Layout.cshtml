@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - WMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WarehouseManagementSystem.styles.css" asp-append-version="true" />
+    <!--<link rel="stylesheet" href="~/WarehouseManagementSystem.styles.css" asp-append-version="true" />-->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -57,6 +57,35 @@
             @RenderBody()
         </main>
     </div>
+
+    @if (TempData["ToastMessage"] is string toastMessage)
+    {
+        var toastTitle = TempData["ToastTitle"] as string ?? "Success";
+        var toastTitleLower = toastTitle.ToLowerInvariant();
+        var toastType = toastTitleLower.Contains("deleted")
+            ? "delete"
+            : toastTitleLower.Contains("updated")
+                ? "edit"
+                : "create";
+        var toastIcon = toastType == "delete"
+            ? "DEL"
+            : toastType == "edit"
+                ? "EDIT"
+                : "NEW";
+
+        <div class="wms-toast-container" aria-live="polite" aria-atomic="true">
+            <div class="wms-toast wms-toast-@toastType" data-wms-toast>
+                <div class="wms-toast-icon">@toastIcon</div>
+                <div>
+                    <div class="wms-toast-title">@toastTitle</div>
+                    <div class="wms-toast-message">@toastMessage</div>
+                </div>
+                <button type="button" class="wms-toast-close" aria-label="Close notification" data-toast-close>
+                    &times;
+                </button>
+            </div>
+        </div>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
