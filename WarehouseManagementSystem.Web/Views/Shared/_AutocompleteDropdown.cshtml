@@ -1,0 +1,69 @@
+@model WarehouseManagementSystem.Web.Models.AutocompleteDropdownModel
+
+@{
+    var displayId = $"{Model.FieldName}_AutocompleteText";
+    var resultsId = $"{Model.FieldName}_AutocompleteResults";
+    var emptyMessage = $"{Model.Label} is required.";
+    var invalidMessage = $"Choose a {Model.Label.ToLower()} from the list.";
+    var modelState = ViewData.ModelState[Model.FieldName];
+    var serverError = modelState?.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty;
+    var validationClass = string.IsNullOrWhiteSpace(serverError) ? "field-validation-valid" : "field-validation-error";
+    var selectedText = !string.IsNullOrWhiteSpace(Model.SelectedText)
+        ? Model.SelectedText
+        : !string.IsNullOrWhiteSpace(Model.SelectedValue)
+            ? string.IsNullOrWhiteSpace(Model.Prefix) ? Model.SelectedValue : $"{Model.Prefix}-{Model.SelectedValue}"
+            : string.Empty;
+}
+
+<div class="wms-autocomplete"
+     data-autocomplete
+     data-search-url="@Model.SearchUrl"
+     data-required="@Model.IsRequired.ToString().ToLowerInvariant()"
+     data-empty-message="@emptyMessage"
+     data-invalid-message="@invalidMessage">
+    <label for="@displayId" class="form-label text-muted small fw-bold text-uppercase">
+        @Model.Label
+    </label>
+
+    <input type="hidden"
+           id="@Model.FieldName"
+           name="@Model.FieldName"
+           value="@Model.SelectedValue"
+           data-autocomplete-value />
+
+    <div class="input-group">
+        @if (!string.IsNullOrWhiteSpace(Model.Prefix))
+        {
+            <span class="input-group-text rounded-start-pill fw-bold text-muted">@Model.Prefix</span>
+        }
+
+        <input type="text"
+               id="@displayId"
+               class="form-control px-4 fw-bolder wms-autocomplete-input @(string.IsNullOrWhiteSpace(Model.Prefix) ? "rounded-start-pill" : "")"
+               value="@selectedText"
+               placeholder="@Model.Placeholder"
+               autocomplete="off"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-expanded="false"
+               aria-controls="@resultsId"
+               data-autocomplete-input />
+
+        <button type="button"
+                class="btn btn-outline-secondary rounded-end-pill px-3 fw-bold"
+                data-autocomplete-toggle>
+            Find
+        </button>
+    </div>
+
+    <div id="@resultsId"
+         class="wms-autocomplete-menu"
+         data-autocomplete-results
+         role="listbox"
+         hidden></div>
+
+    <span class="text-danger small @validationClass"
+          data-valmsg-for="@Model.FieldName"
+          data-valmsg-replace="true"
+          data-autocomplete-error>@serverError</span>
+</div>
