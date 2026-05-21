@@ -74,7 +74,7 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasMany(w => w.PurchaseOrders)
                 .WithOne(po => po.Warehouse)
                 .HasForeignKey(po => po.WarehouseId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Location>()
                 .HasMany(l => l.Inventories)
@@ -86,7 +86,7 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Inventories)
@@ -98,13 +98,13 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasMany(p => p.PurchaseOrderItems)
                 .WithOne(poi => poi.Product)
                 .HasForeignKey(poi => poi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Supplier>()
                 .HasMany(s => s.PurchaseOrders)
                 .WithOne(po => po.Supplier)
                 .HasForeignKey(po => po.SupplierId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PurchaseOrder>()
                 .HasMany(po => po.PurchaseOrderItems)
@@ -112,8 +112,7 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasForeignKey(poi => poi.PurchaseOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
-            
+
             modelBuilder.Entity<Warehouse>().HasData(
                 new Warehouse { Id = 1, Name = "Main Distribution Center", Address = "1250 Logistics Parkway", City = "Chicago", Country = "USA", Capacity = 1000 },
                 new Warehouse { Id = 2, Name = "Eastern Fulfillment Hub", Address = "840 Industrial Avenue", City = "Columbus", Country = "USA", Capacity = 750 },
