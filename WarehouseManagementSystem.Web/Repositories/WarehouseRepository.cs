@@ -28,5 +28,50 @@ namespace WarehouseManagementSystem.Web.Repositories
                 .Include(w => w.Locations)
                 .FirstOrDefault(w => w.Id == id);
         }
+
+        public void Add(Warehouse warehouse)
+        {
+            _db.Warehouses.Add(warehouse);
+            _db.SaveChanges();
+        }
+
+        public void Update(Warehouse warehouse)
+        {
+            _db.Warehouses.Update(warehouse);
+            _db.SaveChanges();
+        }
+
+        public void Delete(int id)
+        {
+            var warehouse = _db.Warehouses.Find(id);
+            if (warehouse != null)
+            {
+                _db.Warehouses.Remove(warehouse);
+                _db.SaveChanges();
+            }
+        }
+
+        public IReadOnlyList<Warehouse> Search(string? term)
+        {
+            var query = _db.Warehouses
+                .AsNoTracking()
+                .Include(w => w.Locations)
+                .AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                term = term.ToLower();
+
+                query = query.Where(w =>
+                    w.Name.ToLower().Contains(term) ||
+                    w.Address.ToLower().Contains(term) ||
+                    w.City.ToLower().Contains(term) ||
+                    w.Country.ToLower().Contains(term) ||
+                    w.Capacity.ToString().Contains(term));
+            }
+
+            return query.ToList();
+        }
+
     }
 }
