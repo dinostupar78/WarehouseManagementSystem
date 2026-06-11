@@ -20,6 +20,12 @@ body {
     overflow: hidden;
 }
 
+body.wms-auth-body {
+    display: block;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
 /* Sidebar Layout */
 .wms-sidebar {
     width: 260px;
@@ -27,8 +33,9 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    padding-top: 2rem;
     flex-shrink: 0;
+    height: 100vh;
+    padding-top: 2rem;
 }
 
 .wms-sidebar-brand {
@@ -63,6 +70,11 @@ body {
     overflow-y: auto;
     padding: 2.5rem;
     background-color: var(--bg-main);
+}
+
+.wms-auth-main-content {
+    min-height: 100vh;
+    padding: 0;
 }
 
 /* Global page transition loader */
@@ -826,6 +838,692 @@ body {
     padding: 0;
 }
 
+.wms-auth-page {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.wms-auth-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    max-width: 460px;
+    padding: 2rem;
+    width: 100%;
+}
+
+.wms-auth-header {
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+}
+
+.wms-auth-icon {
+    align-items: center;
+    background: var(--brand-blue);
+    border-radius: 8px;
+    color: #ffffff;
+    display: flex;
+    flex: 0 0 64px;
+    font-weight: 800;
+    height: 64px;
+    justify-content: center;
+    letter-spacing: 0.04em;
+}
+
+.wms-auth-eyebrow {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.wms-auth-header h1 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0.2rem 0;
+}
+
+.wms-auth-header p {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0;
+}
+
+.wms-auth-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.wms-auth-field .form-control {
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.wms-auth-field .form-control:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.12);
+}
+
+.wms-auth-field .text-danger {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 0.35rem;
+}
+
+.wms-auth-options {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.wms-auth-check {
+    align-items: center;
+    color: var(--text-muted);
+    display: flex;
+    font-size: 0.92rem;
+    font-weight: 700;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.wms-auth-options a,
+.wms-auth-switch a,
+.wms-auth-muted-link {
+    color: var(--brand-blue);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.wms-auth-options a:hover,
+.wms-auth-switch a:hover,
+.wms-auth-muted-link:hover {
+    color: var(--brand-blue-hover);
+    text-decoration: underline;
+}
+
+.wms-auth-submit {
+    background: var(--brand-blue);
+    border: none;
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.85rem 1.2rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.wms-auth-submit:hover {
+    background: var(--brand-blue-hover);
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.wms-auth-switch {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    font-weight: 700;
+    gap: 0.4rem;
+    justify-content: center;
+    padding: 0.9rem;
+}
+
+.wms-auth-muted-link {
+    display: inline-block;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.wms-auth-guest-form {
+    margin-top: 1rem;
+}
+
+.wms-auth-guest-button {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.95rem 1rem;
+    text-align: left;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+.wms-auth-guest-button:hover {
+    border-color: var(--brand-blue);
+    box-shadow: 0 10px 24px rgba(29, 78, 216, 0.1);
+    transform: translateY(-1px);
+}
+
+.wms-auth-guest-button strong {
+    color: var(--brand-blue);
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.wms-auth-guest-button small {
+    color: var(--text-muted);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: 0.15rem;
+}
+
+.wms-auth-divider {
+    align-items: center;
+    color: var(--text-muted);
+    display: flex;
+    font-size: 0.8rem;
+    font-weight: 800;
+    gap: 0.75rem;
+    letter-spacing: 0.08em;
+    margin: 1.5rem 0;
+    text-transform: uppercase;
+}
+
+.wms-auth-divider::before,
+.wms-auth-divider::after {
+    background: var(--border-color);
+    content: "";
+    flex: 1;
+    height: 1px;
+}
+
+.wms-auth-external {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.wms-auth-external button {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-weight: 800;
+    padding: 0.75rem 1rem;
+}
+
+.wms-auth-external button:hover {
+    background: #f1f5f9;
+    border-color: var(--brand-blue);
+    color: var(--brand-blue);
+}
+
+.wms-auth-validation {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+}
+
+.wms-auth-validation:empty {
+    display: none;
+}
+
+.wms-sidebar-guest {
+    border-top: 1px solid var(--border-color);
+    margin: auto 1rem 1rem;
+    padding-top: 1rem;
+}
+
+.wms-sidebar-guest-label {
+    color: var(--text-muted);
+    display: grid;
+    font-size: 0.82rem;
+    font-weight: 700;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.wms-sidebar-guest-badge {
+    background: #e0e7ff;
+    border-radius: 999px;
+    color: var(--brand-blue);
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.55rem;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.wms-sidebar-guest-button {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    color: var(--brand-blue);
+    font-weight: 800;
+    padding: 0.65rem 0.9rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+.wms-sidebar-guest-button:hover {
+    background: #e0e7ff;
+    border-color: var(--brand-blue);
+    transform: translateY(-1px);
+}
+
+.wms-profile-avatar-section {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+}
+
+.wms-avatar-dropzone {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    min-height: 150px;
+    padding: 1.25rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wms-avatar-dropzone.dz-drag-hover {
+    border-color: var(--brand-blue);
+    background: #e0e7ff;
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.12);
+}
+
+.wms-avatar-dropzone .dz-message {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.wms-avatar-dropzone .dz-preview {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin: 0.75rem;
+    min-height: 0;
+    padding: 0;
+}
+
+.wms-avatar-dropzone .dz-preview .dz-image {
+    border-radius: 8px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    height: 120px;
+    overflow: hidden;
+    width: 120px;
+}
+
+.wms-avatar-dropzone .dz-preview .dz-image img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.wms-avatar-dropzone .dz-preview .dz-details {
+    display: none;
+}
+
+.wms-avatar-dropzone .dz-preview .dz-remove {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 999px;
+    color: #e11d48;
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    margin-top: 0.65rem;
+    padding: 0.35rem 0.8rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.wms-avatar-dropzone .dz-preview .dz-remove:hover {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.wms-avatar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.wms-avatar-actions .btn {
+    min-width: 140px;
+}
+
+.wms-avatar-preview {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.wms-avatar-image {
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+    height: 82px;
+    object-fit: cover;
+    width: 82px;
+}
+
+.wms-avatar-info {
+    min-width: 0;
+}
+
+.wms-avatar-empty {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 1rem;
+    text-align: center;
+}
+
+.wms-sidebar-user {
+    border-top: 1px solid var(--border-color);
+    margin: auto 1rem 1rem;
+    padding-top: 1rem;
+}
+
+.wms-sidebar-profile-link {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    text-decoration: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.wms-sidebar-profile-link:hover {
+    border-color: var(--brand-blue);
+    box-shadow: 0 10px 24px rgba(29, 78, 216, 0.1);
+    transform: translateY(-1px);
+}
+
+.wms-sidebar-profile-static,
+.wms-sidebar-profile-static:hover {
+    border-color: var(--border-color);
+    box-shadow: none;
+    cursor: default;
+    transform: none;
+}
+
+.wms-sidebar-avatar,
+.wms-sidebar-avatar-placeholder {
+    border-radius: 999px;
+    flex: 0 0 42px;
+    height: 42px;
+    width: 42px;
+}
+
+.wms-sidebar-avatar {
+    object-fit: cover;
+}
+
+.wms-sidebar-avatar-placeholder {
+    align-items: center;
+    background: #e0e7ff;
+    color: var(--brand-blue);
+    display: flex;
+    font-weight: 800;
+    justify-content: center;
+}
+
+.wms-sidebar-user-text {
+    display: grid;
+    min-width: 0;
+}
+
+.wms-sidebar-user-email {
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wms-sidebar-user-role {
+    color: var(--brand-blue);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.wms-sidebar-logout-button {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-weight: 800;
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    width: 100%;
+}
+
+.wms-sidebar-logout-button:hover {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.wms-account-layout {
+    align-items: flex-start;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.wms-account-sidebar {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+.wms-account-nav {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.wms-account-nav-link {
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 800;
+    padding: 0.75rem 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.wms-account-nav-link:hover,
+.wms-account-nav-link.active {
+    background: #e0e7ff;
+    color: var(--brand-blue);
+}
+
+.wms-account-panel {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+    padding: 1.5rem;
+}
+
+.wms-account-panel-header {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.wms-account-eyebrow {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.wms-account-panel h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0.2rem 0 0;
+}
+
+.wms-account-panel .form-control {
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.wms-account-panel .form-control:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.12);
+}
+
+.wms-account-panel .btn-primary {
+    background: var(--brand-blue);
+    border: none;
+    border-radius: 999px;
+    font-weight: 800;
+    padding: 0.75rem 1.25rem;
+}
+
+.wms-account-panel .btn-primary:hover {
+    background: var(--brand-blue-hover);
+}
+
+.wms-account-copy {
+    color: var(--text-primary);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.wms-account-warning {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    color: #9a3412;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.1rem;
+}
+
+.wms-account-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.wms-account-primary-button,
+.wms-account-secondary-button,
+.wms-account-danger-button {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-weight: 800;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0.7rem 1.4rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.wms-account-primary-button {
+    background: var(--brand-blue);
+    border: 1px solid var(--brand-blue);
+    color: #ffffff;
+}
+
+.wms-account-primary-button:hover {
+    background: var(--brand-blue-hover);
+    border-color: var(--brand-blue-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.wms-account-secondary-button {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: var(--brand-blue);
+}
+
+.wms-account-secondary-button:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: var(--brand-blue-hover);
+    transform: translateY(-1px);
+}
+
+.wms-account-danger-button {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+}
+
+.wms-account-danger-button:hover {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+@media (min-width: 769px) {
+    #wmsMobileNav {
+        display: flex !important;
+        flex: 1;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .wms-nav-items {
+        flex: 0 0 auto;
+    }
+}
+
 @keyframes wmsSpinner {
     to {
         transform: rotate(360deg);
@@ -987,6 +1685,10 @@ body {
         margin-top: 1rem;
     }
 
+    .wms-sidebar-guest {
+        margin: 1rem;
+    }
+
     .wms-nav-link {
         flex-shrink: 0;
         border-left: 4px solid transparent !important;
@@ -1013,5 +1715,25 @@ body {
 
     .detail-card, .metric-card {
         padding: 1rem;
+    }
+
+    .wms-auth-page {
+        align-items: flex-start;
+        min-height: auto;
+        padding: 0;
+    }
+
+    .wms-auth-card {
+        box-shadow: none;
+        padding: 1.25rem;
+    }
+
+    .wms-auth-header {
+        align-items: flex-start;
+    }
+
+    .wms-auth-options {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }

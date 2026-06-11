@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<div class="wms-auth-page">
+    <div class="wms-auth-card">
+        <div class="wms-auth-header">
+            <div class="wms-auth-icon">WMS</div>
+            <div>
+                <div class="wms-auth-eyebrow">Warehouse Management System</div>
+                <h1>Welcome to WMS</h1>
+                <p>Start managing warehouses, inventory, suppliers and purchase orders from one place.</p>
+            </div>
+        </div>
+
+        <a asp-area="Identity"
+           asp-page="/Account/Login"
+           asp-route-returnUrl="/Home/Index"
+           class="wms-auth-submit text-decoration-none text-center d-block">
+            Go to login
+        </a>
+    </div>
+</div>

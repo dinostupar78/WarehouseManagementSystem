@@ -4,12 +4,14 @@
 // Write your JavaScript code.
 
 $(function () {
+    // Client-side validation setup.
     $("form").each(function () {
         if ($.validator && $.validator.unobtrusive) {
             $.validator.unobtrusive.parse(this);
         }
     });
 
+    // Validate fields when the user leaves or changes them.
     $("form").on("blur change", "input, select, textarea", function () {
         const $field = $(this);
         const $form = $field.closest("form");
@@ -21,6 +23,7 @@ $(function () {
         $field.valid();
     });
 
+    // Re-check invalid fields while the user corrects them.
     $("form").on("keyup", "input, textarea", function () {
         const $field = $(this);
 
@@ -29,6 +32,7 @@ $(function () {
         }
     });
 
+    // Global page loading animation.
     const pageLoaderDelay = 180;
 
     function showPageLoader() {
@@ -96,6 +100,7 @@ $(function () {
         }
     });
 
+    // AJAX table search with skeleton and row animations.
     function getTableColumnCount($target) {
         return $target.closest("table").find("thead th").length || 1;
     }
@@ -175,6 +180,7 @@ $(function () {
         animateSearchRows($target);
     }
 
+    // Send search request and replace table body with returned partial view.
     function runAjaxSearch($input) {
         const $target = $($input.data("target"));
         const url = $input.data("search-url");
@@ -222,6 +228,7 @@ $(function () {
         }, 260));
     }
 
+    // Debounce search input so AJAX is not called on every keystroke.
     $("[data-ajax-search]").on("input", function () {
         const $input = $(this);
         const timer = $input.data("search-timer");
@@ -232,6 +239,7 @@ $(function () {
         }, 250));
     });
 
+    // Custom AJAX autocomplete dropdown.
     function closeAutocomplete($widget) {
         $widget.find("[data-autocomplete-results]").prop("hidden", true).empty();
         $widget.find("[data-autocomplete-input]").attr("aria-expanded", "false");
@@ -283,6 +291,7 @@ $(function () {
         return true;
     }
 
+    // Render JSON results returned from autocomplete endpoint.
     function renderAutocompleteResults($widget, items) {
         const $results = $widget.find("[data-autocomplete-results]");
         $results.empty();
@@ -325,6 +334,7 @@ $(function () {
         $widget.find("[data-autocomplete-input]").attr("aria-expanded", "true");
     }
 
+    // Load autocomplete options from server.
     function fetchAutocompleteResults($widget) {
         const url = $widget.data("search-url");
         const term = $widget.find("[data-autocomplete-input]").val();
@@ -382,6 +392,7 @@ $(function () {
         fetchAutocompleteResults($widget);
     });
 
+    // Store selected autocomplete text for display and id for form submit.
     $(document).on("click", ".wms-autocomplete-option", function () {
         const $option = $(this);
         const $widget = $option.closest("[data-autocomplete]");
@@ -418,6 +429,7 @@ $(function () {
         }, 150);
     });
 
+    // Validate custom controls before submitting the form.
     $("form").on("submit", function (event) {
         const $form = $(this);
         let isValid = true;
@@ -458,6 +470,7 @@ $(function () {
         }
     });
 
+    // Custom date-time picker with hr/en formatting.
     function isCroatianCulture() {
         const languages = navigator.languages && navigator.languages.length
             ? navigator.languages
@@ -561,6 +574,7 @@ $(function () {
         return parseIsoDateTime(text);
     }
 
+    // Prevent invalid dates such as 31.02.
     function isRealDate(date, year, month, day, hour, minute) {
         return date instanceof Date &&
             !Number.isNaN(date.getTime()) &&
@@ -695,6 +709,7 @@ $(function () {
         $widget.find("[data-datetime-display]").attr("aria-expanded", "false");
     }
 
+    // Validate typed or selected date-time value.
     function validateDateTimePicker($widget) {
         const isRequired = $widget.data("required") === true || $widget.data("required") === "true";
         const displayValue = $.trim($widget.find("[data-datetime-display]").val());
@@ -836,6 +851,7 @@ $(function () {
         });
     });
 
+    // Purchase order status and inventory stock badge animations.
     function animateBadge($badge) {
         $badge.removeClass("wms-badge-pop");
         void $badge[0].offsetWidth;
@@ -925,6 +941,7 @@ $(function () {
         updateStockPreview($(this));
     });
 
+    // Toast notifications after create, edit and delete actions.
     $("[data-wms-toast]").each(function () {
         const $toast = $(this);
 
