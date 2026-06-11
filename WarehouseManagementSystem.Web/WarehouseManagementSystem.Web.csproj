@@ -1,12 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>enable</Nullable>
+    <UserSecretsId>82a221d9-0f3f-4fca-81ab-522f0ed77a9f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
       <PrivateAssets>all</PrivateAssets>
@@ -17,6 +20,10 @@
   <ItemGroup>
     <ProjectReference Include="..\WarehouseManagementSystem.DAL\WarehouseManagementSystem.DAL.csproj" />
     <ProjectReference Include="..\WarehouseManagementSystem.Model\WarehouseManagementSystem.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\avatars\" />
   </ItemGroup>
 
 </Project>
