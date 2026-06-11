@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Model;
+using Microsoft.AspNetCore.Authorization;
 using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
@@ -17,6 +18,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("")]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var products = _productRepository.GetAll();
@@ -24,6 +26,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
@@ -44,12 +47,14 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("create")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Product product)
         {
@@ -67,6 +72,7 @@ namespace WarehouseManagementSystem.Controllers
 
 
         [HttpGet("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Edit(int id)
         {
             var product = _productRepository.GetById(id);
@@ -78,6 +84,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Product product)
         {
@@ -100,6 +107,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             if (id <= 0)
@@ -119,9 +127,16 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            if (_productRepository.HasPurchaseOrderItems(id))
+            {
+                TempData["DeleteError"] = "Product cannot be deleted because it has related purchase order items.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             _productRepository.Delete(id);
             TempData["ToastTitle"] = "Product deleted";
             TempData["ToastMessage"] = "Product was deleted successfully.";
@@ -145,6 +160,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
         public IActionResult Search(string? term)
         {
             var products = _productRepository.Search(term);

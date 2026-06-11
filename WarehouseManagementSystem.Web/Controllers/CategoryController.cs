@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Model;
+using Microsoft.AspNetCore.Authorization;
 using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
@@ -17,6 +18,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("")]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var categories = _categoryRepository.GetAll();
@@ -24,6 +26,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
@@ -45,12 +48,14 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("create")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category category)
         {
@@ -65,6 +70,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Edit(int id)
         {
             var category = _categoryRepository.GetById(id);
@@ -76,6 +82,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Category category)
         {
@@ -96,6 +103,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             if (id <= 0)
@@ -115,9 +123,16 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            if (_categoryRepository.HasProducts(id))
+            {
+                TempData["DeleteError"] = "Category cannot be deleted because it has related products.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
             _categoryRepository.Delete(id);
             TempData["ToastTitle"] = "Category deleted";
             TempData["ToastMessage"] = "Category was deleted successfully.";
@@ -125,6 +140,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
         public IActionResult Search(string? term)
         {
             var categories = _categoryRepository.Search(term);

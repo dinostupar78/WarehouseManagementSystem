@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using WarehouseManagementSystem.DAL.Data;
 using WarehouseManagementSystem.Model;
 using WarehouseManagementSystem.Web.Repositories;
+using WarehouseManagementSystem.Web.Services;
 
-public class Program
+public partial class Program
 {
     public static void Main(string[] args)
     {
@@ -28,8 +30,24 @@ public class Program
         builder.Services.AddDbContext<WarehouseManagementSystemDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        builder.Services.AddDefaultIdentity<AppUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<WarehouseManagementSystemDbContext>();
+
+        builder.Services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+            });
+
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddRazorPages();
+        builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, NoOpEmailSender>();
 
         // builder.Services.AddSingleton<WarehouseMockRepository>();
         // builder.Services.AddSingleton<LocationMockRepository>();
@@ -50,6 +68,7 @@ public class Program
         builder.Services.AddScoped<PurchaseOrderItemRepository>();
 
         var app = builder.Build();
+        SeedIdentityRoles(app.Services).GetAwaiter().GetResult();
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -75,13 +94,32 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{controller=Welcome}/{action=Index}/{id?}");
+
+        app.MapRazorPages();
 
         app.Run();
+    }
+
+    private static async Task SeedIdentityRoles(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var roles = new[] { "Admin", "Operator", "Guest" };
+
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
     }
 
     private static void RunConsoleApp()

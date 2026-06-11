@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Model;
+using Microsoft.AspNetCore.Authorization;
 using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
@@ -17,6 +18,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("")]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var purchaseOrderItems = _purchaseOrderItemRepository.GetAll();
@@ -24,6 +26,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Details(int id)
         {
             if (id <= 0)
@@ -44,12 +47,14 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("create")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PurchaseOrderItem purchaseOrderItem)
         {
@@ -66,6 +71,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         public IActionResult Edit(int id)
         {
             var purchaseOrderItem = _purchaseOrderItemRepository.GetById(id);
@@ -77,6 +83,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("edit/{id:int}")]
+        [Authorize(Roles = "Admin,Operator")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, PurchaseOrderItem purchaseOrderItem)
         {
@@ -99,6 +106,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             if (id <= 0)
@@ -118,6 +126,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpPost("{id:int}/delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
@@ -128,6 +137,7 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
         public IActionResult Search(string? term)
         {
             var purchaseOrderItems = _purchaseOrderItemRepository.Search(term);
