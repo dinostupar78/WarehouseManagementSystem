@@ -1188,6 +1188,26 @@ body.wms-auth-body {
     display: none;
 }
 
+.wms-avatar-dropzone .dz-preview .dz-progress,
+.wms-avatar-dropzone .dz-preview .dz-success-mark,
+.wms-avatar-dropzone .dz-preview .dz-error-mark,
+.wms-avatar-dropzone .dz-preview .dz-error-message {
+    display: none;
+}
+
+.wms-avatar-dropzone .dz-preview:hover,
+.wms-avatar-dropzone .dz-preview:hover .dz-image,
+.wms-avatar-dropzone .dz-preview:hover .dz-image img {
+    background: transparent;
+    filter: none;
+    opacity: 1;
+    transform: none;
+}
+
+.wms-avatar-dropzone .dz-preview.dz-image-preview {
+    background: transparent;
+}
+
 .wms-avatar-dropzone .dz-preview .dz-remove {
     background: #fff1f2;
     border: 1px solid #fecdd3;
@@ -1199,15 +1219,14 @@ body.wms-auth-body {
     margin-top: 0.65rem;
     padding: 0.35rem 0.8rem;
     text-decoration: none;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .wms-avatar-dropzone .dz-preview .dz-remove:hover {
-    background: #e11d48;
-    border-color: #e11d48;
-    color: #ffffff;
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #e11d48;
     text-decoration: none;
-    transform: translateY(-1px);
+    transform: none;
 }
 
 .wms-avatar-actions {

@@ -81,6 +81,24 @@
     <partial name="_ValidationScriptsPartial" />
 
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" />
+    <style>
+        #avatarDz .dz-preview:hover .dz-image img,
+        #avatarDz .dz-preview:hover .dz-image,
+        #avatarDz .dz-preview:hover {
+            background: transparent !important;
+            filter: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        #avatarDz .dz-preview .dz-progress,
+        #avatarDz .dz-preview .dz-success-mark,
+        #avatarDz .dz-preview .dz-error-mark,
+        #avatarDz .dz-preview .dz-error-message,
+        #avatarDz .dz-preview .dz-details {
+            display: none !important;
+        }
+    </style>
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 
     <script>
@@ -148,8 +166,18 @@
         }
 
         function deleteAvatar() {
-            $.post("@Url.Page("./Index", "DeleteAvatar")", function () {
+            const token = $("input[name='__RequestVerificationToken']").first().val();
+
+            $.ajax({
+                url: "@Url.Page("./Index", "DeleteAvatar")",
+                type: "POST",
+                headers: {
+                    RequestVerificationToken: token
+                }
+            }).done(function () {
                 loadAvatar();
+            }).fail(function () {
+                alert("Avatar could not be removed. Please try again.");
             });
         }
     </script>
