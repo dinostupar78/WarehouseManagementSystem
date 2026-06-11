@@ -1,0 +1,108 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="wms-auth-page">
+    <div class="wms-auth-card">
+        <div class="wms-auth-header">
+            <div class="wms-auth-icon">WMS</div>
+            <div>
+                <div class="wms-auth-eyebrow">Warehouse Management System</div>
+                <h1>Welcome back</h1>
+                <p>Sign in to manage warehouse operations.</p>
+            </div>
+        </div>
+
+        <form id="account" method="post" class="wms-auth-form">
+            <div asp-validation-summary="ModelOnly" class="wms-auth-validation" role="alert"></div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email address</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.Password"
+                       class="form-control"
+                       autocomplete="current-password"
+                       aria-required="true"
+                       placeholder="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="wms-auth-options">
+                <label asp-for="Input.RememberMe" class="wms-auth-check">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    <span>@Html.DisplayNameFor(m => m.Input.RememberMe)</span>
+                </label>
+
+                <a id="forgot-password" asp-page="./ForgotPassword">Forgot password?</a>
+            </div>
+
+            <button id="login-submit" type="submit" class="wms-auth-submit">
+                Log in
+            </button>
+
+            <div class="wms-auth-switch">
+                <span>Don't have an account?</span>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create new account</a>
+            </div>
+
+            <a id="resend-confirmation"
+               class="wms-auth-muted-link"
+               asp-page="./ResendEmailConfirmation">
+                Resend email confirmation
+            </a>
+        </form>
+
+        <form method="post"
+              asp-page-handler="Guest"
+              asp-route-returnUrl="@Model.ReturnUrl"
+              class="wms-auth-guest-form">
+            <button type="submit" class="wms-auth-guest-button">
+                <span>
+                    <strong>Continue as guest</strong>
+                    <small>View warehouse data with limited access.</small>
+                </span>
+                <span aria-hidden="true">&rarr;</span>
+            </button>
+        </form>
+
+        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+        {
+            <div class="wms-auth-divider">
+                <span>or</span>
+            </div>
+
+            <form id="external-account"
+                  asp-page="./ExternalLogin"
+                  asp-route-returnUrl="@Model.ReturnUrl"
+                  method="post"
+                  data-no-page-loader
+                  class="wms-auth-external">
+                @foreach (var provider in Model.ExternalLogins!)
+                {
+                    <button type="submit"
+                            name="provider"
+                            value="@provider.Name"
+                            title="Log in using your @provider.DisplayName account">
+                        Continue with @provider.DisplayName
+                    </button>
+                }
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

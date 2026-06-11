@@ -1,0 +1,119 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="wms-auth-page">
+    <div class="wms-auth-card">
+        <div class="wms-auth-header">
+            <div class="wms-auth-icon">WMS</div>
+            <div>
+                <div class="wms-auth-eyebrow">New employee account</div>
+                <h1>Create account</h1>
+                <p>Register to access warehouse management tools.</p>
+            </div>
+        </div>
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="wms-auth-form">
+            <div asp-validation-summary="ModelOnly" class="wms-auth-validation" role="alert"></div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email address</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.UserName"
+                       class="form-control"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder="username" />
+                <label asp-for="Input.UserName">Username</label>
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.OIB"
+                       class="form-control"
+                       autocomplete="off"
+                       aria-required="true"
+                       placeholder="12345678901" />
+                <label asp-for="Input.OIB">OIB</label>
+                <span asp-validation-for="Input.OIB" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.JMBG"
+                       class="form-control"
+                       autocomplete="off"
+                       aria-required="true"
+                       placeholder="1234567890123" />
+                <label asp-for="Input.JMBG">JMBG</label>
+                <span asp-validation-for="Input.JMBG" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.Password"
+                       class="form-control"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating wms-auth-field">
+                <input asp-for="Input.ConfirmPassword"
+                       class="form-control"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder="password" />
+                <label asp-for="Input.ConfirmPassword">Confirm password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button id="registerSubmit" type="submit" class="wms-auth-submit">
+                Create account
+            </button>
+
+            <div class="wms-auth-switch">
+                <span>Already have an account?</span>
+                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Log in</a>
+            </div>
+        </form>
+
+        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+        {
+            <div class="wms-auth-divider">
+                <span>or</span>
+            </div>
+
+            <form id="external-account"
+                  asp-page="./ExternalLogin"
+                  asp-route-returnUrl="@Model.ReturnUrl"
+                  method="post"
+                  class="wms-auth-external">
+                @foreach (var provider in Model.ExternalLogins!)
+                {
+                    <button type="submit"
+                            name="provider"
+                            value="@provider.Name"
+                            title="Register using your @provider.DisplayName account">
+                        Continue with @provider.DisplayName
+                    </button>
+                }
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
