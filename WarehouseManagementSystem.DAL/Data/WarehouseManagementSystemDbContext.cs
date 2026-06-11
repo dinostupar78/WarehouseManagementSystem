@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WarehouseManagementSystem.Model;
 
 namespace WarehouseManagementSystem.DAL.Data
 {
-    public class WarehouseManagementSystemDbContext : DbContext
+    public class WarehouseManagementSystemDbContext : IdentityDbContext<AppUser>
+
     {
         public WarehouseManagementSystemDbContext(DbContextOptions<WarehouseManagementSystemDbContext> options) 
             : base(options)
@@ -74,7 +76,7 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasMany(w => w.PurchaseOrders)
                 .WithOne(po => po.Warehouse)
                 .HasForeignKey(po => po.WarehouseId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Location>()
                 .HasMany(l => l.Inventories)
@@ -86,7 +88,7 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Inventories)
@@ -98,13 +100,13 @@ namespace WarehouseManagementSystem.DAL.Data
                 .HasMany(p => p.PurchaseOrderItems)
                 .WithOne(poi => poi.Product)
                 .HasForeignKey(poi => poi.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Supplier>()
                 .HasMany(s => s.PurchaseOrders)
                 .WithOne(po => po.Supplier)
                 .HasForeignKey(po => po.SupplierId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PurchaseOrder>()
                 .HasMany(po => po.PurchaseOrderItems)
