@@ -1,0 +1,157 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    Account
+</div>
+
+<h1 class="page-title">Account Settings</h1>
+
+<div class="wms-account-layout">
+    <aside class="wms-account-sidebar">
+        <partial name="_ManageNav" />
+    </aside>
+
+    <section class="wms-account-panel">
+        <div class="wms-account-panel-header">
+            <div>
+                <div class="wms-account-eyebrow">Identity</div>
+                <h2>Profile</h2>
+            </div>
+        </div>
+
+        <partial name="_StatusMessage" for="StatusMessage" />
+
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" disabled />
+                <label asp-for="Email" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="OIB" class="form-control" disabled />
+                <label asp-for="OIB" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="JMBG" class="form-control" disabled />
+                <label asp-for="JMBG" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+
+        <div class="wms-profile-avatar-section">
+            <label class="form-label fw-bold">Profile avatar</label>
+
+            <form id="avatarDz"
+                  method="post"
+                  enctype="multipart/form-data"
+                  asp-page-handler="UploadAvatar"
+                  class="dropzone wms-avatar-dropzone">
+            </form>
+
+            <div class="wms-avatar-actions">
+                <button type="button" id="saveAvatarButton" class="btn btn-primary rounded-pill fw-bold" disabled>
+                    Save avatar
+                </button>
+                <button type="button" id="cancelAvatarButton" class="btn btn-outline-secondary rounded-pill fw-bold" disabled>
+                    Cancel preview
+                </button>
+            </div>
+
+            <div id="avatarPreview" class="mt-3"></div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" />
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+
+    <script>
+        Dropzone.options.avatarDz = {
+            paramName: "file",
+            maxFiles: 1,
+            maxFilesize: 2,
+            acceptedFiles: "image/jpeg,image/png,image/webp",
+            autoProcessQueue: false,
+            addRemoveLinks: true,
+            dictDefaultMessage: "Drop avatar here or click to upload",
+
+            init: function () {
+                const dropzone = this;
+                const $saveButton = $("#saveAvatarButton");
+                const $cancelButton = $("#cancelAvatarButton");
+
+                function setPreviewMode(isPreviewing) {
+                    $saveButton.prop("disabled", !isPreviewing);
+                    $cancelButton.prop("disabled", !isPreviewing);
+                }
+
+                dropzone.on("addedfile", function () {
+                    if (dropzone.files.length > 1) {
+                        dropzone.removeFile(dropzone.files[0]);
+                    }
+
+                    setPreviewMode(true);
+                });
+
+                dropzone.on("removedfile", function () {
+                    setPreviewMode(dropzone.files.length > 0);
+                });
+
+                dropzone.on("success", function () {
+                    loadAvatar();
+                    dropzone.removeAllFiles(true);
+                    setPreviewMode(false);
+                });
+
+                dropzone.on("error", function (_file, message) {
+                    alert(message);
+                    setPreviewMode(dropzone.files.length > 0);
+                });
+
+                $saveButton.on("click", function () {
+                    if (dropzone.files.length) {
+                        dropzone.processQueue();
+                    }
+                });
+
+                $cancelButton.on("click", function () {
+                    dropzone.removeAllFiles(true);
+                    setPreviewMode(false);
+                });
+            }
+        };
+
+        $(function () {
+            loadAvatar();
+        });
+
+        function loadAvatar() {
+            $("#avatarPreview").load("@Url.Page("./Index", "AvatarPreview")");
+        }
+
+        function deleteAvatar() {
+            $.post("@Url.Page("./Index", "DeleteAvatar")", function () {
+                loadAvatar();
+            });
+        }
+    </script>
+}
+

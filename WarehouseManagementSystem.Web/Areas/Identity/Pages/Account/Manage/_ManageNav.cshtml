@@ -1,0 +1,35 @@
+@inject SignInManager<AppUser> SignInManager
+
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<nav class="wms-account-nav">
+    <a class="wms-account-nav-link @ManageNavPages.IndexNavClass(ViewContext)"
+       asp-page="./Index">
+        Profile
+    </a>
+
+    <a class="wms-account-nav-link @ManageNavPages.EmailNavClass(ViewContext)"
+       asp-page="./Email">
+        Email
+    </a>
+
+    <a class="wms-account-nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)"
+       asp-page="./ChangePassword">
+        Password
+    </a>
+
+    @if (hasExternalLogins)
+    {
+        <a class="wms-account-nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)"
+           asp-page="./ExternalLogins">
+            External logins
+        </a>
+    }
+
+    <a class="wms-account-nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)"
+       asp-page="./PersonalData">
+        Personal data
+    </a>
+</nav>

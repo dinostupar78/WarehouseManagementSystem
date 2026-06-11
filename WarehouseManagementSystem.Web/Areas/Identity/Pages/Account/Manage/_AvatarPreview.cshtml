@@ -1,0 +1,29 @@
+@model WarehouseManagementSystem.Model.AppUser
+
+@if (!string.IsNullOrWhiteSpace(Model.AvatarFilePath))
+{
+    <div class="wms-avatar-preview">
+        <img src="@Model.AvatarFilePath"
+             alt="User avatar"
+             class="wms-avatar-image" />
+
+        <div class="wms-avatar-info">
+            <div class="fw-bold">@Model.AvatarFileName</div>
+            <div class="text-muted small">
+                @Model.AvatarContentType - @Model.AvatarFileSize bytes
+            </div>
+
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm mt-2"
+                    onclick="deleteAvatar()">
+                Remove avatar
+            </button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="wms-avatar-empty">
+        No avatar uploaded yet.
+    </div>
+}
