@@ -14,6 +14,11 @@ namespace WarehouseManagementSystem.Web.Repositories
             _db = db;
         }
 
+        public bool HasProducts(int id)
+        {
+            return _db.Products.AsNoTracking().Any(p => p.CategoryId == id);
+        }
+
         public IReadOnlyList<Category> GetAll()
         {
             return _db.Categories

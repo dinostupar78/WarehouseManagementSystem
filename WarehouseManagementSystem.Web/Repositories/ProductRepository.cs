@@ -13,6 +13,11 @@ namespace WarehouseManagementSystem.Web.Repositories
             _db = db;
         }
 
+        public bool HasPurchaseOrderItems(int id)
+        {
+            return _db.PurchaseOrderItems.AsNoTracking().Any(poi => poi.ProductId == id);
+        }
+
         public IReadOnlyList<Product> GetAll()
         {
             return _db.Products
