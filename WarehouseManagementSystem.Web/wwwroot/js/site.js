@@ -463,6 +463,26 @@ $(function () {
             event.preventDefault();
             showPageLoader();
 
+            const submitter = event.originalEvent && event.originalEvent.submitter;
+
+            if (submitter) {
+                if (submitter.formAction) {
+                    $form.attr("action", submitter.formAction);
+                }
+
+                if (submitter.formMethod) {
+                    $form.attr("method", submitter.formMethod);
+                }
+
+                if (submitter.name) {
+                    $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", submitter.name)
+                        .val(submitter.value)
+                        .appendTo($form);
+                }
+            }
+
             $form.data("page-loader-submitted", true);
             setTimeout(function () {
                 $form[0].submit();
@@ -957,4 +977,316 @@ $(function () {
     $(document).on("click", "[data-toast-close]", function () {
         $(this).closest("[data-wms-toast]").removeClass("wms-toast-visible");
     });
+});
+
+// AI form assistant: sends a natural-language prompt to the server and fills the active Create form.
+$(document).on("click", "[data-ai-generate]", function () {
+    const entity = $(this).data("entity");
+    const prompt = $("[data-ai-prompt='" + entity + "']").val();
+    const token = $("input[name='__RequestVerificationToken']").first().val();
+    const $message = $("[data-ai-message='" + entity + "']");
+
+    if (!prompt || !prompt.trim()) {
+        $message.html('<div class="wms-alert wms-alert-danger">Please enter a description.</div>');
+        return;
+    }
+
+    $message.html('<div class="wms-alert wms-alert-info">Generating suggestion...</div>');
+
+    $.ajax({
+        url: "/ai/suggest",
+        type: "POST",
+        contentType: "application/json",
+        headers: {
+            RequestVerificationToken: token
+        },
+        data: JSON.stringify({
+            entity: entity,
+            prompt: prompt
+        })
+    }).done(function (response) {
+        if (!response.success) {
+            $message.html('<div class="wms-alert wms-alert-danger">' + response.message + '</div>');
+            return;
+        }
+
+        fillFormFromAi(entity, response.data);
+
+        $message.html('<div class="wms-alert wms-alert-success">' + response.message + '</div>');
+    }).fail(function () {
+        $message.html('<div class="wms-alert wms-alert-danger">AI suggestion failed. Please try again.</div>');
+    });
+});
+
+// Select the correct form filler based on the entity returned from the AI assistant.
+function fillFormFromAi(entity, data) {
+    switch (entity) {
+        case "category":
+            fillCategoryForm(data);
+            break;
+        case "warehouse":
+            fillWarehouseForm(data);
+            break;
+        case "supplier":
+            fillSupplierForm(data);
+            break;
+        case "product":
+            fillProductForm(data);
+            break;
+        case "location":
+            fillLocationForm(data);
+            break;
+        case "inventory":
+            fillInventoryForm(data);
+            break;
+        case "purchaseorder":
+            fillPurchaseOrderForm(data);
+            break;
+        case "purchaseorderitem":
+            fillPurchaseOrderItemForm(data);
+            break;
+    }
+}
+
+// Category Create form fields.
+function fillCategoryForm(data) {
+    setField("#Name", data.name);
+    setField("#Description", data.description);
+}
+
+// Warehouse Create form fields.
+function fillWarehouseForm(data) {
+    setField("#Name", data.name);
+    setField("#Address", data.address);
+    setField("#City", data.city);
+    setField("#Country", data.country);
+    setField("#Capacity", data.capacity);
+}
+
+// Supplier Create form fields.
+function fillSupplierForm(data) {
+    setField("#Name", data.name);
+    setField("#ContactPerson", data.contactPerson || data.contactName);
+    setField("#ContactEmail", data.contactEmail);
+    setField("#ContactPhone", data.contactPhone);
+    setField("#ContactAddress", data.contactAddress);
+}
+
+// Product Create form fields.
+function fillProductForm(data) {
+    setField("#Name", data.name);
+    setField("#Description", data.description);
+    setField("#Price", data.price);
+    setField("#Weight", data.weight);
+    setDateTimeField("ProductReceivedAt", data.productReceivedAt);
+    setAutocompleteField("CategoryId", data.categoryId, data.categoryName);
+}
+
+// Location Create form fields.
+function fillLocationForm(data) {
+    setField("#Code", data.code);
+    setField("#Zone", data.zone);
+    setField("#ShelfNumber", data.shelfNumber);
+    setAutocompleteField("WarehouseId", data.warehouseId, data.warehouseName);
+}
+
+// Inventory Create form fields.
+function fillInventoryForm(data) {
+    setField("#Quantity", data.quantity);
+    setDateTimeField("LastUpdated", data.lastUpdated);
+    setAutocompleteField("ProductId", data.productId, data.productName);
+    setAutocompleteField("LocationId", data.locationId, data.locationCode);
+}
+
+// PurchaseOrder Create form fields.
+function fillPurchaseOrderForm(data) {
+    setField("#TotalAmount", data.totalAmount);
+    setAutocompleteField("SupplierId", data.supplierId, data.supplierName);
+    setAutocompleteField("WarehouseId", data.warehouseId, data.warehouseName);
+    setSelectByTextOrValue("#Status", data.status);
+    setDateTimeField("OrderDate", data.orderDate);
+    setDateTimeField("ExpectedDeliveryDate", data.expectedDeliveryDate);
+}
+
+// PurchaseOrderItem Create form fields.
+function fillPurchaseOrderItemForm(data) {
+    setAutocompleteField("PurchaseOrderId", data.purchaseOrderId, formatPurchaseOrderText(data.purchaseOrderNumber));
+    setAutocompleteField("ProductId", data.productId, data.productName);
+    setField("#Quantity", data.quantity);
+    setField("#UnitPrice", data.unitPrice);
+}
+
+// Fill a normal input/select/textarea and trigger validation refresh.
+function setField(selector, value) {
+    if (value === null || value === undefined) {
+        return;
+    }
+
+    $(selector)
+        .val(value)
+        .trigger("change")
+        .trigger("keyup");
+}
+
+// Select an option by value first, then by visible option text.
+function setSelectByTextOrValue(selector, value) {
+    if (value === null || value === undefined) {
+        return;
+    }
+
+    const $select = $(selector);
+    const normalizedValue = value.toString().trim().toLowerCase();
+    let matchedValue = null;
+
+    $select.find("option").each(function () {
+        const optionValue = $(this).val().toString().trim().toLowerCase();
+        const optionText = $(this).text().trim().toLowerCase();
+
+        if (optionValue === normalizedValue || optionText === normalizedValue) {
+            matchedValue = $(this).val();
+            return false;
+        }
+    });
+
+    if (matchedValue !== null) {
+        $select
+            .val(matchedValue)
+            .trigger("change")
+            .trigger("keyup");
+    }
+}
+
+// Keep purchase order autocomplete text consistent for values like "1001" and "PO-1001".
+function formatPurchaseOrderText(orderNumber) {
+    if (!orderNumber) {
+        return null;
+    }
+
+    const text = orderNumber.toString().trim();
+    return text.toLowerCase().startsWith("po-") ? text : "PO-" + text;
+}
+
+// Fill the custom AJAX autocomplete dropdown by setting both hidden ID and visible text.
+function setAutocompleteField(fieldName, id, text) {
+    if (!id) {
+        return;
+    }
+
+    const $value = $("[data-autocomplete-value][name='" + fieldName + "']");
+    const $widget = $value.closest("[data-autocomplete]");
+
+    if (!$value.length || !$widget.length) {
+        return;
+    }
+
+    $value.val(id).trigger("change");
+    $widget.find("[data-autocomplete-input]").val(text || "");
+    $widget.find("[data-autocomplete-error]")
+        .removeClass("field-validation-error")
+        .addClass("field-validation-valid")
+        .text("");
+
+    $widget.removeClass("wms-autocomplete-invalid");
+}
+
+// Fill the custom date-time partial view control.
+function setDateTimeField(fieldName, value) {
+    if (!value) {
+        return;
+    }
+
+    const $value = $("[data-datetime-value][name='" + fieldName + "']");
+    const $widget = $value.closest("[data-datetime-picker]");
+
+    if (!$value.length || !$widget.length) {
+        return;
+    }
+
+    $value.val(value).trigger("change");
+    $widget.find("[data-datetime-display]").val(value).trigger("blur");
+}
+
+// Global search for pages, actions and application data.
+const $globalSearchInput = $("#globalSearchInput");
+const $globalSearchResults = $("#globalSearchResults");
+
+function renderGlobalSearchResults(results) {
+    $globalSearchResults.empty();
+
+    if (!results.length) {
+        $("<div>")
+            .addClass("wms-global-search-empty")
+            .text("No results found.")
+            .appendTo($globalSearchResults);
+
+        $globalSearchResults.prop("hidden", false);
+        return;
+    }
+
+    results.forEach(function (result) {
+        const $item = $("<a>")
+            .addClass("wms-global-search-item")
+            .attr("href", result.url);
+
+        $("<span>")
+            .addClass("wms-global-search-type")
+            .text(result.type)
+            .appendTo($item);
+
+        $("<strong>")
+            .text(result.title)
+            .appendTo($item);
+
+        $("<small>")
+            .text(result.subtitle)
+            .appendTo($item);
+
+        $item.appendTo($globalSearchResults);
+    });
+
+    $globalSearchResults.prop("hidden", false);
+}
+
+function runGlobalSearch() {
+    const term = $.trim($globalSearchInput.val());
+
+    if (term.length < 2) {
+        $globalSearchResults.empty().prop("hidden", true);
+        return;
+    }
+
+    $.get("/global-search", { term: term })
+        .done(function (results) {
+            renderGlobalSearchResults(results);
+        })
+        .fail(function () {
+            $globalSearchResults
+                .empty()
+                .append(
+                    $("<div>")
+                        .addClass("wms-global-search-empty")
+                        .text("Search failed.")
+                )
+                .prop("hidden", false);
+        });
+}
+
+$globalSearchInput.on("input", function () {
+    clearTimeout($globalSearchInput.data("search-timer"));
+
+    $globalSearchInput.data("search-timer", setTimeout(function () {
+        runGlobalSearch();
+    }, 250));
+});
+
+$(document).on("click", function (event) {
+    if (!$(event.target).closest(".wms-global-search").length) {
+        $globalSearchResults.prop("hidden", true);
+    }
+});
+
+$globalSearchInput.on("focus", function () {
+    if ($globalSearchResults.children().length) {
+        $globalSearchResults.prop("hidden", false);
+    }
 });

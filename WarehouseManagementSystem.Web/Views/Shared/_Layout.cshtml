@@ -15,8 +15,12 @@
         path.StartsWithSegments("/Identity/Account/Register") ||
         path.StartsWithSegments("/Identity/Account/ExternalLogin") ||
         path.StartsWithSegments("/Identity/Account/ForgotPassword") ||
+        path.StartsWithSegments("/Identity/Account/ForgotPasswordConfirmation") ||
         path.StartsWithSegments("/Identity/Account/ResetPassword") ||
+        path.StartsWithSegments("/Identity/Account/ResetPasswordConfirmation") ||
+        path.StartsWithSegments("/Identity/Account/AccessDenied") ||
         path.StartsWithSegments("/Identity/Account/ConfirmEmail") ||
+        path.StartsWithSegments("/Identity/Account/ConfirmEmailChange") ||
         path.StartsWithSegments("/Identity/Account/ResendEmailConfirmation");
 
     AppUser? currentUser = null;
@@ -68,6 +72,25 @@
                 <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
             </button>
         </div>
+
+            <div class="wms-global-search">
+                <input type="text"
+                       id="globalSearchInput"
+                       class="wms-global-search-input"
+                       placeholder="Search WMS..."
+                       autocomplete="off" />
+                <span class="wms-global-search-icon" aria-hidden="true">
+                    <svg width="17" height="17" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.096.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.113-.099M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                </span>
+
+                <div id="globalSearchResults"
+                     class="wms-global-search-results"
+                     hidden>
+                </div>
+            </div>
+
         <div class="collapse d-md-block" id="wmsMobileNav">
             <div class="wms-nav-items">
             <a class="wms-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
@@ -144,7 +167,8 @@
                         <form asp-area="Identity"
                               asp-page="/Account/Logout"
                               asp-route-returnUrl="/Identity/Account/Login"
-                              method="post">
+                              method="post"
+                              data-no-page-loader>
                             @Html.AntiForgeryToken()
 
                             <button type="submit" class="wms-sidebar-logout-button">
