@@ -23,6 +23,21 @@ namespace WarehouseManagementSystem.Web.Repositories
 
         }
 
+        public int GetTotalCount()
+        {
+            return _db.Inventories.Count();
+        }
+
+        public int GetTotalStockUnits()
+        {
+            return _db.Inventories.Sum(i => i.Quantity);
+        }
+
+        public int GetLowStockCount(int threshold = 10)
+        {
+            return _db.Inventories.Count(i => i.Quantity <= threshold);
+        }
+
         public Inventory? GetById(int id)
         {
             return _db.Inventories
@@ -52,6 +67,39 @@ namespace WarehouseManagementSystem.Web.Repositories
                 _db.Inventories.Remove(inventory);
                 _db.SaveChanges();
             }
+        }
+
+        public IReadOnlyList<Inventory> GetLowStock(int threshold)
+        {
+            return _db.Inventories
+                .Include(i => i.Product)
+                .Include(i => i.Location)
+                    .ThenInclude(l => l.Warehouse)
+                .Where(i => i.Quantity <= threshold)
+                .OrderBy(i => i.Quantity)
+                .ToList();
+        }
+
+        public IReadOnlyList<Inventory> GetByLocation(int locationId)
+        {
+            return _db.Inventories
+                .Include(i => i.Product)
+                .Include(i => i.Location)
+                    .ThenInclude(l => l.Warehouse)
+                .Where(i => i.LocationId == locationId)
+                .OrderBy(i => i.Product.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Inventory> GetByProduct(int productId)
+        {
+            return _db.Inventories
+                .Include(i => i.Product)
+                .Include(i => i.Location)
+                    .ThenInclude(l => l.Warehouse)
+                .Where(i => i.ProductId == productId)
+                .OrderBy(i => i.Location.Code)
+                .ToList();
         }
 
         public bool ProductExists(int productId)

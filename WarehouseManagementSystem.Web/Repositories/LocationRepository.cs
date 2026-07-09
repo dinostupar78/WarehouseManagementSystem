@@ -23,6 +23,28 @@ namespace WarehouseManagementSystem.Web.Repositories
 
         }
 
+        public int GetTotalCount()
+        {
+            return _db.Locations.Count();
+        }
+
+        public int GetZoneCount()
+        {
+            return _db.Locations
+                .Where(l => !string.IsNullOrWhiteSpace(l.Zone))
+                .Select(l => l.Zone)
+                .Distinct()
+                .Count();
+        }
+
+        public int GetLinkedWarehouseCount()
+        {
+            return _db.Locations
+                .Select(l => l.WarehouseId)
+                .Distinct()
+                .Count();
+        }
+
         public Location? GetById(int id)
         {
             return _db.Locations
@@ -54,11 +76,6 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
         }
 
-        public bool WarehouseExists(int warehouseId)
-        {
-            return _db.Warehouses.AsNoTracking().Any(w => w.Id == warehouseId);
-        }
-
         public IReadOnlyList<Location> Search(string? term)
         {
             var query = _db.Locations
@@ -81,5 +98,41 @@ namespace WarehouseManagementSystem.Web.Repositories
 
             return query.ToList();
         }
+
+        public IReadOnlyList<Location> GetByZone(string zone)
+        {
+            return _db.Locations
+                .Include(l => l.Warehouse)
+                .Where(l => l.Zone.ToLower() == zone.ToLower())
+                .OrderBy(l => l.ShelfNumber)
+                .ThenBy(l => l.Code)
+                .ToList();
+        }
+
+        public IReadOnlyList<Location> GetByWarehouse(int warehouseId)
+        {
+            return _db.Locations
+                .Include(l => l.Warehouse)
+                .Where(l => l.WarehouseId == warehouseId)
+                .OrderBy(l => l.Zone)
+                .ThenBy(l => l.ShelfNumber)
+                .ToList();
+        }
+
+        public IReadOnlyList<Location> GetShelfAbove(int shelfNumber)
+        {
+            return _db.Locations
+                .Include(l => l.Warehouse)
+                .Where(l => l.ShelfNumber >= shelfNumber)
+                .OrderBy(l => l.ShelfNumber)
+                .ThenBy(l => l.Code)
+                .ToList();
+        }
+
+        public bool WarehouseExists(int warehouseId)
+        {
+            return _db.Warehouses.AsNoTracking().Any(w => w.Id == warehouseId);
+        }
+
     }
 }

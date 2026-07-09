@@ -23,6 +23,21 @@ namespace WarehouseManagementSystem.Web.Repositories
 
         }
 
+        public int GetTotalCount()
+        {
+            return _db.PurchaseOrderItems.Count();
+        }
+
+        public int GetTotalQuantity()
+        {
+            return _db.PurchaseOrderItems.Sum(poi => poi.Quantity);
+        }
+
+        public decimal GetTotalItemValue()
+        {
+            return _db.PurchaseOrderItems.Sum(poi => poi.Quantity * poi.UnitPrice);
+        }
+
         public PurchaseOrderItem? GetById(int id)
         {
             return _db.PurchaseOrderItems
@@ -54,16 +69,6 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
         }
 
-        public bool PurchaseOrderExists(int purchaseOrderId)
-        {
-            return _db.PurchaseOrders.AsNoTracking().Any(po => po.Id == purchaseOrderId);
-        }
-
-        public bool ProductExists(int productId)
-        {
-            return _db.Products.AsNoTracking().Any(p => p.Id == productId);
-        }
-
         public IReadOnlyList<PurchaseOrderItem> Search(string? term)
         {
             var query = _db.PurchaseOrderItems
@@ -87,5 +92,49 @@ namespace WarehouseManagementSystem.Web.Repositories
 
             return query.ToList();
         }
+
+        public IReadOnlyList<PurchaseOrderItem> GetByPurchaseOrder(int purchaseOrderId)
+        {
+            return _db.PurchaseOrderItems
+                .Include(poi => poi.PurchaseOrder)
+                    .ThenInclude(po => po.Supplier)
+                .Include(poi => poi.Product)
+                .Where(poi => poi.PurchaseOrderId == purchaseOrderId)
+                .OrderBy(poi => poi.Product.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<PurchaseOrderItem> GetByProduct(int productId)
+        {
+            return _db.PurchaseOrderItems
+                .Include(poi => poi.PurchaseOrder)
+                    .ThenInclude(po => po.Supplier)
+                .Include(poi => poi.Product)
+                .Where(poi => poi.ProductId == productId)
+                .OrderByDescending(poi => poi.PurchaseOrder.OrderDate)
+                .ToList();
+        }
+
+        public IReadOnlyList<PurchaseOrderItem> GetPriceAbove(decimal minPrice)
+        {
+            return _db.PurchaseOrderItems
+                .Include(poi => poi.PurchaseOrder)
+                    .ThenInclude(po => po.Supplier)
+                .Include(poi => poi.Product)
+                .Where(poi => poi.UnitPrice >= minPrice)
+                .OrderByDescending(poi => poi.UnitPrice)
+                .ToList();
+        }
+
+        public bool PurchaseOrderExists(int purchaseOrderId)
+        {
+            return _db.PurchaseOrders.AsNoTracking().Any(po => po.Id == purchaseOrderId);
+        }
+
+        public bool ProductExists(int productId)
+        {
+            return _db.Products.AsNoTracking().Any(p => p.Id == productId);
+        }
+
     }
 }

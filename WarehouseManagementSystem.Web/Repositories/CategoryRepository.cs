@@ -28,6 +28,29 @@ namespace WarehouseManagementSystem.Web.Repositories
 
         }
 
+        public int GetTotalCount()
+        {
+            return _db.Categories.Count();
+        }
+
+        public int GetDocumentedCount()
+        {
+            return _db.Categories.Count(c => !string.IsNullOrWhiteSpace(c.Description));
+        }
+
+        public int GetAverageDescriptionLength()
+        {
+            var descriptionLengths = _db.Categories
+                .AsNoTracking()
+                .Where(c => !string.IsNullOrWhiteSpace(c.Description))
+                .Select(c => c.Description.Length)
+                .ToList();
+
+            return descriptionLengths.Any()
+                ? (int)Math.Round(descriptionLengths.Average())
+                : 0;
+        }
+
         public Category? GetById(int id)
         {
             return _db.Categories
@@ -76,6 +99,34 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
 
             return query.ToList();
+        }
+
+        public IReadOnlyList<Category> GetWithProducts()
+        {
+            return _db.Categories
+                .Include(c => c.Products)
+                .Where(c => c.Products.Any())
+                .OrderBy(c => c.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Category> GetWithoutProducts()
+        {
+            return _db.Categories
+                .Include(c => c.Products)
+                .Where(c => !c.Products.Any())
+                .OrderBy(c => c.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Category> GetByDescriptionKeyword(string keyword)
+        {
+            return _db.Categories
+                .Include(c => c.Products)
+                .Where(c => c.Description != null &&
+                            c.Description.ToLower().Contains(keyword.ToLower()))
+                .OrderBy(c => c.Name)
+                .ToList();
         }
     }
 }

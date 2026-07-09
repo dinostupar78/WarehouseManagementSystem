@@ -26,6 +26,21 @@ namespace WarehouseManagementSystem.Web.Repositories
                 .ToList();
         }
 
+        public int GetTotalCount()
+        {
+            return _db.Suppliers.Count();
+        }
+
+        public int GetSuppliersWithEmailCount()
+        {
+            return _db.Suppliers.Count(s => !string.IsNullOrWhiteSpace(s.ContactEmail));
+        }
+
+        public int GetSuppliersWithAddressCount()
+        {
+            return _db.Suppliers.Count(s => !string.IsNullOrWhiteSpace(s.ContactAddress));
+        }
+
         public Supplier? GetById(int id)
         {
             return _db.Suppliers
@@ -76,6 +91,33 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
 
             return query.ToList();
-        }    
+        }
+
+        public IReadOnlyList<Supplier> GetByEmailDomain(string domain)
+        {
+            return _db.Suppliers
+                .Where(s => s.ContactEmail != null &&
+                            s.ContactEmail.ToLower().EndsWith("@" + domain.ToLower()))
+                .OrderBy(s => s.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Supplier> GetWithPurchaseOrders()
+        {
+            return _db.Suppliers
+                .Include(s => s.PurchaseOrders)
+                .Where(s => s.PurchaseOrders.Any())
+                .OrderBy(s => s.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Supplier> GetWithoutPurchaseOrders()
+        {
+            return _db.Suppliers
+                .Include(s => s.PurchaseOrders)
+                .Where(s => !s.PurchaseOrders.Any())
+                .OrderBy(s => s.Name)
+                .ToList();
+        }
     }
 }

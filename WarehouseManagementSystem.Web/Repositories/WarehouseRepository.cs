@@ -13,17 +13,30 @@ namespace WarehouseManagementSystem.Web.Repositories
             _db = db;
         }
 
-        public bool HasPurchaseOrders(int id)
-        {
-            return _db.PurchaseOrders.AsNoTracking().Any(po => po.WarehouseId == id);
-        }
-
         public IReadOnlyList<Warehouse> GetAll()
         { 
             return _db.Warehouses
                 .AsNoTracking()
                 .Include(w => w.Locations)
                 .ToList();
+        }
+
+        public int GetTotalCount()
+        {
+            return _db.Warehouses.Count();
+        }
+
+        public int GetTotalCapacity()
+        {
+            return _db.Warehouses.Sum(w => w.Capacity);
+        }
+
+        public Warehouse? GetLargestWarehouse()
+        {
+            return _db.Warehouses
+                .AsNoTracking()
+                .OrderByDescending(w => w.Capacity)
+                .FirstOrDefault();
         }
 
         public Warehouse? GetById(int id)
@@ -76,6 +89,36 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
 
             return query.ToList();
+        }
+
+        public IReadOnlyList<Warehouse> GetByCity(string city)
+        {
+            return _db.Warehouses
+                .Where(w => w.City.ToLower() == city.ToLower())
+                .OrderBy(w => w.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Warehouse> GetByCountry(string country)
+        {
+            return _db.Warehouses
+                .Where(w => w.Country.ToLower() == country.ToLower())
+                .OrderBy(w => w.City)
+                .ThenBy(w => w.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Warehouse> GetCapacityAbove(int capacity)
+        {
+            return _db.Warehouses
+                .Where(w => w.Capacity >= capacity)
+                .OrderByDescending(w => w.Capacity)
+                .ToList();
+        }
+
+        public bool HasPurchaseOrders(int id)
+        {
+            return _db.PurchaseOrders.AsNoTracking().Any(po => po.WarehouseId == id);
         }
 
     }

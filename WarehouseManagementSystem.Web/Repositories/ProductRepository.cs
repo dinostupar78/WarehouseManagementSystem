@@ -13,11 +13,6 @@ namespace WarehouseManagementSystem.Web.Repositories
             _db = db;
         }
 
-        public bool HasPurchaseOrderItems(int id)
-        {
-            return _db.PurchaseOrderItems.AsNoTracking().Any(poi => poi.ProductId == id);
-        }
-
         public IReadOnlyList<Product> GetAll()
         {
             return _db.Products
@@ -26,6 +21,24 @@ namespace WarehouseManagementSystem.Web.Repositories
                 .Include(p => p.Inventories)
                 .Include(p => p.PurchaseOrderItems)
                 .ToList();
+        }
+
+        public int GetTotalCount()
+        {
+            return _db.Products.Count();
+        }
+
+        public decimal GetTotalCatalogValue()
+        {
+            return _db.Products.Sum(p => p.Price);
+        }
+
+        public Product? GetHighestValueProduct()
+        {
+            return _db.Products
+                .AsNoTracking()
+                .OrderByDescending(p => p.Price)
+                .FirstOrDefault();
         }
 
         public Product? GetById(int id)
@@ -88,6 +101,38 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
 
             return query.ToList();
+        }
+
+        public IReadOnlyList<Product> GetPriceAbove(decimal minPrice)
+        {
+            return _db.Products
+                .Include(p => p.Category)
+                .Where(p => p.Price >= minPrice)
+                .OrderByDescending(p => p.Price)
+                .ToList();
+        }
+
+        public IReadOnlyList<Product> GetByCategory(int categoryId)
+        {
+            return _db.Products
+                .Include(p => p.Category)
+                .Where(p => p.CategoryId == categoryId)
+                .OrderBy(p => p.Name)
+                .ToList();
+        }
+
+        public IReadOnlyList<Product> GetWeightAbove(decimal minWeight)
+        {
+            return _db.Products
+                .Include(p => p.Category)
+                .Where(p => p.Weight >= minWeight)
+                .OrderByDescending(p => p.Weight)
+                .ToList();
+        }
+
+        public bool HasPurchaseOrderItems(int id)
+        {
+            return _db.PurchaseOrderItems.AsNoTracking().Any(poi => poi.ProductId == id);
         }
     }
 }

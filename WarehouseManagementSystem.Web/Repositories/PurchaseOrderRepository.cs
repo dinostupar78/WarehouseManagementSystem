@@ -24,6 +24,23 @@ namespace WarehouseManagementSystem.Web.Repositories
                 .ToList();
         }
 
+        public int GetTotalCount()
+        {
+            return _db.PurchaseOrders.Count();
+        }
+
+        public int GetActiveOrderCount()
+        {
+            return _db.PurchaseOrders.Count(po =>
+                po.Status != OrderStatus.Delivered &&
+                po.Status != OrderStatus.Cancelled);
+        }
+
+        public decimal GetTotalOrderValue()
+        {
+            return _db.PurchaseOrders.Sum(po => po.TotalAmount);
+        }
+
         public PurchaseOrder? GetById(int id)
         {
             return _db.PurchaseOrders
@@ -67,16 +84,6 @@ namespace WarehouseManagementSystem.Web.Repositories
             }
         }
 
-        public bool SupplierExists(int supplierId)
-        {
-            return _db.Suppliers.AsNoTracking().Any(s => s.Id == supplierId);
-        }
-
-        public bool WarehouseExists(int warehouseId)
-        {
-            return _db.Warehouses.AsNoTracking().Any(w => w.Id == warehouseId);
-        }
-
         public IReadOnlyList<PurchaseOrder> Search(string? term)
         {
             var query = _db.PurchaseOrders
@@ -103,5 +110,51 @@ namespace WarehouseManagementSystem.Web.Repositories
 
             return query.ToList();
         }
+
+        public IReadOnlyList<PurchaseOrder> GetBySupplier(int supplierId)
+        {
+            return _db.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.Warehouse)
+                .Where(po => po.SupplierId == supplierId)
+                .OrderByDescending(po => po.OrderDate)
+                .ToList();
+        }
+
+        public IReadOnlyList<PurchaseOrder> GetOverdue()
+        {
+            var now = DateTime.Now;
+
+            return _db.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.Warehouse)
+                .Where(po =>
+                    po.ExpectedDeliveryDate < now &&
+                    po.Status != OrderStatus.Delivered &&
+                    po.Status != OrderStatus.Cancelled)
+                .OrderBy(po => po.ExpectedDeliveryDate)
+                .ToList();
+        }
+
+        public IReadOnlyList<PurchaseOrder> GetByStatus(OrderStatus status)
+        {
+            return _db.PurchaseOrders
+                .Include(po => po.Supplier)
+                .Include(po => po.Warehouse)
+                .Where(po => po.Status == status)
+                .OrderByDescending(po => po.OrderDate)
+                .ToList();
+        }
+
+        public bool SupplierExists(int supplierId)
+        {
+            return _db.Suppliers.AsNoTracking().Any(s => s.Id == supplierId);
+        }
+
+        public bool WarehouseExists(int warehouseId)
+        {
+            return _db.Warehouses.AsNoTracking().Any(w => w.Id == warehouseId);
+        }
+
     }
 }
