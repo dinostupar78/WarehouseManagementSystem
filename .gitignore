@@ -368,3 +368,8 @@ lab-3/LAB3.md
 lab-4/LAB4.md
 
 WarehouseManagementSystem.Web/wwwroot/uploads/avatars/
+
+**/Logs/
+*.log
+
+**/.vscode/
