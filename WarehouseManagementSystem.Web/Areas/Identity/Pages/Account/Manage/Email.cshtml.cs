@@ -20,15 +20,18 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly ILogger<EmailModel> _logger;
 
         public EmailModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ILogger<EmailModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         /// <summary>
@@ -91,6 +94,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Email settings page could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -103,6 +107,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Email change submit could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -123,15 +128,31 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                try
+                {
+                    await _emailSender.SendEmailAsync(
+                        Input.NewEmail,
+                        "Confirm your email",
+                        $"Please confirm your email by opening this link: {callbackUrl}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Email change confirmation could not be sent for user {UserId} to {Email}", userId, Input.NewEmail);
+                    StatusMessage = "Error sending email. Please try again later.";
+                    return RedirectToPage();
+                }
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                _logger.LogInformation(
+                    "User {UserId} requested email change from {OldEmail} to {NewEmail}",
+                    userId,
+                    email,
+                    Input.NewEmail);
+
+                StatusMessage = $"Email confirmation sent to {Input.NewEmail}. Please check your inbox.";
                 return RedirectToPage();
             }
 
+            _logger.LogInformation("User {UserId} submitted unchanged email {Email}", user.Id, email);
             StatusMessage = "Your email is unchanged.";
             return RedirectToPage();
         }
@@ -141,6 +162,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Verification email submit could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -159,12 +181,22 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            try
+            {
+                await _emailSender.SendEmailAsync(
+                    email,
+                    "Confirm your email",
+                    $"Please confirm your email by opening this link: {callbackUrl}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Verification email could not be sent for user {UserId} to {Email}", userId, email);
+                StatusMessage = "Error sending email. Please try again or check the EmailJS settings.";
+                return RedirectToPage();
+            }
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            _logger.LogInformation("User {UserId} requested verification email for {Email}", userId, email);
+            StatusMessage = $"Verification email sent to {email}. Please check your inbox.";
             return RedirectToPage();
         }
     }

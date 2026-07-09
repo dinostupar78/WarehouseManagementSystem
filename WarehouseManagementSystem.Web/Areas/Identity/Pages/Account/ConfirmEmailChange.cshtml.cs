@@ -17,30 +17,36 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly ILogger<ConfirmEmailChangeModel> _logger;
 
-        public ConfirmEmailChangeModel(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public ConfirmEmailChangeModel(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            ILogger<ConfirmEmailChangeModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        [TempData]
         public string StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string userId, string email, string code)
         {
             if (userId == null || email == null || code == null)
             {
+                _logger.LogWarning("Email change confirmation was requested with missing data");
                 return RedirectToPage("/Index");
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
+                _logger.LogWarning("Email change confirmation failed because user {UserId} was not found", userId);
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
@@ -49,20 +55,13 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             if (!result.Succeeded)
             {
                 StatusMessage = "Error changing email.";
-                return Page();
-            }
-
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
-            if (!setUserNameResult.Succeeded)
-            {
-                StatusMessage = "Error changing user name.";
+                _logger.LogWarning("Email change confirmation failed for user {UserId} to {Email}", user.Id, email);
                 return Page();
             }
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Thank you for confirming your email change.";
+            _logger.LogInformation("User {UserId} changed email to {Email}", user.Id, email);
             return Page();
         }
     }

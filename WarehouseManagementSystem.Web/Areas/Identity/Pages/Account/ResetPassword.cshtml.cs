@@ -17,10 +17,12 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<ResetPasswordModel> _logger;
 
-        public ResetPasswordModel(UserManager<AppUser> userManager)
+        public ResetPasswordModel(UserManager<AppUser> userManager, ILogger<ResetPasswordModel> logger)
         {
             _userManager = userManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -71,17 +73,19 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
 
         }
 
-        public IActionResult OnGet(string code = null)
+        public IActionResult OnGet(string code = null, string email = null)
         {
             if (code == null)
             {
+                _logger.LogWarning("Password reset page was requested without reset code");
                 return BadRequest("A code must be supplied for password reset.");
             }
             else
             {
                 Input = new InputModel
                 {
-                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)),
+                    Email = email
                 };
                 return Page();
             }
@@ -98,15 +102,18 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             if (user == null)
             {
                 // Don't reveal that the user does not exist
+                _logger.LogWarning("Password reset submit could not find user for email {Email}", Input.Email);
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
             var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if (result.Succeeded)
             {
+                _logger.LogInformation("Password was reset for user {UserId}", user.Id);
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
+            _logger.LogWarning("Password reset failed for user {UserId}", user.Id);
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);

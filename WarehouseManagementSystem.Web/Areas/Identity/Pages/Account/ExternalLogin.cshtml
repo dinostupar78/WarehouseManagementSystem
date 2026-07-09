@@ -24,8 +24,12 @@
         <form asp-page-handler="Confirmation"
               asp-route-returnUrl="@Model.ReturnUrl"
               method="post"
+              data-no-page-loader
               class="wms-auth-form">
             <div asp-validation-summary="ModelOnly" class="wms-auth-validation" role="alert"></div>
+            <input asp-for="Input.LoginProvider" type="hidden" />
+            <input asp-for="Input.ProviderDisplayName" type="hidden" />
+            <input asp-for="Input.ProviderKey" type="hidden" />
 
             <div class="form-floating wms-auth-field">
                 <input asp-for="Input.Email"

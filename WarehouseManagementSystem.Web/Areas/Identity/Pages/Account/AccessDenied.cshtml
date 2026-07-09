@@ -4,7 +4,35 @@
     ViewData["Title"] = "Access denied";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+<div class="wms-auth-page">
+    <div class="wms-auth-card">
+        <div class="wms-auth-header">
+            <div class="wms-auth-icon">WMS</div>
+            <div>
+                <div class="wms-auth-eyebrow">Warehouse Management System</div>
+                <h1>Access denied</h1>
+                <p>Your current role does not allow this action.</p>
+            </div>
+        </div>
+
+        <div class="alert alert-danger wms-status-message" role="alert">
+           This operation requires higher permissions.
+        </div>
+
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="wms-account-secondary-button text-center text-decoration-none">
+                Go to dashboard
+            </a>
+        }
+        else
+        {
+            <a asp-page="./Login" class="wms-account-secondary-button text-center text-decoration-none">
+                Go to login
+            </a>
+        }
+    </div>
+</div>

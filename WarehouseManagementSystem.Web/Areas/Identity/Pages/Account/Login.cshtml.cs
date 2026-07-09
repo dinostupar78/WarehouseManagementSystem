@@ -131,7 +131,10 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    _logger.LogInformation(
+                        "User {User} logged in",
+                    Input.Email);
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -156,7 +159,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostGuestAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl = NormalizeReturnUrl(returnUrl);
 
             var guestUser = await _userManager.FindByEmailAsync(GuestEmail);
 
@@ -199,6 +202,16 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             _logger.LogInformation("Guest user logged in.");
 
             return LocalRedirect(returnUrl);
+        }
+
+        private string NormalizeReturnUrl(string returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(returnUrl) || returnUrl == Url.Content("~/") || returnUrl == "/")
+            {
+                return Url.Content("~/Home");
+            }
+
+            return returnUrl;
         }
     }
 }

@@ -101,6 +101,12 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG may contain digits only.")]
             [Display(Name = "JMBG")]
             public string JMBG { get; set; }
+
+            public string LoginProvider { get; set; }
+
+            public string ProviderDisplayName { get; set; }
+
+            public string ProviderKey { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -115,16 +121,18 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = NormalizeReturnUrl(returnUrl);
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
+                _logger.LogWarning("External login provider returned an error: {RemoteError}", remoteError);
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";
+                _logger.LogWarning("External login information could not be loaded");
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -137,6 +145,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("External login user is locked out for provider {LoginProvider}", info.LoginProvider);
                 return RedirectToPage("./Lockout");
             }
             else
@@ -150,7 +159,10 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
                     Input = new InputModel
                     {
                         Email = email,
-                        UserName = CreateUserNameFromEmail(email)
+                        UserName = CreateUserNameFromEmail(email),
+                        LoginProvider = info.LoginProvider,
+                        ProviderDisplayName = info.ProviderDisplayName,
+                        ProviderKey = info.ProviderKey
                     };
                 }
                 return Page();
@@ -159,13 +171,23 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = NormalizeReturnUrl(returnUrl);
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
-                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                if (string.IsNullOrWhiteSpace(Input.LoginProvider) || string.IsNullOrWhiteSpace(Input.ProviderKey))
+                {
+                    ErrorMessage = "Error loading external login information during confirmation.";
+                    _logger.LogWarning("External login confirmation failed because provider data was missing");
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                }
+
+                info = new ExternalLoginInfo(
+                    new ClaimsPrincipal(),
+                    Input.LoginProvider,
+                    Input.ProviderKey,
+                    Input.ProviderDisplayName ?? Input.LoginProvider);
             }
 
             if (ModelState.IsValid)
@@ -184,7 +206,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        _logger.LogInformation("User {UserId} created an account using {LoginProvider} provider", user.Id, info.LoginProvider);
 
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -195,19 +217,22 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        try
                         {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+                            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        }
+                        catch
+                        {
+                            _logger.LogWarning("Confirmation email could not be sent for external login user {Email}.", Input.Email);
                         }
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                         return LocalRedirect(returnUrl);
                     }
                 }
+                _logger.LogWarning("External login account creation failed for email {Email} using {LoginProvider}", Input.Email, info.LoginProvider);
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -242,6 +267,16 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
 
             var atIndex = email.IndexOf('@');
             return atIndex > 0 ? email[..atIndex] : email;
+        }
+
+        private string NormalizeReturnUrl(string returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(returnUrl) || returnUrl == Url.Content("~/") || returnUrl == "/")
+            {
+                return Url.Content("~/Home");
+            }
+
+            return returnUrl;
         }
 
         private IUserEmailStore<AppUser> GetEmailStore()

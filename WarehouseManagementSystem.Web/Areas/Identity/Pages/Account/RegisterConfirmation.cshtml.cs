@@ -19,11 +19,16 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _sender;
+        private readonly ILogger<RegisterConfirmationModel> _logger;
 
-        public RegisterConfirmationModel(UserManager<AppUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(
+            UserManager<AppUser> userManager,
+            IEmailSender sender,
+            ILogger<RegisterConfirmationModel> logger)
         {
             _userManager = userManager;
             _sender = sender;
+            _logger = logger;
         }
 
         /// <summary>
@@ -48,6 +53,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
         {
             if (email == null)
             {
+                _logger.LogWarning("Register confirmation page was requested without email");
                 return RedirectToPage("/Index");
             }
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -55,6 +61,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
+                _logger.LogWarning("Register confirmation page could not find user with email {Email}", email);
                 return NotFound($"Unable to load user with email '{email}'.");
             }
 
@@ -71,6 +78,8 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                     protocol: Request.Scheme);
+
+                _logger.LogInformation("Register confirmation link was generated for user {UserId}", userId);
             }
 
             return Page();

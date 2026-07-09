@@ -2,7 +2,40 @@
 @model ConfirmEmailChangeModel
 @{
     ViewData["Title"] = "Confirm email change";
+    ViewData["HideStatusCloseButton"] = true;
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="wms-auth-page">
+    <div class="wms-auth-card">
+        <div class="wms-auth-header">
+            <div class="wms-auth-icon">WMS</div>
+            <div>
+                <div class="wms-auth-eyebrow">Warehouse Management System</div>
+                <h1>Confirm email change</h1>
+                <p>Your email change request has been processed.</p>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            var statusMessageClass = Model.StatusMessage.StartsWith("Error") ? "danger" : "success";
+
+            <div class="alert alert-@statusMessageClass wms-status-message" role="alert">
+                @Model.StatusMessage
+            </div>
+        }
+
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="wms-account-secondary-button w-100 text-decoration-none text-center">
+                Go to account
+            </a>
+        }
+        else
+        {
+            <a asp-page="./Login" class="wms-account-secondary-button w-100 text-decoration-none text-center">
+                Go to login
+            </a>
+        }
+    </div>
+</div>

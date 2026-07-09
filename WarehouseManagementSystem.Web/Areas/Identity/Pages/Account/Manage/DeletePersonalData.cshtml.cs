@@ -61,6 +61,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Delete personal data page could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -73,6 +74,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Delete personal data submit could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -81,6 +83,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             {
                 if (!await _userManager.CheckPasswordAsync(user, Input.Password))
                 {
+                    _logger.LogWarning("User {UserId} failed password check while deleting personal data", user.Id);
                     ModelState.AddModelError(string.Empty, "Incorrect password.");
                     return Page();
                 }

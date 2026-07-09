@@ -38,12 +38,20 @@
                 <label asp-for="Email" class="form-label"></label>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="OIB" class="form-control" disabled />
-                <label asp-for="OIB" class="form-label"></label>
+                <input asp-for="Input.OIB"
+                       class="form-control"
+                       placeholder="Enter OIB"
+                       maxlength="11" />
+                <label asp-for="Input.OIB" class="form-label"></label>
+                <span asp-validation-for="Input.OIB" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="JMBG" class="form-control" disabled />
-                <label asp-for="JMBG" class="form-label"></label>
+                <input asp-for="Input.JMBG"
+                       class="form-control"
+                       placeholder="Enter JMBG"
+                       maxlength="13" />
+                <label asp-for="Input.JMBG" class="form-label"></label>
+                <span asp-validation-for="Input.JMBG" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>

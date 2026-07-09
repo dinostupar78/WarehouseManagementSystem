@@ -57,16 +57,12 @@
                 <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create new account</a>
             </div>
 
-            <a id="resend-confirmation"
-               class="wms-auth-muted-link"
-               asp-page="./ResendEmailConfirmation">
-                Resend email confirmation
-            </a>
         </form>
 
         <form method="post"
               asp-page-handler="Guest"
               asp-route-returnUrl="@Model.ReturnUrl"
+              data-no-page-loader
               class="wms-auth-guest-form">
             <button type="submit" class="wms-auth-guest-button">
                 <span>

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace WarehouseManagementSystem.Web.Services
+namespace WarehouseManagementSystem.Web.Services.Email
 {
     public class NoOpEmailSender : IEmailSender
     {

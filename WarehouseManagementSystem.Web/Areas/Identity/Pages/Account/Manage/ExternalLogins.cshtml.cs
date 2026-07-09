@@ -19,15 +19,18 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IUserStore<AppUser> _userStore;
+        private readonly ILogger<ExternalLoginsModel> _logger;
 
         public ExternalLoginsModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            IUserStore<AppUser> userStore)
+            IUserStore<AppUser> userStore,
+            ILogger<ExternalLoginsModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userStore = userStore;
+            _logger = logger;
         }
 
         /// <summary>
@@ -60,6 +63,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("External logins page could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -83,23 +87,28 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("External login removal could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
             {
+                _logger.LogWarning("User {UserId} failed to remove external login {LoginProvider}", user.Id, loginProvider);
                 StatusMessage = "The external login was not removed.";
                 return RedirectToPage();
             }
 
             await _signInManager.RefreshSignInAsync(user);
+            _logger.LogInformation("User {UserId} removed external login {LoginProvider}", user.Id, loginProvider);
             StatusMessage = "The external login was removed.";
             return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostLinkLoginAsync(string provider)
         {
+            _logger.LogInformation("User {User} started linking external login {LoginProvider}", User.Identity?.Name ?? "Unknown", provider);
+
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -114,6 +123,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("External login callback could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -121,12 +131,14 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var info = await _signInManager.GetExternalLoginInfoAsync(userId);
             if (info == null)
             {
+                _logger.LogWarning("User {UserId} failed to load external login information while linking provider", userId);
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info.");
             }
 
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
+                _logger.LogWarning("User {UserId} failed to link external login {LoginProvider}", userId, info.LoginProvider);
                 StatusMessage = "The external login was not added. External logins can only be associated with one account.";
                 return RedirectToPage();
             }
@@ -134,6 +146,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
+            _logger.LogInformation("User {UserId} linked external login {LoginProvider}", userId, info.LoginProvider);
             StatusMessage = "The external login was added.";
             return RedirectToPage();
         }

@@ -17,13 +17,16 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly ILogger<IndexModel> _logger;
 
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            ILogger<IndexModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -35,12 +38,6 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
         [Display(Name = "Email address")]
         public string Email { get; set; }
-
-        [Display(Name = "OIB")]
-        public string OIB { get; set; }
-
-        [Display(Name = "JMBG")]
-        public string JMBG { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -69,6 +66,18 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Required]
+            [StringLength(11, MinimumLength = 11)]
+            [RegularExpression("^[0-9]*$", ErrorMessage = "OIB may contain digits only.")]
+            [Display(Name = "OIB")]
+            public string OIB { get; set; }
+
+            [Required]
+            [StringLength(13, MinimumLength = 13)]
+            [RegularExpression("^[0-9]*$", ErrorMessage = "JMBG may contain digits only.")]
+            [Display(Name = "JMBG")]
+            public string JMBG { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
@@ -79,13 +88,19 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             Username = userName;
             Email = email;
-            OIB = user.OIB;
-            JMBG = user.JMBG;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                OIB = user.OIB,
+                JMBG = user.JMBG
             };
+        }
+
+        private async Task LoadDisplayDataAsync(AppUser user)
+        {
+            Username = await _userManager.GetUserNameAsync(user);
+            Email = await _userManager.GetEmailAsync(user);
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -93,6 +108,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Profile page could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -105,12 +121,13 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+                _logger.LogWarning("Profile update could not load user {UserId}", _userManager.GetUserId(User));
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
             {
-                await LoadAsync(user);
+                await LoadDisplayDataAsync(user);
                 return Page();
             }
 
@@ -120,12 +137,34 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
+                    _logger.LogWarning("User {User} failed to update phone number", User.Identity?.Name ?? "Unknown");
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
             }
 
+            if (Input.OIB != user.OIB || Input.JMBG != user.JMBG)
+            {
+                user.OIB = Input.OIB;
+                user.JMBG = Input.JMBG;
+
+                var updateProfileResult = await _userManager.UpdateAsync(user);
+                if (!updateProfileResult.Succeeded)
+                {
+                    _logger.LogWarning("User {User} failed to update profile details", User.Identity?.Name ?? "Unknown");
+
+                    foreach (var error in updateProfileResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    await LoadDisplayDataAsync(user);
+                    return Page();
+                }
+            }
+
             await _signInManager.RefreshSignInAsync(user);
+            _logger.LogInformation("User {User} updated profile details", User.Identity?.Name ?? "Unknown");
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
@@ -136,11 +175,13 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             if (user == null)
             {
+                _logger.LogWarning("Avatar upload could not load the current user");
                 return NotFound();
             }
 
             if (file == null || file.Length == 0)
             {
+                _logger.LogWarning("User {User} tried to upload an empty avatar file", User.Identity?.Name ?? "Unknown");
                 return BadRequest("File is required.");
             }
 
@@ -152,6 +193,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             if (!allowedContentTypes.Contains(file.ContentType))
             {
+                _logger.LogWarning("User {User} tried to upload avatar with invalid content type {ContentType}", User.Identity?.Name ?? "Unknown", file.ContentType);
                 return BadRequest("Only JPG, PNG and WEBP images are allowed.");
             }
 
@@ -159,6 +201,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             if (file.Length > maxFileSize)
             {
+                _logger.LogWarning("User {User} tried to upload avatar larger than allowed size", User.Identity?.Name ?? "Unknown");
                 return BadRequest("Maximum file size is 2 MB.");
             }
 
@@ -173,6 +216,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             if (!allowedExtensions.Contains(extension))
             {
+                _logger.LogWarning("User {User} tried to upload avatar with invalid extension {Extension}", User.Identity?.Name ?? "Unknown", extension);
                 return BadRequest("Invalid file extension.");
             }
 
@@ -203,6 +247,11 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             await _userManager.UpdateAsync(user);
 
+            _logger.LogInformation(
+                "User {User} uploaded avatar {FileName}",
+                User.Identity?.Name ?? "Unknown",
+                file.FileName);
+
             return new JsonResult(new { success = true });
         }
 
@@ -223,6 +272,7 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
 
             if (user == null)
             {
+                _logger.LogWarning("Avatar deletion could not load the current user");
                 return NotFound();
             }
 
@@ -235,6 +285,10 @@ namespace WarehouseManagementSystem.Web.Areas.Identity.Pages.Account.Manage
             user.AvatarUploadedAt = null;
 
             await _userManager.UpdateAsync(user);
+
+            _logger.LogWarning(
+                "User {User} deleted profile avatar",
+                User.Identity?.Name ?? "Unknown");
 
             return new JsonResult(new { success = true });
         }

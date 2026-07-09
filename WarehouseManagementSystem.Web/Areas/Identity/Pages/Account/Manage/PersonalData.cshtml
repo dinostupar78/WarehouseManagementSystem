@@ -33,7 +33,10 @@
         </p>
 
         <div class="wms-account-actions">
-            <form id="download-data" asp-page="DownloadPersonalData" method="post">
+            <form id="download-data"
+                  asp-page="DownloadPersonalData"
+                  method="post"
+                  data-no-page-loader>
                 <button class="wms-account-primary-button" type="submit">
                     Download data
                 </button>
