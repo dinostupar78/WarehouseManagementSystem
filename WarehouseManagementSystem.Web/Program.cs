@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 using System.Globalization;
 using WarehouseManagementSystem.DAL.Data;
 using WarehouseManagementSystem.Model;
 using WarehouseManagementSystem.Web.Repositories;
-using WarehouseManagementSystem.Web.Services;
+using WarehouseManagementSystem.Web.Services.AI;
+using WarehouseManagementSystem.Web.Services.Email;
 
 public partial class Program
 {
@@ -23,6 +27,19 @@ public partial class Program
     private static void RunWebApp(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Error)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .WriteTo.File(
+                path: "Logs/wms-log-.txt",
+                rollingInterval: RollingInterval.Day,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} | {Level:u3} | {Message:lj}{NewLine}{Exception}")
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
 
         // Dodaj DbContext sa PostgreSQL
         var connectionString = builder.Configuration.GetConnectionString("WarehouseManagementSystemDbContext");
@@ -47,7 +64,17 @@ public partial class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();
-        builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, NoOpEmailSender>();
+        builder.Services.Configure<EmailJsOptions>(
+            builder.Configuration.GetSection("EmailJs"));
+
+        builder.Services.AddHttpClient<IEmailSender, EmailJSEmailSender>();
+
+        builder.Services.Configure<GroqOptions>(
+            builder.Configuration.GetSection("Groq"));
+
+        builder.Services.AddScoped<AiPromptProvider>();
+        builder.Services.AddScoped<AiReferenceMatcher>();
+        builder.Services.AddHttpClient<GroqAiService>();
 
         // builder.Services.AddSingleton<WarehouseMockRepository>();
         // builder.Services.AddSingleton<LocationMockRepository>();
@@ -58,6 +85,7 @@ public partial class Program
         // builder.Services.AddSingleton<PurchaseOrderMockRepository>();
         // builder.Services.AddSingleton<PurchaseOrderItemMockRepository>();
 
+        builder.Services.AddScoped<DashboardRepository>();
         builder.Services.AddScoped<WarehouseRepository>();
         builder.Services.AddScoped<LocationRepository>();
         builder.Services.AddScoped<CategoryRepository>();
