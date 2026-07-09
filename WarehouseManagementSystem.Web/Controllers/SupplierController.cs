@@ -22,6 +22,11 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Index()
         {
             var suppliers = _supplierRepository.GetAll();
+
+            ViewBag.TotalSuppliers = _supplierRepository.GetTotalCount();
+            ViewBag.SuppliersWithEmail = _supplierRepository.GetSuppliersWithEmailCount();
+            ViewBag.SuppliersWithAddress = _supplierRepository.GetSuppliersWithAddressCount();
+
             return View(suppliers);
         }
 
@@ -61,6 +66,13 @@ namespace WarehouseManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 _supplierRepository.Add(supplier);
+
+                _logger.LogInformation(
+                    "User {User} created Supplier {SupplierId} ({SupplierName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    supplier.Id,
+                    supplier.Name);
+
                 TempData["ToastTitle"] = "Supplier created";
                 TempData["ToastMessage"] = "Supplier was created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -75,6 +87,7 @@ namespace WarehouseManagementSystem.Controllers
             var supplier = _supplierRepository.GetById(id);
             if (supplier == null)
             {
+                _logger.LogWarning("Supplier not found for edit with ID: {SupplierId}", id);
                 return NotFound();
             }
             return View(supplier);
@@ -87,12 +100,20 @@ namespace WarehouseManagementSystem.Controllers
         {
             if (id != supplier.Id)
             {
+                _logger.LogWarning("Supplier edit rejected because route ID {RouteId} does not match model ID {ModelId}", id, supplier.Id);
                 return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 _supplierRepository.Update(supplier);
+
+                _logger.LogInformation(
+                    "User {User} updated Supplier {SupplierId} ({SupplierName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    supplier.Id,
+                    supplier.Name);
+
                 TempData["ToastTitle"] = "Supplier updated";
                 TempData["ToastMessage"] = "Supplier was updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -128,11 +149,24 @@ namespace WarehouseManagementSystem.Controllers
         {
             if (_supplierRepository.HasPurchaseOrders(id))
             {
+                _logger.LogWarning(
+                    "User {User} tried to delete Supplier {SupplierId}, but delete was blocked because it has related purchase orders",
+                    User.Identity?.Name ?? "Anonymous",
+                    id);
+
                 TempData["DeleteError"] = "Supplier cannot be deleted because it has related purchase orders.";
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
+            var supplier = _supplierRepository.GetById(id);
             _supplierRepository.Delete(id);
+
+            _logger.LogWarning(
+                "User {User} deleted Supplier {SupplierId} ({SupplierName})",
+                User.Identity?.Name ?? "Anonymous",
+                id,
+                supplier?.Name ?? "Unknown");
+
             TempData["ToastTitle"] = "Supplier deleted";
             TempData["ToastMessage"] = "Supplier was deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -159,6 +193,50 @@ namespace WarehouseManagementSystem.Controllers
                 .ToList();
 
             return Json(suppliers);
+        }
+
+        [HttpGet("by-email-domain")]
+        public IActionResult ByEmailDomain(string domain)
+        {
+            if (string.IsNullOrWhiteSpace(domain))
+            {
+                return BadRequest();
+            }
+
+            var suppliers = _supplierRepository.GetByEmailDomain(domain);
+
+            ViewBag.EmailDomain = domain;
+
+            _logger.LogInformation(
+                "User {User} viewed suppliers with email domain {Domain}",
+                User.Identity?.Name ?? "Anonymous",
+                domain);
+
+            return View(suppliers);
+        }
+
+        [HttpGet("with-purchase-orders")]
+        public IActionResult WithPurchaseOrders()
+        {
+            var suppliers = _supplierRepository.GetWithPurchaseOrders();
+
+            _logger.LogInformation(
+                "User {User} viewed suppliers with purchase orders",
+                User.Identity?.Name ?? "Anonymous");
+
+            return View(suppliers);
+        }
+
+        [HttpGet("without-purchase-orders")]
+        public IActionResult WithoutPurchaseOrders()
+        {
+            var suppliers = _supplierRepository.GetWithoutPurchaseOrders();
+
+            _logger.LogInformation(
+                "User {User} viewed suppliers without purchase orders",
+                User.Identity?.Name ?? "Anonymous");
+
+            return View(suppliers);
         }
     }
 }

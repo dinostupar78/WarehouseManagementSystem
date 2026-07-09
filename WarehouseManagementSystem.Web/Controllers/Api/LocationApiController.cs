@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class LocationApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<LocationApiController> _logger;
 
-        public LocationApiController(WarehouseManagementSystemDbContext dbContext)
+        public LocationApiController(WarehouseManagementSystemDbContext dbContext, ILogger<LocationApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -53,6 +55,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (location == null)
             {
+                _logger.LogWarning("API location lookup failed for ID {LocationId}", id);
                 return NotFound();
             }
 
@@ -68,6 +71,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!warehouseExists)
             {
+                _logger.LogWarning("API location create rejected because Warehouse {WarehouseId} does not exist", dto.WarehouseId);
                 return BadRequest("Selected warehouse does not exist.");
             }
 
@@ -80,6 +84,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .AsNoTracking()
                 .Include(l => l.Warehouse)
                 .First(l => l.Id == location.Id);
+
+            _logger.LogInformation("API created Location {LocationId} ({LocationCode})", location.Id, location.Code);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -95,6 +101,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (location == null)
             {
+                _logger.LogWarning("API location update failed because ID {LocationId} was not found", id);
                 return NotFound();
             }
 
@@ -104,6 +111,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!warehouseExists)
             {
+                _logger.LogWarning("API location update rejected for Location {LocationId} because Warehouse {WarehouseId} does not exist", id, dto.WarehouseId);
                 return BadRequest("Selected warehouse does not exist.");
             }
 
@@ -116,6 +124,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(l => l.Warehouse)
                 .First(l => l.Id == id);
 
+            _logger.LogInformation("API updated Location {LocationId} ({LocationCode})", location.Id, location.Code);
+
             return Ok(ApiMapper.ToDto(updatedLocation));
         }
 
@@ -127,11 +137,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (location == null)
             {
+                _logger.LogWarning("API location delete failed because ID {LocationId} was not found", id);
                 return NotFound();
             }
 
             _dbContext.Locations.Remove(location);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Location {LocationId} ({LocationCode})", location.Id, location.Code);
 
             return NoContent();
         }

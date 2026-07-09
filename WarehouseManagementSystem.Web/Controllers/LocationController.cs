@@ -22,6 +22,11 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Index()
         {
             var locations = _locationRepository.GetAll();
+
+            ViewBag.TotalLocations = _locationRepository.GetTotalCount();
+            ViewBag.TotalZones = _locationRepository.GetZoneCount();
+            ViewBag.LinkedWarehouses = _locationRepository.GetLinkedWarehouseCount();
+
             return View(locations);
         }
 
@@ -63,6 +68,13 @@ namespace WarehouseManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 _locationRepository.Add(location);
+
+                _logger.LogInformation(
+                    "User {User} created Location {LocationId} ({LocationCode})",
+                    User.Identity?.Name ?? "Anonymous",
+                    location.Id,
+                    location.Code);
+
                 TempData["ToastTitle"] = "Location created";
                 TempData["ToastMessage"] = "Location was created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -77,6 +89,7 @@ namespace WarehouseManagementSystem.Controllers
             var location = _locationRepository.GetById(id);
             if (location == null)
             {
+                _logger.LogWarning("Location not found for edit with ID: {LocationId}", id);
                 return NotFound();
             }
             return View(location);
@@ -91,12 +104,20 @@ namespace WarehouseManagementSystem.Controllers
 
             if (id != location.Id)
             {
+                _logger.LogWarning("Location edit rejected because route ID {RouteId} does not match model ID {ModelId}", id, location.Id);
                 return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 _locationRepository.Update(location);
+
+                _logger.LogInformation(
+                    "User {User} updated Location {LocationId} ({LocationCode})",
+                    User.Identity?.Name ?? "Anonymous",
+                    location.Id,
+                    location.Code);
+
                 TempData["ToastTitle"] = "Location updated";
                 TempData["ToastMessage"] = "Location was updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -130,7 +151,15 @@ namespace WarehouseManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            var location = _locationRepository.GetById(id);
             _locationRepository.Delete(id);
+
+            _logger.LogWarning(
+                "User {User} deleted Location {LocationId} ({LocationCode})",
+                User.Identity?.Name ?? "Anonymous",
+                id,
+                location?.Code ?? "Unknown");
+
             TempData["ToastTitle"] = "Location deleted";
             TempData["ToastMessage"] = "Location was deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -157,6 +186,57 @@ namespace WarehouseManagementSystem.Controllers
                 .ToList();
 
             return Json(locations);
+        }
+
+        [HttpGet("by-zone")]
+        public IActionResult ByZone(string zone)
+        {
+            if (string.IsNullOrWhiteSpace(zone))
+            {
+                return BadRequest();
+            }
+
+            var locations = _locationRepository.GetByZone(zone);
+
+            ViewBag.Zone = zone;
+
+            _logger.LogInformation(
+                "User {User} viewed locations in Zone {Zone}",
+                User.Identity?.Name ?? "Anonymous",
+                zone);
+
+            return View(locations);
+        }
+
+        [HttpGet("by-warehouse/{warehouseId:int}")]
+        public IActionResult ByWarehouse(int warehouseId)
+        {
+            var locations = _locationRepository.GetByWarehouse(warehouseId);
+
+            ViewBag.WarehouseId = warehouseId;
+            ViewBag.WarehouseName = locations.FirstOrDefault()?.Warehouse?.Name ?? $"Warehouse {warehouseId}";
+
+            _logger.LogInformation(
+                "User {User} viewed locations for Warehouse {WarehouseId}",
+                User.Identity?.Name ?? "Anonymous",
+                warehouseId);
+
+            return View(locations);
+        }
+
+        [HttpGet("shelf-above")]
+        public IActionResult ShelfAbove(int shelfNumber)
+        {
+            var locations = _locationRepository.GetShelfAbove(shelfNumber);
+
+            ViewBag.ShelfNumber = shelfNumber;
+
+            _logger.LogInformation(
+                "User {User} viewed locations with shelf number above {ShelfNumber}",
+                User.Identity?.Name ?? "Anonymous",
+                shelfNumber);
+
+            return View(locations);
         }
 
         private void ValidateLocationReferences(Location location)

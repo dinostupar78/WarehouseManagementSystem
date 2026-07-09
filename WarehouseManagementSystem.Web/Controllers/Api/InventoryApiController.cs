@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class InventoryApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<InventoryApiController> _logger;
 
-        public InventoryApiController(WarehouseManagementSystemDbContext dbContext)
+        public InventoryApiController(WarehouseManagementSystemDbContext dbContext, ILogger<InventoryApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -55,6 +57,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (inventory == null)
             {
+                _logger.LogWarning("API inventory lookup failed for ID {InventoryId}", id);
                 return NotFound();
             }
 
@@ -70,6 +73,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!productExists)
             {
+                _logger.LogWarning("API inventory create rejected because Product {ProductId} does not exist", dto.ProductId);
                 return BadRequest("Selected product does not exist.");
             }
 
@@ -79,6 +83,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!locationExists)
             {
+                _logger.LogWarning("API inventory create rejected because Location {LocationId} does not exist", dto.LocationId);
                 return BadRequest("Selected location does not exist.");
             }
 
@@ -92,6 +97,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(i => i.Product)
                 .Include(i => i.Location)
                 .First(i => i.Id == inventory.Id);
+
+            _logger.LogInformation("API created Inventory {InventoryId} for Product {ProductId} and Location {LocationId}", inventory.Id, inventory.ProductId, inventory.LocationId);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -107,6 +114,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (inventory == null)
             {
+                _logger.LogWarning("API inventory update failed because ID {InventoryId} was not found", id);
                 return NotFound();
             }
 
@@ -116,6 +124,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!productExists)
             {
+                _logger.LogWarning("API inventory update rejected for Inventory {InventoryId} because Product {ProductId} does not exist", id, dto.ProductId);
                 return BadRequest("Selected product does not exist.");
             }
 
@@ -125,6 +134,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!locationExists)
             {
+                _logger.LogWarning("API inventory update rejected for Inventory {InventoryId} because Location {LocationId} does not exist", id, dto.LocationId);
                 return BadRequest("Selected location does not exist.");
             }
 
@@ -138,6 +148,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(i => i.Location)
                 .First(i => i.Id == id);
 
+            _logger.LogInformation("API updated Inventory {InventoryId} for Product {ProductId} and Location {LocationId}", inventory.Id, inventory.ProductId, inventory.LocationId);
+
             return Ok(ApiMapper.ToDto(updatedInventory));
         }
 
@@ -149,11 +161,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (inventory == null)
             {
+                _logger.LogWarning("API inventory delete failed because ID {InventoryId} was not found", id);
                 return NotFound();
             }
 
             _dbContext.Inventories.Remove(inventory);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Inventory {InventoryId}", inventory.Id);
 
             return NoContent();
         }

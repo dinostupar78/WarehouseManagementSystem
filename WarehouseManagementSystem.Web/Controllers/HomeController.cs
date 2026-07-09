@@ -2,21 +2,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly DashboardRepository _dashboardRepository;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(DashboardRepository dashboardRepository, ILogger<HomeController> logger)
         {
+            _dashboardRepository = dashboardRepository;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = await _dashboardRepository.GetDashboardAsync();
+            return View(model);
         }
 
         public IActionResult Privacy()

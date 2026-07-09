@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class ProductApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<ProductApiController> _logger;
 
-        public ProductApiController(WarehouseManagementSystemDbContext dbContext)
+        public ProductApiController(WarehouseManagementSystemDbContext dbContext, ILogger<ProductApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -54,6 +56,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (product == null)
             {
+                _logger.LogWarning("API product lookup failed for ID {ProductId}", id);
                 return NotFound();
             }
 
@@ -69,6 +72,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!categoryExists)
             {
+                _logger.LogWarning("API product create rejected because Category {CategoryId} does not exist", dto.CategoryId);
                 return BadRequest("Selected category does not exist.");
             }
 
@@ -81,6 +85,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .AsNoTracking()
                 .Include(p => p.Category)
                 .First(p => p.Id == product.Id);
+
+            _logger.LogInformation("API created Product {ProductId} ({ProductName})", product.Id, product.Name);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -96,6 +102,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (product == null)
             {
+                _logger.LogWarning("API product update failed because ID {ProductId} was not found", id);
                 return NotFound();
             }
 
@@ -105,6 +112,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!categoryExists)
             {
+                _logger.LogWarning("API product update rejected for Product {ProductId} because Category {CategoryId} does not exist", id, dto.CategoryId);
                 return BadRequest("Selected category does not exist.");
             }
 
@@ -117,6 +125,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(p => p.Category)
                 .First(p => p.Id == id);
 
+            _logger.LogInformation("API updated Product {ProductId} ({ProductName})", product.Id, product.Name);
+
             return Ok(ApiMapper.ToDto(updatedProduct));
         }
 
@@ -128,6 +138,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (product == null)
             {
+                _logger.LogWarning("API product delete failed because ID {ProductId} was not found", id);
                 return NotFound();
             }
 
@@ -137,11 +148,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (hasPurchaseOrderItems)
             {
+                _logger.LogWarning("API blocked delete for Product {ProductId} because related purchase order items exist", id);
                 return Conflict("Product cannot be deleted because it has related purchase order items.");
             }
 
             _dbContext.Products.Remove(product);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Product {ProductId} ({ProductName})", product.Id, product.Name);
 
             return NoContent();
         }

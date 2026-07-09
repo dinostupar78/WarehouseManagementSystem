@@ -23,6 +23,11 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Index()
         {
             var inventories = _inventoryRepository.GetAll();
+
+            ViewBag.TotalInventoryItems = _inventoryRepository.GetTotalCount();
+            ViewBag.TotalStockUnits = _inventoryRepository.GetTotalStockUnits();
+            ViewBag.LowStockItems = _inventoryRepository.GetLowStockCount();
+
             return View(inventories);
         }
 
@@ -64,6 +69,14 @@ namespace WarehouseManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 _inventoryRepository.Add(inventory);
+
+                _logger.LogInformation(
+                    "User {User} created Inventory {InventoryId} for Product {ProductId} at Location {LocationId}",
+                    User.Identity?.Name ?? "Anonymous",
+                    inventory.Id,
+                    inventory.ProductId,
+                    inventory.LocationId);
+
                 TempData["ToastTitle"] = "Inventory created";
                 TempData["ToastMessage"] = "Inventory item was created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -78,6 +91,7 @@ namespace WarehouseManagementSystem.Controllers
             var inventory = _inventoryRepository.GetById(id);
             if (inventory == null)
             {
+                _logger.LogWarning("Inventory not found for edit with ID: {InventoryId}", id);
                 return NotFound();
             }
             return View(inventory);
@@ -92,12 +106,21 @@ namespace WarehouseManagementSystem.Controllers
 
             if (id != inventory.Id)
             {
+                _logger.LogWarning("Inventory edit rejected because route ID {RouteId} does not match model ID {ModelId}", id, inventory.Id);
                 return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 _inventoryRepository.Update(inventory);
+
+                _logger.LogInformation(
+                    "User {User} updated Inventory {InventoryId} for Product {ProductId} at Location {LocationId}",
+                    User.Identity?.Name ?? "Anonymous",
+                    inventory.Id,
+                    inventory.ProductId,
+                    inventory.LocationId);
+
                 TempData["ToastTitle"] = "Inventory updated";
                 TempData["ToastMessage"] = "Inventory item was updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -131,7 +154,16 @@ namespace WarehouseManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            var inventory = _inventoryRepository.GetById(id);
             _inventoryRepository.Delete(id);
+
+            _logger.LogWarning(
+                "User {User} deleted Inventory {InventoryId} for Product {ProductId} at Location {LocationId}",
+                User.Identity?.Name ?? "Anonymous",
+                id,
+                inventory?.ProductId,
+                inventory?.LocationId);
+
             TempData["ToastTitle"] = "Inventory deleted";
             TempData["ToastMessage"] = "Inventory item was deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -143,6 +175,59 @@ namespace WarehouseManagementSystem.Controllers
         {
             var inventories = _inventoryRepository.Search(term);
             return PartialView("_InventoryListPartial", inventories);
+        }
+
+        [HttpGet("low-stock")]
+        public IActionResult LowStock(int threshold = 10)
+        {
+            var inventories = _inventoryRepository.GetLowStock(threshold);
+
+            ViewBag.Threshold = threshold;
+
+            _logger.LogInformation(
+                "User {User} viewed inventory items with quantity at or below {Threshold}",
+                User.Identity?.Name ?? "Anonymous",
+                threshold);
+
+            return View(inventories);
+        }
+
+        [HttpGet("by-location/{locationId:int}")]
+        public IActionResult ByLocation(int locationId)
+        {
+            var inventories = _inventoryRepository.GetByLocation(locationId);
+
+            if (!inventories.Any())
+            {
+                _logger.LogWarning(
+                    "User {User} tried to view inventory for Location {LocationId}, but no records were found",
+                    User.Identity?.Name ?? "Anonymous",
+                    locationId);
+            }
+
+            ViewBag.LocationId = locationId;
+            ViewBag.LocationCode = inventories.FirstOrDefault()?.Location?.Code ?? $"LOC-{locationId:0000}";
+
+            return View(inventories);
+        }
+
+        [HttpGet("by-product/{productId:int}")]
+        public IActionResult ByProduct(int productId)
+        {
+            var inventories = _inventoryRepository.GetByProduct(productId);
+
+            if (!inventories.Any())
+            {
+                _logger.LogWarning(
+                    "User {User} tried to view inventory for Product {ProductId}, but no records were found",
+                    User.Identity?.Name ?? "Anonymous",
+                    productId);
+            }
+
+            ViewBag.ProductId = productId;
+            ViewBag.ProductName = inventories.FirstOrDefault()?.Product?.Name ?? $"Product {productId}";
+
+            return View(inventories);
         }
 
         private void ValidateInventoryReferences(Inventory inventory)

@@ -22,6 +22,14 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Index()
         {
             var warehouses = _warehouseRepository.GetAll();
+
+            ViewBag.TotalWarehouses = _warehouseRepository.GetTotalCount();
+            ViewBag.TotalCapacity = _warehouseRepository.GetTotalCapacity();
+
+            var largestWarehouse = _warehouseRepository.GetLargestWarehouse();
+            ViewBag.LargestWarehouseName = largestWarehouse?.Name ?? "No warehouses";
+            ViewBag.LargestWarehouseCapacity = largestWarehouse?.Capacity ?? 0;
+
             return View(warehouses);
         }
 
@@ -61,6 +69,13 @@ namespace WarehouseManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 _warehouseRepository.Add(warehouse);
+
+                _logger.LogInformation(
+                    "User {User} created Warehouse {WarehouseId} ({WarehouseName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    warehouse.Id,
+                    warehouse.Name);
+
                 TempData["ToastTitle"] = "Warehouse created";
                 TempData["ToastMessage"] = "Warehouse was created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -75,6 +90,7 @@ namespace WarehouseManagementSystem.Controllers
             var warehouse = _warehouseRepository.GetById(id);
             if (warehouse == null)
             {
+                _logger.LogWarning("Warehouse not found for edit with ID: {WarehouseId}", id);
                 return NotFound();
             }
             return View(warehouse);
@@ -87,12 +103,20 @@ namespace WarehouseManagementSystem.Controllers
         {
             if (id != warehouse.Id)
             {
+                _logger.LogWarning("Warehouse edit rejected because route ID {RouteId} does not match model ID {ModelId}", id, warehouse.Id);
                 return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 _warehouseRepository.Update(warehouse);
+
+                _logger.LogInformation(
+                    "User {User} updated Warehouse {WarehouseId} ({WarehouseName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    warehouse.Id,
+                    warehouse.Name);
+
                 TempData["ToastTitle"] = "Warehouse updated";
                 TempData["ToastMessage"] = "Warehouse was updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -128,11 +152,24 @@ namespace WarehouseManagementSystem.Controllers
         {
             if (_warehouseRepository.HasPurchaseOrders(id))
             {
+                _logger.LogWarning(
+                    "User {User} tried to delete Warehouse {WarehouseId}, but delete was blocked because it has related purchase orders",
+                    User.Identity?.Name ?? "Anonymous",
+                    id);
+
                 TempData["DeleteError"] = "Warehouse cannot be deleted because it has related purchase orders.";
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
+            var warehouse = _warehouseRepository.GetById(id);
             _warehouseRepository.Delete(id);
+
+            _logger.LogWarning(
+                "User {User} deleted Warehouse {WarehouseId} ({WarehouseName})",
+                User.Identity?.Name ?? "Anonymous",
+                id,
+                warehouse?.Name ?? "Unknown");
+
             TempData["ToastTitle"] = "Warehouse deleted";
             TempData["ToastMessage"] = "Warehouse was deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -165,23 +202,48 @@ namespace WarehouseManagementSystem.Controllers
         [HttpGet("city/{city}")]
         public IActionResult FindByCity(string city)
         {
-            var warehouses = _warehouseRepository.GetAll()
-            .Where(w => w.City == city)
-            .ToList();
+            var warehouses = _warehouseRepository.GetByCity(city);
 
             ViewBag.City = city;
+
+            _logger.LogInformation(
+                "User {User} viewed warehouses in city {City}",
+                User.Identity?.Name ?? "Anonymous",
+                city);
+
             return View(warehouses);
         }
 
-        [HttpGet("capacity-above/{minCapacity:int}")]
-        public IActionResult CapacityAbove(int minCapacity)
+        [HttpGet("country/{country}")]
+        public IActionResult FindByCountry(string country)
         {
-            var warehouses = _warehouseRepository.GetAll()
-            .Where(w => w.Capacity > minCapacity)
-            .ToList();
+            var warehouses = _warehouseRepository.GetByCountry(country);
 
-            ViewBag.MinCapacity = minCapacity;
+            ViewBag.Country = country;
+
+            _logger.LogInformation(
+                "User {User} viewed warehouses in country {Country}",
+                User.Identity?.Name ?? "Anonymous",
+                country);
+
             return View(warehouses);
         }
+
+        [HttpGet("capacity-above/{capacity:int}")]
+        public IActionResult CapacityAbove(int capacity)
+        {
+            var warehouses = _warehouseRepository.GetCapacityAbove(capacity);
+
+            ViewBag.Capacity = capacity;
+
+            _logger.LogInformation(
+                "User {User} viewed warehouses with capacity above {Capacity}",
+                User.Identity?.Name ?? "Anonymous",
+                capacity);
+
+            return View(warehouses);
+        }
+
+
     }
 }

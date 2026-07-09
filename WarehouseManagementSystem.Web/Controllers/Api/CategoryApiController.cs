@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class CategoryApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<CategoryApiController> _logger;
 
-        public CategoryApiController(WarehouseManagementSystemDbContext dbContext)
+        public CategoryApiController(WarehouseManagementSystemDbContext dbContext, ILogger<CategoryApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -49,6 +51,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (category == null)
             {
+                _logger.LogWarning("API category lookup failed for ID {CategoryId}", id);
                 return NotFound();
             }
 
@@ -62,6 +65,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             this._dbContext.Categories.Add(category);
             this._dbContext.SaveChanges();
+
+            _logger.LogInformation("API created Category {CategoryId} ({CategoryName})", category.Id, category.Name);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -79,12 +84,15 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (category == null)
             {
+                _logger.LogWarning("API category update failed because ID {CategoryId} was not found", id);
                 return NotFound();
             }
 
             ApiMapper.UpdateEntity(category, dto);
 
             this._dbContext.SaveChanges();
+
+            _logger.LogInformation("API updated Category {CategoryId} ({CategoryName})", category.Id, category.Name);
 
             return Ok(ApiMapper.ToDto(category));
 
@@ -98,6 +106,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (category == null)
             {
+                _logger.LogWarning("API category delete failed because ID {CategoryId} was not found", id);
                 return NotFound();
             }
 
@@ -107,11 +116,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (hasProducts)
             {
+                _logger.LogWarning("API blocked delete for Category {CategoryId} because related products exist", id);
                 return Conflict("Category cannot be deleted because it has related products.");
             }
 
             _dbContext.Categories.Remove(category);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Category {CategoryId} ({CategoryName})", category.Id, category.Name);
 
             return NoContent();
         }

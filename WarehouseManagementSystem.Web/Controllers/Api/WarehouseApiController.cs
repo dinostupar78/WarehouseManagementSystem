@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class WarehouseApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<WarehouseApiController> _logger;
 
-        public WarehouseApiController(WarehouseManagementSystemDbContext dbContext)
+        public WarehouseApiController(WarehouseManagementSystemDbContext dbContext, ILogger<WarehouseApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -53,6 +55,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (warehouse == null)
             {
+                _logger.LogWarning("API warehouse lookup failed for ID {WarehouseId}", id);
                 return NotFound();
             }
 
@@ -66,6 +69,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             this._dbContext.Warehouses.Add(warehouse);
             this._dbContext.SaveChanges();
+
+            _logger.LogInformation("API created Warehouse {WarehouseId} ({WarehouseName})", warehouse.Id, warehouse.Name);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -82,12 +87,15 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (warehouse == null)
             {
+                _logger.LogWarning("API warehouse update failed because ID {WarehouseId} was not found", id);
                 return NotFound();
             }
 
             ApiMapper.UpdateEntity(warehouse, dto);
 
             this._dbContext.SaveChanges();
+
+            _logger.LogInformation("API updated Warehouse {WarehouseId} ({WarehouseName})", warehouse.Id, warehouse.Name);
 
             return Ok(ApiMapper.ToDto(warehouse));
 
@@ -101,6 +109,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (warehouse == null)
             {
+                _logger.LogWarning("API warehouse delete failed because ID {WarehouseId} was not found", id);
                 return NotFound();
             }
 
@@ -110,11 +119,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (hasPurchaseOrders)
             {
+                _logger.LogWarning("API blocked delete for Warehouse {WarehouseId} because related purchase orders exist", id);
                 return Conflict("Warehouse cannot be deleted because it has related purchase orders.");
             }
 
             _dbContext.Warehouses.Remove(warehouse);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Warehouse {WarehouseId} ({WarehouseName})", warehouse.Id, warehouse.Name);
 
             return NoContent();
         }

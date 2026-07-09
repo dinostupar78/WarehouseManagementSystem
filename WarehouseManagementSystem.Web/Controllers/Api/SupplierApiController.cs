@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class SupplierApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<SupplierApiController> _logger;
 
-        public SupplierApiController(WarehouseManagementSystemDbContext dbContext)
+        public SupplierApiController(WarehouseManagementSystemDbContext dbContext, ILogger<SupplierApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -54,6 +56,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (supplier == null)
             {
+                _logger.LogWarning("API supplier lookup failed for ID {SupplierId}", id);
                 return NotFound();
             }
 
@@ -67,6 +70,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             this._dbContext.Suppliers.Add(supplier);
             this._dbContext.SaveChanges();
+
+            _logger.LogInformation("API created Supplier {SupplierId} ({SupplierName})", supplier.Id, supplier.Name);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -82,12 +87,15 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (supplier == null)
             {
+                _logger.LogWarning("API supplier update failed because ID {SupplierId} was not found", id);
                 return NotFound();
             }
 
             ApiMapper.UpdateEntity(supplier, dto);
 
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API updated Supplier {SupplierId} ({SupplierName})", supplier.Id, supplier.Name);
 
             return Ok(ApiMapper.ToDto(supplier));
         }
@@ -100,6 +108,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (supplier == null)
             {
+                _logger.LogWarning("API supplier delete failed because ID {SupplierId} was not found", id);
                 return NotFound();
             }
 
@@ -109,11 +118,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (hasPurchaseOrders)
             {
+                _logger.LogWarning("API blocked delete for Supplier {SupplierId} because related purchase orders exist", id);
                 return Conflict("Supplier cannot be deleted because it has related purchase orders.");
             }
 
             _dbContext.Suppliers.Remove(supplier);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted Supplier {SupplierId} ({SupplierName})", supplier.Id, supplier.Name);
 
             return NoContent();
         }

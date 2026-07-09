@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WarehouseManagementSystem.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Web.Repositories;
 
 namespace WarehouseManagementSystem.Controllers
@@ -22,6 +21,14 @@ namespace WarehouseManagementSystem.Controllers
         public IActionResult Index()
         {
             var products = _productRepository.GetAll();
+
+            ViewBag.TotalProducts = _productRepository.GetTotalCount();
+            ViewBag.TotalCatalogValue = _productRepository.GetTotalCatalogValue();
+
+            var highestValueProduct = _productRepository.GetHighestValueProduct();
+            ViewBag.HighestValueProductName = highestValueProduct?.Name ?? "No products";
+            ViewBag.HighestValueProductPrice = highestValueProduct?.Price ?? 0m;
+
             return View(products);
         }
 
@@ -63,6 +70,13 @@ namespace WarehouseManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 _productRepository.Add(product);
+
+                _logger.LogInformation(
+                    "User {User} created Product {ProductId} ({ProductName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    product.Id,
+                    product.Name);
+
                 TempData["ToastTitle"] = "Product created";
                 TempData["ToastMessage"] = "Product was created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -78,6 +92,7 @@ namespace WarehouseManagementSystem.Controllers
             var product = _productRepository.GetById(id);
             if (product == null)
             {
+                _logger.LogWarning("Product not found for edit with ID: {ProductId}", id);
                 return NotFound();
             }
             return View(product);
@@ -92,12 +107,20 @@ namespace WarehouseManagementSystem.Controllers
 
             if (id != product.Id)
             {
+                _logger.LogWarning("Product edit rejected because route ID {RouteId} does not match model ID {ModelId}", id, product.Id);
                 return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 _productRepository.Update(product);
+
+                _logger.LogInformation(
+                    "User {User} updated Product {ProductId} ({ProductName})",
+                    User.Identity?.Name ?? "Anonymous",
+                    product.Id,
+                    product.Name);
+
                 TempData["ToastTitle"] = "Product updated";
                 TempData["ToastMessage"] = "Product was updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -133,11 +156,24 @@ namespace WarehouseManagementSystem.Controllers
         {
             if (_productRepository.HasPurchaseOrderItems(id))
             {
+                _logger.LogWarning(
+                    "User {User} tried to delete Product {ProductId}, but delete was blocked because it has related purchase order items",
+                    User.Identity?.Name ?? "Anonymous",
+                    id);
+
                 TempData["DeleteError"] = "Product cannot be deleted because it has related purchase order items.";
                 return RedirectToAction(nameof(Delete), new { id });
             }
 
+            var product = _productRepository.GetById(id);
             _productRepository.Delete(id);
+
+            _logger.LogWarning(
+                "User {User} deleted Product {ProductId} ({ProductName})",
+                User.Identity?.Name ?? "Anonymous",
+                id,
+                product?.Name ?? "Unknown");
+
             TempData["ToastTitle"] = "Product deleted";
             TempData["ToastMessage"] = "Product was deleted successfully.";
             return RedirectToAction(nameof(Index));
@@ -167,14 +203,49 @@ namespace WarehouseManagementSystem.Controllers
             return PartialView("_ProductListPartial", products);
         }
 
-        [HttpGet("price-above/{minPrice:decimal}")]
+        [HttpGet("price-above")]
         public IActionResult PriceAbove(decimal minPrice)
         {
-            var products = _productRepository.GetAll()
-                .Where(p => p.Price > minPrice)
-                .ToList();
+            var products = _productRepository.GetPriceAbove(minPrice);
 
             ViewBag.MinPrice = minPrice;
+
+            _logger.LogInformation(
+                "User {User} viewed products with price above {MinPrice}",
+                User.Identity?.Name ?? "Anonymous",
+                minPrice);
+
+            return View(products);
+        }
+
+        [HttpGet("category/{categoryId:int}")]
+        public IActionResult ByCategory(int categoryId)
+        {
+            var products = _productRepository.GetByCategory(categoryId);
+
+            ViewBag.CategoryId = categoryId;
+            ViewBag.CategoryName = products.FirstOrDefault()?.Category?.Name ?? $"Category {categoryId}";
+
+            _logger.LogInformation(
+                "User {User} viewed products in Category {CategoryId}",
+                User.Identity?.Name ?? "Anonymous",
+                categoryId);
+
+            return View(products);
+        }
+
+        [HttpGet("weight-above")]
+        public IActionResult WeightAbove(decimal minWeight)
+        {
+            var products = _productRepository.GetWeightAbove(minWeight);
+
+            ViewBag.MinWeight = minWeight;
+
+            _logger.LogInformation(
+                "User {User} viewed products with weight above {MinWeight}",
+                User.Identity?.Name ?? "Anonymous",
+                minWeight);
+
             return View(products);
         }
 

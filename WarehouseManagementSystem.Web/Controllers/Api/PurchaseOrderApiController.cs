@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class PurchaseOrderApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<PurchaseOrderApiController> _logger;
 
-        public PurchaseOrderApiController(WarehouseManagementSystemDbContext dbContext)
+        public PurchaseOrderApiController(WarehouseManagementSystemDbContext dbContext, ILogger<PurchaseOrderApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -55,6 +57,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (purchaseOrder == null)
             {
+                _logger.LogWarning("API purchase order lookup failed for ID {PurchaseOrderId}", id);
                 return NotFound();
             }
 
@@ -66,6 +69,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
         {
             if (dto.ExpectedDeliveryDate < dto.OrderDate)
             {
+                _logger.LogWarning("API purchase order create rejected because expected delivery date is before order date");
                 return BadRequest("Expected delivery date cannot be before the order date.");
             }
 
@@ -75,6 +79,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!supplierExists)
             {
+                _logger.LogWarning("API purchase order create rejected because Supplier {SupplierId} does not exist", dto.SupplierId);
                 return BadRequest("Selected supplier does not exist.");
             }
 
@@ -84,6 +89,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!warehouseExists)
             {
+                _logger.LogWarning("API purchase order create rejected because Warehouse {WarehouseId} does not exist", dto.WarehouseId);
                 return BadRequest("Selected warehouse does not exist.");
             }
 
@@ -102,6 +108,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(po => po.Warehouse)
                 .First(po => po.Id == purchaseOrder.Id);
 
+            _logger.LogInformation("API created PurchaseOrder {PurchaseOrderId} (PO-{OrderNumber})", purchaseOrder.Id, purchaseOrder.OrderNumber);
+
             return CreatedAtAction(
                 nameof(Get),
                 new { id = purchaseOrder.Id },
@@ -113,6 +121,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
         {
             if (dto.ExpectedDeliveryDate < dto.OrderDate)
             {
+                _logger.LogWarning("API purchase order update rejected for PurchaseOrder {PurchaseOrderId} because expected delivery date is before order date", id);
                 return BadRequest("Expected delivery date cannot be before the order date.");
             }
 
@@ -121,6 +130,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (purchaseOrder == null)
             {
+                _logger.LogWarning("API purchase order update failed because ID {PurchaseOrderId} was not found", id);
                 return NotFound();
             }
 
@@ -130,6 +140,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!supplierExists)
             {
+                _logger.LogWarning("API purchase order update rejected for PurchaseOrder {PurchaseOrderId} because Supplier {SupplierId} does not exist", id, dto.SupplierId);
                 return BadRequest("Selected supplier does not exist.");
             }
 
@@ -139,6 +150,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!warehouseExists)
             {
+                _logger.LogWarning("API purchase order update rejected for PurchaseOrder {PurchaseOrderId} because Warehouse {WarehouseId} does not exist", id, dto.WarehouseId);
                 return BadRequest("Selected warehouse does not exist.");
             }
 
@@ -152,6 +164,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(po => po.Warehouse)
                 .First(po => po.Id == id);
 
+            _logger.LogInformation("API updated PurchaseOrder {PurchaseOrderId} (PO-{OrderNumber})", purchaseOrder.Id, purchaseOrder.OrderNumber);
+
             return Ok(ApiMapper.ToDto(updatedPurchaseOrder));
         }
 
@@ -163,6 +177,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (purchaseOrder == null)
             {
+                _logger.LogWarning("API purchase order delete failed because ID {PurchaseOrderId} was not found", id);
                 return NotFound();
             }
 
@@ -172,11 +187,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (hasItems)
             {
+                _logger.LogWarning("API blocked delete for PurchaseOrder {PurchaseOrderId} because related purchase order items exist", id);
                 return Conflict("Purchase order cannot be deleted because it has related purchase order items.");
             }
 
             _dbContext.PurchaseOrders.Remove(purchaseOrder);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted PurchaseOrder {PurchaseOrderId} (PO-{OrderNumber})", purchaseOrder.Id, purchaseOrder.OrderNumber);
 
             return NoContent();
         }

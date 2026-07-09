@@ -10,10 +10,12 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
     public class PurchaseOrderItemApiController : ControllerBase
     {
         private readonly WarehouseManagementSystemDbContext _dbContext;
+        private readonly ILogger<PurchaseOrderItemApiController> _logger;
 
-        public PurchaseOrderItemApiController(WarehouseManagementSystemDbContext dbContext)
+        public PurchaseOrderItemApiController(WarehouseManagementSystemDbContext dbContext, ILogger<PurchaseOrderItemApiController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -55,6 +57,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (item == null)
             {
+                _logger.LogWarning("API purchase order item lookup failed for ID {PurchaseOrderItemId}", id);
                 return NotFound();
             }
 
@@ -70,6 +73,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!purchaseOrderExists)
             {
+                _logger.LogWarning("API purchase order item create rejected because PurchaseOrder {PurchaseOrderId} does not exist", dto.PurchaseOrderId);
                 return BadRequest("Selected purchase order does not exist.");
             }
 
@@ -79,6 +83,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!productExists)
             {
+                _logger.LogWarning("API purchase order item create rejected because Product {ProductId} does not exist", dto.ProductId);
                 return BadRequest("Selected product does not exist.");
             }
 
@@ -92,6 +97,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(poi => poi.PurchaseOrder)
                 .Include(poi => poi.Product)
                 .First(poi => poi.Id == item.Id);
+
+            _logger.LogInformation("API created PurchaseOrderItem {PurchaseOrderItemId} for PurchaseOrder {PurchaseOrderId} and Product {ProductId}", item.Id, item.PurchaseOrderId, item.ProductId);
 
             return CreatedAtAction(
                 nameof(Get),
@@ -107,6 +114,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (item == null)
             {
+                _logger.LogWarning("API purchase order item update failed because ID {PurchaseOrderItemId} was not found", id);
                 return NotFound();
             }
 
@@ -116,6 +124,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!purchaseOrderExists)
             {
+                _logger.LogWarning("API purchase order item update rejected for item {PurchaseOrderItemId} because PurchaseOrder {PurchaseOrderId} does not exist", id, dto.PurchaseOrderId);
                 return BadRequest("Selected purchase order does not exist.");
             }
 
@@ -125,6 +134,7 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (!productExists)
             {
+                _logger.LogWarning("API purchase order item update rejected for item {PurchaseOrderItemId} because Product {ProductId} does not exist", id, dto.ProductId);
                 return BadRequest("Selected product does not exist.");
             }
 
@@ -138,6 +148,8 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
                 .Include(poi => poi.Product)
                 .First(poi => poi.Id == id);
 
+            _logger.LogInformation("API updated PurchaseOrderItem {PurchaseOrderItemId} for PurchaseOrder {PurchaseOrderId} and Product {ProductId}", item.Id, item.PurchaseOrderId, item.ProductId);
+
             return Ok(ApiMapper.ToDto(updatedItem));
         }
 
@@ -149,11 +161,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
 
             if (item == null)
             {
+                _logger.LogWarning("API purchase order item delete failed because ID {PurchaseOrderItemId} was not found", id);
                 return NotFound();
             }
 
             _dbContext.PurchaseOrderItems.Remove(item);
             _dbContext.SaveChanges();
+
+            _logger.LogInformation("API deleted PurchaseOrderItem {PurchaseOrderItemId}", item.Id);
 
             return NoContent();
         }
