@@ -1,0 +1,36 @@
+﻿@model IReadOnlyList<WarehouseManagementSystem.Model.Inventory>
+
+@{
+    ViewData["Title"] = "Low Stock Inventory";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">INVENTORY</a> &gt;
+    LOW STOCK
+</div>
+
+<h1 class="page-title">Low Stock Inventory</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Product Information</th>
+                <th>Location Details</th>
+                <th>Stock / Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_InventoryListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Inventory
+    </a>
+</div>

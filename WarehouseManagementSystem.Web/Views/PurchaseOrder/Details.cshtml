@@ -71,28 +71,67 @@ else
 
 @if (Model != null)
 {
-    <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Purchase Order
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this purchase order</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Purchase Order
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Purchase Order
+                </a>
 
-        <a asp-action="FindByOrderStatus" 
-        asp-route-status="@Model.Status.ToString().ToLower()" 
-        class="btn btn-outline-info px-4 fw-bold rounded-pill me-3">
-        View all @Model.Status orders
-        </a>
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Purchase Order
+                </a>
+            </div>
+        </div>
 
-        <a asp-action="Index" 
-        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Order Book
-        </a>
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related PO Views</div>
+                <div class="fw-bolder">Explore related purchase orders</div>
+            </div>
+
+            <div class="wms-related-actions">
+                <a asp-action="FindByOrderStatus"
+                   asp-route-status="@Model.Status.ToString().ToLower()"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Status</span>
+                    <span>@Model.Status orders</span>
+                </a>
+
+                <a asp-action="BySupplier"
+                   asp-route-supplierId="@Model.SupplierId"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Supplier</span>
+                    <span>Orders from @(Model.Supplier?.Name)</span>
+                </a>
+
+                <a asp-action="Overdue"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Delivery risk</span>
+                    <span>Overdue orders</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to order book</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Order Book
+            </a>
+        </div>
     </div>
 }

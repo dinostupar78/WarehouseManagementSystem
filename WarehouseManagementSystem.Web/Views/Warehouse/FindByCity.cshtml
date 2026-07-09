@@ -10,15 +10,6 @@
 </div>
 <h1 class="page-title">Warehouses in @ViewBag.City</h1>
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="metric-card border-start border-4 border-primary">
-            <div class="text-muted small fw-bold text-uppercase mb-2">Total Warehouses</div>
-            <div class="fs-4 fw-bolder text-primary">@(Model?.Count ?? 0) Active Units</div>
-        </div>
-    </div>
-</div>
-
 @if (Model == null || Model.Count == 0)
 {
     <div class="alert alert-secondary">No warehouses found in @ViewBag.City.</div>

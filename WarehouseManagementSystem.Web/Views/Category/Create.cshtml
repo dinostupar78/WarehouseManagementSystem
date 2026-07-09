@@ -1,4 +1,5 @@
-﻿@model WarehouseManagementSystem.Model.Category
+﻿@using WarehouseManagementSystem.Web.Models.AI
+@model WarehouseManagementSystem.Model.Category
 
 @{
     ViewData["Title"] = "Create Category";
@@ -19,6 +20,13 @@
     {
         <div asp-validation-summary="All" class="alert alert-danger"></div>
     }
+
+    @await Html.PartialAsync("_AiFormAssistant", new AiFormAssistantModel
+    {
+        Entity = "category",
+        Title = "Generate category data",
+        Placeholder = "Example: Create a category called Safety Equipment. Description: Protective equipment used by warehouse workers."
+    })
 
     <div class="detail-card border-0 h-100">
         <div class="d-flex align-items-center mb-4">

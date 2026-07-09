@@ -1,0 +1,35 @@
+﻿@model IReadOnlyList<WarehouseManagementSystem.Model.Category>
+
+@{
+    ViewData["Title"] = "Categories by Description";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">CATEGORIES</a> &gt;
+    DESCRIPTION
+</div>
+
+<h1 class="page-title">Categories matching "@ViewBag.Keyword"</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Classification Name</th>
+                <th>Operational Requirements</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_CategoryListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Categories
+    </a>
+</div>

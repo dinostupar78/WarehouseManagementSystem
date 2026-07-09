@@ -1,18 +1,18 @@
 @model IReadOnlyList<WarehouseManagementSystem.Model.Warehouse>
 @{
-    ViewData["Title"] = $"Warehouses with Capacity Above {ViewBag.MinCapacity}";
+    ViewData["Title"] = $"Warehouses in {ViewBag.Country}";
 }
 
 <div class="wms-breadcrumbs">
     <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; 
     <a asp-action="Index">WAREHOUSES</a> &gt; 
-    Capacity Above @ViewBag.MinCapacity
+    Warehouses in @ViewBag.Country
 </div>
-<h1 class="page-title">Warehouses with Capacity Above @ViewBag.MinCapacity</h1>
+<h1 class="page-title">Warehouses in @ViewBag.Country</h1>
 
 @if (Model == null || Model.Count == 0)
 {
-    <div class="alert alert-secondary">No warehouses found with capacity above @ViewBag.MinCapacity.</div>
+    <div class="alert alert-secondary">No warehouses found in @ViewBag.Country.</div>
 }
 else
 {

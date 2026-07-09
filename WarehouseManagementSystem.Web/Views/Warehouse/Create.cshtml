@@ -1,3 +1,4 @@
+@using WarehouseManagementSystem.Web.Models.AI
 @model WarehouseManagementSystem.Model.Warehouse
 
 @{
@@ -19,6 +20,13 @@
     {
         <div asp-validation-summary="All" class="alert alert-danger"></div>
     }
+
+    @await Html.PartialAsync("_AiFormAssistant", new AiFormAssistantModel
+    {
+        Entity = "warehouse",
+        Title = "Generate warehouse data",
+        Placeholder = "Example: Create warehouse Main Distribution Center, address Logistics Park 12, city Zagreb, country Croatia, capacity 5000."
+    })
 
     <div class="row g-4">
         <div class="col-md-7">

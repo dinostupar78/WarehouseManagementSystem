@@ -1,0 +1,49 @@
+@model IReadOnlyList<WarehouseManagementSystem.Model.Product>
+
+@{
+    ViewData["Title"] = "Products by Category";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">PRODUCTS</a> &gt;
+    Category
+</div>
+
+<h1 class="page-title">Products in @ViewBag.CategoryName</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name / Description</th>
+                <th>Price</th>
+                <th>Weight</th>
+                <th>Received</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_ProductListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-5">
+    @if (ViewBag.SourceProductId != null)
+    {
+        <a asp-action="Details"
+           asp-route-id="@ViewBag.SourceProductId"
+           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Product Details
+        </a>
+    }
+    else
+    {
+        <a asp-action="Index"
+           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to Products
+        </a>
+    }
+</div>

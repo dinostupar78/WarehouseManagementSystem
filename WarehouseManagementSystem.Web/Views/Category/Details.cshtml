@@ -42,27 +42,76 @@ else
     </div>
 }
 
-<div class="mt-5">
-</div>
-
 @if (Model != null)
 {
-    <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Warehouse
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this category</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Category
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Category
+                </a>
 
-        <a asp-action="Index" 
-        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Categories
-        </a> 
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Category
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related Category Views</div>
+                <div class="fw-bolder">Explore related categories</div>
+            </div>
+
+            <div class="wms-related-actions">
+                <a asp-action="WithProducts"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Used Categories</span>
+                    <span>With products</span>
+                </a>
+
+                <a asp-action="WithoutProducts"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Empty Categories</span>
+                    <span>Without products</span>
+                </a>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    var keyword = Model.Description.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(keyword))
+                    {
+                        <a asp-action="ByDescriptionKeyword"
+                           asp-route-keyword="@keyword"
+                           class="wms-related-action-link">
+                            <span class="wms-related-action-label">Description keyword</span>
+                            <span>Matching "@keyword"</span>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to category list</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Categories
+            </a>
+        </div>
     </div>
 }

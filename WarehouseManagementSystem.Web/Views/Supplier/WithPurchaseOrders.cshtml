@@ -1,0 +1,36 @@
+﻿@model IReadOnlyList<WarehouseManagementSystem.Model.Supplier>
+
+@{
+    ViewData["Title"] = "Suppliers with Purchase Orders";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">SUPPLIERS</a> &gt;
+    WITH ORDERS
+</div>
+
+<h1 class="page-title">Suppliers with Purchase Orders</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Registration ID</th>
+                <th>Supplier Name</th>
+                <th>Primary Contact</th>
+                <th>Email Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_SupplierListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Suppliers
+    </a>
+</div>

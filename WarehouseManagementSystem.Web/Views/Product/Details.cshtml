@@ -68,28 +68,70 @@ else
 
 @if (Model != null)
 {
-     <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Product
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this product</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Product
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Product
+                </a>
 
-        <a asp-action="PriceAbove"
-           asp-route-minPrice="@Model.Price"
-           class="btn btn-outline-primary px-4 fw-bold rounded-pill me-3">
-            View products priced above @Model.Price.ToString("C")
-        </a>
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Product
+                </a>
+            </div>
+        </div>
 
-        <a asp-action="Index"
-           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-            &larr; Back to Products
-        </a>
-     </div>
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related Product Views</div>
+                <div class="fw-bolder">Explore related products</div>
+            </div>
+
+            <div class="wms-related-actions">
+                <a asp-action="FindByCategory"
+                   asp-route-categoryId="@Model.CategoryId"
+                   asp-route-sourceProductId="@Model.Id"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Same Category</span>
+                    <span>Products in @(Model.Category?.Name)</span>
+                </a>
+
+                <a asp-action="PriceAbove"
+                   asp-route-minPrice="@Model.Price"
+                   asp-route-sourceProductId="@Model.Id"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Price Filter</span>
+                    <span>Above @Model.Price.ToString("C")</span>
+                </a>
+
+                <a asp-action="FindBySimilarWeight"
+                   asp-route-id="@Model.Id"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Weight Filter</span>
+                    <span>Above @Model.Weight kg</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to product list</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Products
+            </a>
+        </div>
+    </div>
 }

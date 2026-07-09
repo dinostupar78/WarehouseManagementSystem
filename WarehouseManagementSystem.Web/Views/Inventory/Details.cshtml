@@ -69,22 +69,68 @@ else
 
 @if (Model != null)
 {
-    <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Inventory
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this inventory record</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Inventory
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Inventory
+                </a>
 
-        <a asp-action="Index" 
-        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Active Index
-        </a>
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Inventory
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related Inventory Views</div>
+                <div class="fw-bolder">Explore related stock records</div>
+            </div>
+
+            <div class="wms-related-actions">
+                <a asp-action="LowStock"
+                   asp-route-threshold="10"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Stock filter</span>
+                    <span>Low stock items</span>
+                </a>
+
+                <a asp-action="ByLocation"
+                   asp-route-locationId="@Model.LocationId"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Same location</span>
+                    <span>Inventory at @(Model.Location?.Code)</span>
+                </a>
+
+                <a asp-action="ByProduct"
+                   asp-route-productId="@Model.ProductId"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Same product</span>
+                    <span>Inventory for @(Model.Product?.Name)</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to inventory list</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Inventory
+            </a>
+        </div>
     </div>
 }

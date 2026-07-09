@@ -3,6 +3,12 @@
     ViewData["Title"] = "Supplier Details";
 }
 
+@{
+    var emailDomain = Model.ContactEmail?.Contains("@") == true
+        ? Model.ContactEmail.Split('@').Last()
+        : "";
+}
+
 <div class="wms-breadcrumbs">
     <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt; 
     <a asp-action="Index">SUPPLIERS</a> &gt; 
@@ -60,27 +66,71 @@ else
     </div>
 }
 
-<div class="mt-5">
-</div>
-
 @if (Model != null)
 {
-    <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Supplier
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this supplier</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Supplier
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Supplier
+                </a>
 
-        <a asp-action="Index" 
-        class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Suppliers
-        </a>
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Supplier
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related Supplier Views</div>
+                <div class="fw-bolder">Explore related supplier records</div>
+            </div>
+
+            <div class="wms-related-actions">
+                @if (!string.IsNullOrWhiteSpace(emailDomain))
+                {
+                    <a asp-action="ByEmailDomain"
+                       asp-route-domain="@emailDomain"
+                       class="wms-related-action-link">
+                        <span class="wms-related-action-label">Email Domain</span>
+                        <span>Suppliers using @emailDomain</span>
+                    </a>
+                }
+
+                <a asp-action="WithPurchaseOrders"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Active Suppliers</span>
+                    <span>With purchase orders</span>
+                </a>
+
+                <a asp-action="WithoutPurchaseOrders"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Unused Suppliers</span>
+                    <span>Without purchase orders</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to supplier list</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Suppliers
+            </a>
+        </div>
     </div>
 }

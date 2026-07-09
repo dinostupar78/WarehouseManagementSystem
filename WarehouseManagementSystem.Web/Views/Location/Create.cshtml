@@ -2,6 +2,8 @@
 
 @model WarehouseManagementSystem.Model.Location
 
+@using WarehouseManagementSystem.Web.Models.AI
+
 @{
     ViewData["Title"] = "Create Location";
 }
@@ -21,6 +23,13 @@
     {
         <div asp-validation-summary="All" class="alert alert-danger"></div>
     }
+
+    @await Html.PartialAsync("_AiFormAssistant", new AiFormAssistantModel
+    {
+        Entity = "location",
+        Title = "Generate location data",
+        Placeholder = "Example: Create location MDC-B-03 in zone B, shelf 3, inside Main Distribution Center."
+    })
 
     <div class="row g-4">
         <div class="col-md-7">

@@ -1,0 +1,43 @@
+@model IReadOnlyList<WarehouseManagementSystem.Model.Product>
+
+@{
+    ViewData["Title"] = "Products by Similar Weight";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">PRODUCTS</a> &gt;
+    Similar Weight
+</div>
+
+<h1 class="page-title">Products with Similar Weight</h1>
+
+<div class="alert alert-info rounded-4 fw-bold">
+    Showing products between @ViewBag.MinWeight kg and @ViewBag.MaxWeight kg related to @ViewBag.ProductName.
+</div>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name / Description</th>
+                <th>Price</th>
+                <th>Weight</th>
+                <th>Received</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_ProductListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-5">
+    <a asp-action="Details"
+       asp-route-id="@ViewBag.SourceProductId"
+       class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+        &larr; Back to Product Details
+    </a>
+</div>

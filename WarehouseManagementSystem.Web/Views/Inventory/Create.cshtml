@@ -2,6 +2,8 @@
 
 @model WarehouseManagementSystem.Model.Inventory
 
+@using WarehouseManagementSystem.Web.Models.AI
+
 @{
     ViewData["Title"] = "Create Inventory Item";
 }
@@ -21,6 +23,13 @@
     {
         <div asp-validation-summary="All" class="alert alert-danger"></div>
     }
+
+    @await Html.PartialAsync("_AiFormAssistant", new AiFormAssistantModel
+    {
+        Entity = "inventory",
+        Title = "Generate inventory data",
+        Placeholder = "Example: Add 25 units of Laptop to location EFH-A-01. Last updated today at 14:30."
+    })
 
     <div class="row g-4">
         <div class="col-md-7">

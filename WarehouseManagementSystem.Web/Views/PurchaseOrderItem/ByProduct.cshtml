@@ -1,0 +1,45 @@
+﻿@model IReadOnlyList<WarehouseManagementSystem.Model.PurchaseOrderItem>
+
+@{
+    ViewData["Title"] = "Items by Product";
+}
+
+<div class="wms-breadcrumbs">
+    <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
+    <a asp-action="Index">PO ITEMS</a> &gt;
+    PRODUCT
+</div>
+
+<h1 class="page-title">Purchase Order Items for @ViewBag.ProductName</h1>
+
+<div class="wms-table-container mt-4">
+    <table class="table wms-table table-hover">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Product</th>
+                <th>Purchase Order</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_PurchaseOrderItemListPartial" model="Model" />
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a asp-controller="Product"
+       asp-action="Details"
+       asp-route-id="@ViewBag.ProductId"
+       class="btn btn-outline-primary px-4 fw-bold rounded-pill">
+        Back to Product Details
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-outline-secondary px-4 fw-bold rounded-pill ms-2">
+        &larr; Back to PO Items
+    </a>
+</div>

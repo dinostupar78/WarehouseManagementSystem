@@ -1,36 +1,36 @@
-@model IReadOnlyList<WarehouseManagementSystem.Model.PurchaseOrder>
+﻿@model IReadOnlyList<WarehouseManagementSystem.Model.Location>
 
 @{
-    ViewData["Title"] = "Purchase Orders by Status";
+    ViewData["Title"] = "Locations by Shelf";
 }
 
 <div class="wms-breadcrumbs">
     <a asp-controller="Home" asp-action="Index">Dashboard</a> &gt;
-    <a asp-action="Index">PURCHASE ORDERS</a> &gt;
-    STATUS
+    <a asp-action="Index">LOCATIONS</a> &gt;
+    SHELF
 </div>
 
-<h1 class="page-title">@ViewBag.Status Purchase Orders</h1>
+<h1 class="page-title">Locations with Shelf @ViewBag.ShelfNumber or Above</h1>
 
 <div class="wms-table-container mt-4">
     <table class="table wms-table table-hover">
         <thead>
             <tr>
-                <th>Order Number</th>
-                <th>Supplier Information</th>
-                <th>Date Issued</th>
+                <th>Location ID</th>
+                <th>Internal Code</th>
+                <th>Assigned Warehouse</th>
                 <th>Current Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <partial name="_PurchaseOrderListPartial" model="Model" />
+            <partial name="_LocationListPartial" model="Model" />
         </tbody>
     </table>
 </div>
 
 <div class="mt-4">
     <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Purchase Orders
+        &larr; Back to Locations
     </a>
 </div>

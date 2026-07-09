@@ -63,34 +63,68 @@ else
 
 @if (Model != null)
 {
-    <div class="mt-5 d-flex flex-wrap gap-3">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn btn-primary px-4 fw-bold rounded-pill">
-            Edit Warehouse
-        </a>
+    <div class="wms-detail-actions mt-5">
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Record actions</div>
+                <div class="fw-bolder">Manage this warehouse</div>
+            </div>
 
-        <a asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger px-4 fw-bold rounded-pill">
-            Delete Warehouse
-        </a>
+            <div class="wms-detail-action-buttons">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4 fw-bold rounded-pill">
+                    Edit Warehouse
+                </a>
 
-        <a asp-action="FindByCity"
-           asp-route-city="@Model.City"
-           class="btn btn-outline-info px-4 fw-bold rounded-pill">
-            View Warehouses in @Model.City
-        </a>
+                <a asp-action="Delete"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-outline-danger px-4 fw-bold rounded-pill">
+                    Delete Warehouse
+                </a>
+            </div>
+        </div>
 
-        <a asp-action="CapacityAbove"
-           asp-route-minCapacity="@Model.Capacity"
-           class="btn btn-outline-primary px-4 fw-bold rounded-pill">
-            View Warehouses with Similar Capacity
-        </a>
+        <div class="wms-detail-action-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Related Warehouse Views</div>
+                <div class="fw-bolder">Explore related warehouses</div>
+            </div>
 
-        <a asp-action="Index"
-           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-            &larr; Back to Active Warehouses
-        </a>
+            <div class="wms-related-actions">
+                <a asp-action="FindByCity"
+                   asp-route-city="@Model.City"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Same city</span>
+                    <span>Warehouses in @Model.City</span>
+                </a>
+
+                <a asp-action="FindByCountry"
+                   asp-route-country="@Model.Country"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Same country</span>
+                    <span>Warehouses in @Model.Country</span>
+                </a>
+
+                <a asp-action="CapacityAbove"
+                   asp-route-minCapacity="@Model.Capacity"
+                   class="wms-related-action-link">
+                    <span class="wms-related-action-label">Capacity</span>
+                    <span>Above @Model.Capacity units</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="wms-detail-action-group wms-detail-navigation-group">
+            <div class="wms-detail-action-heading">
+                <div class="text-muted small fw-bold text-uppercase">Navigation</div>
+                <div class="fw-bolder">Return to warehouse list</div>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary px-4 fw-bold rounded-pill wms-detail-back-link">
+                &larr; Back to Active Warehouses
+            </a>
+        </div>
     </div>
 }
