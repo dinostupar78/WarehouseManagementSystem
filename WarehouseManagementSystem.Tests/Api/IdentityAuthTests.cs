@@ -46,7 +46,7 @@ namespace WarehouseManagementSystem.Tests.Api
             var response = await _client.PostAsync("/Identity/Account/Register", new FormUrlEncodedContent(form));
 
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location!.ToString().Should().Contain("/Identity/Account/Manage");
+            response.Headers.Location!.ToString().Should().Be("/Home");
 
             using var scope = _factory.Services.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
@@ -97,7 +97,7 @@ namespace WarehouseManagementSystem.Tests.Api
             var response = await _client.PostAsync("/Identity/Account/Login?handler=Guest", new FormUrlEncodedContent(form));
 
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location!.ToString().Should().Be("/");
+            response.Headers.Location!.ToString().Should().Be("/Home");
 
             using var scope = _factory.Services.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
