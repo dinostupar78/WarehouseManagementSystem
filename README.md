@@ -168,7 +168,7 @@ The REST API uses DTOs rather than serializing EF entities directly. `ApiMapper`
 ```text
 WarehouseManagementSystem/
 │
-├── WarehouseManagementSystem.Web/           # MVC UI, REST API, Identity, services
+├── WarehouseManagementSystem.Web/            # MVC UI, REST API, Identity, services
 │   ├── Areas/Identity/Pages/                 # Scaffolded and customized Identity pages
 │   ├── Controllers/
 │   │   ├── Api/                              # REST API controllers
