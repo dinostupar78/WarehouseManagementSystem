@@ -199,7 +199,7 @@ WarehouseManagementSystem/
 │   ├── E2E/
 │   └── Infrastructure/
 │
-├── docker-compose.yml                         # Local PostgreSQL + pgAdmin environment
+├── docker-compose.yml                        # Local PostgreSQL + pgAdmin environment
 ├── WarehouseManagementSystem.sln
 └── LICENSE.txt
 ```
