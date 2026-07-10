@@ -43,7 +43,7 @@ namespace WarehouseManagementSystem.Tests.E2E
                 .ToBeVisibleAsync();
 
             // 4. Open Create Location form.
-            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create Location Item" }).ClickAsync();
+            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create Location" }).ClickAsync();
 
             await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Create Location" }))
                 .ToBeVisibleAsync();

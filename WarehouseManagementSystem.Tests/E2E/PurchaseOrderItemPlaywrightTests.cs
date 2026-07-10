@@ -44,7 +44,7 @@ namespace WarehouseManagementSystem.Tests.E2E
                 .ToBeVisibleAsync();
 
             // 4. Open Create Purchase Order Item form.
-            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create Purchase Order Item" }).ClickAsync();
+            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create PO Item" }).ClickAsync();
 
             await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Create Purchase Order Item" }))
                 .ToBeVisibleAsync();

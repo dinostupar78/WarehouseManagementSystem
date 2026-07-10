@@ -41,7 +41,7 @@ namespace WarehouseManagementSystem.Tests.E2E
             await Expect(page.GetByText("Category Management")).ToBeVisibleAsync();
 
             // 4. Open the Create Category form.
-            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create Category Item" }).ClickAsync();
+            await page.GetByRole(AriaRole.Link, new() { Name = "+ Create Category" }).ClickAsync();
             await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Create Category" })).ToBeVisibleAsync();
 
             // 5. Fill and submit the Create Category form.
