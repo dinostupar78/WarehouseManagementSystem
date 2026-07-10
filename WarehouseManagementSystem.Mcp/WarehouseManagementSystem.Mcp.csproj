@@ -9,8 +9,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WarehouseManagementSystem.Model\WarehouseManagementSystem.Model.csproj" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
     <PackageReference Include="ModelContextProtocol" Version="2.0.0-preview.2" />
   </ItemGroup>
 
