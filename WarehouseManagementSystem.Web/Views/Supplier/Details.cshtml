@@ -101,6 +101,7 @@ else
                 {
                     <a asp-action="ByEmailDomain"
                        asp-route-domain="@emailDomain"
+                       asp-route-sourceId="@Model.Id"
                        class="wms-related-action-link">
                         <span class="wms-related-action-label">Email Domain</span>
                         <span>Suppliers using @emailDomain</span>
@@ -108,12 +109,14 @@ else
                 }
 
                 <a asp-action="WithPurchaseOrders"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Active Suppliers</span>
                     <span>With purchase orders</span>
                 </a>
 
                 <a asp-action="WithoutPurchaseOrders"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Unused Suppliers</span>
                     <span>Without purchase orders</span>

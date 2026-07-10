@@ -102,6 +102,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="FindByOrderStatus"
                    asp-route-status="@Model.Status.ToString().ToLower()"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Status</span>
                     <span>@Model.Status orders</span>
@@ -109,12 +110,14 @@ else
 
                 <a asp-action="BySupplier"
                    asp-route-supplierId="@Model.SupplierId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Supplier</span>
                     <span>Orders from @(Model.Supplier?.Name)</span>
                 </a>
 
                 <a asp-action="Overdue"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Delivery risk</span>
                     <span>Overdue orders</span>

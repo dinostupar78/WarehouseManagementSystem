@@ -99,7 +99,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="FindByCategory"
                    asp-route-categoryId="@Model.CategoryId"
-                   asp-route-sourceProductId="@Model.Id"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same Category</span>
                     <span>Products in @(Model.Category?.Name)</span>
@@ -107,7 +107,7 @@ else
 
                 <a asp-action="PriceAbove"
                    asp-route-minPrice="@Model.Price"
-                   asp-route-sourceProductId="@Model.Id"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Price Filter</span>
                     <span>Above @Model.Price.ToString("C")</span>
@@ -115,6 +115,7 @@ else
 
                 <a asp-action="FindBySimilarWeight"
                    asp-route-id="@Model.Id"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Weight Filter</span>
                     <span>Above @Model.Weight kg</span>

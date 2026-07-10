@@ -74,12 +74,14 @@ else
 
             <div class="wms-related-actions">
                 <a asp-action="WithProducts"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Used Categories</span>
                     <span>With products</span>
                 </a>
 
                 <a asp-action="WithoutProducts"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Empty Categories</span>
                     <span>Without products</span>
@@ -93,6 +95,7 @@ else
                     {
                         <a asp-action="ByDescriptionKeyword"
                            asp-route-keyword="@keyword"
+                           asp-route-sourceId="@Model.Id"
                            class="wms-related-action-link">
                             <span class="wms-related-action-label">Description keyword</span>
                             <span>Matching "@keyword"</span>

@@ -130,6 +130,16 @@ namespace WarehouseManagementSystem.Web.Repositories
                 .ToList();
         }
 
+        public IReadOnlyList<Product> GetByWeightRange(decimal minWeight, decimal maxWeight, int excludedProductId)
+        {
+            return _db.Products
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Where(p => p.Id != excludedProductId && p.Weight >= minWeight && p.Weight <= maxWeight)
+                .OrderBy(p => p.Weight)
+                .ToList();
+        }
+
         public bool HasPurchaseOrderItems(int id)
         {
             return _db.PurchaseOrderItems.AsNoTracking().Any(poi => poi.ProductId == id);

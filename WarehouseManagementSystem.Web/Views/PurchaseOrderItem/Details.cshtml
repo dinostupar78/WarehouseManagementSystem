@@ -93,6 +93,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="ByPurchaseOrder"
                    asp-route-purchaseOrderId="@Model.PurchaseOrderId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same order</span>
                     <span>PO-@((Model.PurchaseOrder?.OrderNumber ?? Model.PurchaseOrderId).ToString("0000")) items</span>
@@ -100,6 +101,7 @@ else
 
                 <a asp-action="ByProduct"
                    asp-route-productId="@Model.ProductId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same product</span>
                     <span>@(Model.Product?.Name ?? "Product items")</span>
@@ -107,6 +109,7 @@ else
 
                 <a asp-action="PriceAbove"
                    asp-route-minPrice="@Model.UnitPrice"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Price filter</span>
                     <span>Above @Model.UnitPrice.ToString("C")</span>

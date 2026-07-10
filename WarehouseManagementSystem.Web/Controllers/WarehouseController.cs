@@ -234,7 +234,7 @@ namespace WarehouseManagementSystem.Controllers
         {
             var warehouses = _warehouseRepository.GetCapacityAbove(capacity);
 
-            ViewBag.Capacity = capacity;
+            ViewBag.MinCapacity = capacity;
 
             _logger.LogInformation(
                 "User {User} viewed warehouses with capacity above {Capacity}",

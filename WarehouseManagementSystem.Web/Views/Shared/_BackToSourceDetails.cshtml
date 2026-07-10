@@ -1,0 +1,28 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var sourceId = Context.Request.Query["sourceId"].ToString();
+    var entityName = controller switch
+    {
+        "Warehouse" => "Warehouse",
+        "Product" => "Product",
+        "Supplier" => "Supplier",
+        "Category" => "Category",
+        "Location" => "Location",
+        "Inventory" => "Inventory Item",
+        "PurchaseOrder" => "Purchase Order",
+        "PurchaseOrderItem" => "Purchase Order Item",
+        _ => "Record"
+    };
+}
+
+@if (!string.IsNullOrWhiteSpace(sourceId))
+{
+    <div class="mt-4">
+        <a asp-controller="@controller"
+           asp-action="Details"
+           asp-route-id="@sourceId"
+           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
+            &larr; Back to @entityName Details
+        </a>
+    </div>
+}

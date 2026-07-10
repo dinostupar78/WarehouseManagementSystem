@@ -219,19 +219,20 @@ namespace WarehouseManagementSystem.Controllers
         }
 
         [HttpGet("category/{categoryId:int}")]
-        public IActionResult ByCategory(int categoryId)
+        public IActionResult FindByCategory(int categoryId, int? sourceProductId)
         {
             var products = _productRepository.GetByCategory(categoryId);
 
             ViewBag.CategoryId = categoryId;
             ViewBag.CategoryName = products.FirstOrDefault()?.Category?.Name ?? $"Category {categoryId}";
+            ViewBag.SourceProductId = sourceProductId;
 
             _logger.LogInformation(
                 "User {User} viewed products in Category {CategoryId}",
                 User.Identity?.Name ?? "Anonymous",
                 categoryId);
 
-            return View(products);
+            return View("FindByCategory", products);
         }
 
         [HttpGet("weight-above")]
@@ -247,6 +248,34 @@ namespace WarehouseManagementSystem.Controllers
                 minWeight);
 
             return View(products);
+        }
+
+        [HttpGet("similar-weight/{id:int}")]
+        public IActionResult FindBySimilarWeight(int id)
+        {
+            var product = _productRepository.GetById(id);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product not found for similar-weight filter: {ProductId}", id);
+                return NotFound();
+            }
+
+            var minWeight = product.Weight * 0.8m;
+            var maxWeight = product.Weight * 1.2m;
+            var products = _productRepository.GetByWeightRange(minWeight, maxWeight, product.Id);
+
+            ViewBag.MinWeight = minWeight;
+            ViewBag.MaxWeight = maxWeight;
+            ViewBag.ProductName = product.Name;
+            ViewBag.SourceProductId = product.Id;
+
+            _logger.LogInformation(
+                "User {User} viewed products with similar weight to Product {ProductId}",
+                User.Identity?.Name ?? "Anonymous",
+                product.Id);
+
+            return View("FindBySimilarWeight", products);
         }
 
         private void ValidateProductReferences(Product product)

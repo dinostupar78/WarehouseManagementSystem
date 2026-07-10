@@ -94,6 +94,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="FindByCity"
                    asp-route-city="@Model.City"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same city</span>
                     <span>Warehouses in @Model.City</span>
@@ -101,13 +102,15 @@ else
 
                 <a asp-action="FindByCountry"
                    asp-route-country="@Model.Country"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same country</span>
                     <span>Warehouses in @Model.Country</span>
                 </a>
 
                 <a asp-action="CapacityAbove"
-                   asp-route-minCapacity="@Model.Capacity"
+                   asp-route-capacity="@Model.Capacity"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Capacity</span>
                     <span>Above @Model.Capacity units</span>

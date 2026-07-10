@@ -100,6 +100,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="LowStock"
                    asp-route-threshold="10"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Stock filter</span>
                     <span>Low stock items</span>
@@ -107,6 +108,7 @@ else
 
                 <a asp-action="ByLocation"
                    asp-route-locationId="@Model.LocationId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same location</span>
                     <span>Inventory at @(Model.Location?.Code)</span>
@@ -114,6 +116,7 @@ else
 
                 <a asp-action="ByProduct"
                    asp-route-productId="@Model.ProductId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same product</span>
                     <span>Inventory for @(Model.Product?.Name)</span>

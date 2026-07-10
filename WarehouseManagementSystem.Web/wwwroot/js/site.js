@@ -1290,3 +1290,42 @@ $globalSearchInput.on("focus", function () {
         $globalSearchResults.prop("hidden", false);
     }
 });
+
+// Keep the mobile navigation in its off-canvas state from the first Bootstrap
+// collapse frame, and let a click on the dimmed page close it.
+const mobileNav = document.getElementById("wmsMobileNav");
+const mobileSidebar = document.querySelector(".wms-sidebar");
+const mainContent = document.querySelector(".wms-main-content");
+const mobileQuery = window.matchMedia("(max-width: 767.98px)");
+
+function setMobileNavOpen(isOpen) {
+    if (!mobileSidebar || !mobileQuery.matches) {
+        return;
+    }
+
+    mobileSidebar.classList.toggle("is-mobile-nav-open", isOpen);
+    document.body.classList.toggle("wms-mobile-nav-open", isOpen);
+}
+
+if (mobileNav && mobileSidebar) {
+    mobileNav.addEventListener("show.bs.collapse", function () {
+        setMobileNavOpen(true);
+    });
+
+    mobileNav.addEventListener("hidden.bs.collapse", function () {
+        setMobileNavOpen(false);
+    });
+
+    mobileQuery.addEventListener("change", function (event) {
+        if (!event.matches) {
+            mobileSidebar.classList.remove("is-mobile-nav-open");
+            document.body.classList.remove("wms-mobile-nav-open");
+        }
+    });
+
+    mainContent?.addEventListener("click", function () {
+        if (mobileQuery.matches && mobileSidebar.classList.contains("is-mobile-nav-open")) {
+            bootstrap.Collapse.getOrCreateInstance(mobileNav).hide();
+        }
+    });
+}

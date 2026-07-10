@@ -34,10 +34,4 @@
     </table>
 </div>
 
-<div class="mt-5">
-    <a asp-action="Details"
-       asp-route-id="@ViewBag.SourceProductId"
-       class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-        &larr; Back to Product Details
-    </a>
-</div>
+<partial name="_BackToSourceDetails" />

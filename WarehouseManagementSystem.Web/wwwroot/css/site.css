@@ -2288,6 +2288,205 @@ body.wms-auth-body {
         align-items: center;
         flex-direction: row;
     }
+
+    /* Account management pages: keep navigation and form controls usable on phones. */
+    .wms-account-layout {
+        gap: 1rem;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wms-account-sidebar {
+        padding: 0.55rem;
+    }
+
+    .wms-account-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
+    }
+
+    .wms-account-nav-link {
+        font-size: 0.9rem;
+        padding: 0.7rem 0.55rem;
+        text-align: center;
+    }
+
+    .wms-account-nav-link:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
+    .wms-account-panel {
+        padding: 1rem;
+    }
+
+    .wms-account-panel-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.85rem;
+    }
+
+    .wms-account-panel h2 {
+        font-size: 1.35rem;
+    }
+
+    .wms-account-panel .form-control {
+        min-height: 3.35rem;
+    }
+
+    .wms-profile-avatar-section {
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+
+    .wms-avatar-dropzone {
+        min-height: 130px;
+        padding: 0.9rem;
+    }
+
+    .wms-avatar-actions,
+    .wms-account-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .wms-avatar-actions .btn,
+    .wms-account-primary-button,
+    .wms-account-secondary-button,
+    .wms-account-danger-button {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .wms-avatar-preview {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+/* Mobile sidebar: keep the desktop navigation unchanged and turn the existing
+   Bootstrap collapse into a compact off-canvas panel on small screens. */
+@media (max-width: 767.98px) {
+    body.wms-mobile-nav-open {
+        overflow: hidden;
+    }
+
+    .wms-sidebar {
+        background: transparent;
+        border: 0;
+        height: auto;
+        min-height: 0;
+        padding: 0;
+        position: relative;
+        width: 100%;
+        z-index: 1045;
+    }
+
+    .wms-sidebar > .d-flex {
+        background-color: var(--sidebar-bg);
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 0 !important;
+        min-height: 4.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .wms-sidebar > .wms-global-search {
+        background-color: var(--sidebar-bg);
+        margin: 0;
+        padding: 0.75rem 1rem 1rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .wms-sidebar.is-mobile-nav-open {
+        animation: wms-mobile-sidebar-enter 0.26s cubic-bezier(0.22, 0.8, 0.28, 1) both;
+        background-color: var(--sidebar-bg);
+        box-shadow: 18px 0 40px rgba(15, 23, 42, 0.22);
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+        inset: 0 auto 0 0;
+        max-width: 320px;
+        position: fixed;
+        width: 85vw;
+    }
+
+    .wms-sidebar.is-mobile-nav-open ~ .wms-main-content::before {
+        animation: wms-mobile-sidebar-overlay-enter 0.2s ease-out both;
+        background: rgba(15, 23, 42, 0.56);
+        content: "";
+        inset: 0;
+        position: fixed;
+        z-index: 1040;
+    }
+
+    .wms-sidebar #wmsMobileNav.show,
+    .wms-sidebar #wmsMobileNav.collapsing {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        height: auto !important;
+        min-height: 0;
+        overflow-y: auto;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        transition: none;
+    }
+
+    .wms-sidebar #wmsMobileNav.show .wms-nav-items,
+    .wms-sidebar #wmsMobileNav.collapsing .wms-nav-items {
+        margin-top: 0.35rem;
+    }
+
+    .wms-sidebar #wmsMobileNav.show .wms-nav-link,
+    .wms-sidebar #wmsMobileNav.collapsing .wms-nav-link {
+        padding-bottom: 0.6rem;
+        padding-top: 0.6rem;
+    }
+
+    .wms-sidebar #wmsMobileNav.show .wms-sidebar-user,
+    .wms-sidebar #wmsMobileNav.collapsing .wms-sidebar-user {
+        margin: auto 1rem 0;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    .wms-global-search-icon {
+        height: 1.5rem;
+        right: 1.5rem;
+        width: 2.25rem;
+    }
+
+    .wms-global-search-icon svg {
+        height: 20px;
+        width: 20px;
+    }
+
+    .wms-global-search-results {
+        top: calc(100% - 1rem);
+    }
+
+    @keyframes wms-mobile-sidebar-enter {
+        from {
+            transform: translateX(-105%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes wms-mobile-sidebar-overlay-enter {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .wms-sidebar.is-mobile-nav-open,
+        .wms-sidebar.is-mobile-nav-open ~ .wms-main-content::before {
+            animation: none;
+        }
+    }
 }
 
 @media (max-width: 480px) {
@@ -2396,6 +2595,32 @@ body.wms-auth-body {
     .wms-dashboard-action-buttons .btn {
         flex-basis: 100%;
         width: 100%;
+    }
+
+    .wms-account-nav {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wms-account-nav-link:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
+
+    .wms-account-panel {
+        padding: 0.9rem;
+    }
+
+    .wms-account-eyebrow {
+        font-size: 0.68rem;
+    }
+
+    .wms-account-warning,
+    .wms-account-copy {
+        font-size: 0.95rem;
+    }
+
+    .wms-avatar-dropzone .dz-preview .dz-image {
+        height: 108px;
+        width: 108px;
     }
 }
 

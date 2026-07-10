@@ -90,6 +90,7 @@ else
             <div class="wms-related-actions">
                 <a asp-action="ByZone"
                    asp-route-zone="@Model.Zone"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same Zone</span>
                     <span>Zone @Model.Zone.ToUpper()</span>
@@ -97,6 +98,7 @@ else
 
                 <a asp-action="ByWarehouse"
                    asp-route-warehouseId="@Model.WarehouseId"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Same Warehouse</span>
                     <span>Locations in @(Model.Warehouse?.Name)</span>
@@ -104,6 +106,7 @@ else
 
                 <a asp-action="ShelfAbove"
                    asp-route-shelfNumber="@Model.ShelfNumber"
+                   asp-route-sourceId="@Model.Id"
                    class="wms-related-action-link">
                     <span class="wms-related-action-label">Shelf Filter</span>
                     <span>Shelf @Model.ShelfNumber or above</span>

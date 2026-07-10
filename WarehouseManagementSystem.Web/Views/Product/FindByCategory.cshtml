@@ -30,20 +30,4 @@
     </table>
 </div>
 
-<div class="mt-5">
-    @if (ViewBag.SourceProductId != null)
-    {
-        <a asp-action="Details"
-           asp-route-id="@ViewBag.SourceProductId"
-           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-            &larr; Back to Product Details
-        </a>
-    }
-    else
-    {
-        <a asp-action="Index"
-           class="btn btn-outline-secondary px-4 fw-bold rounded-pill">
-            &larr; Back to Products
-        </a>
-    }
-</div>
+<partial name="_BackToSourceDetails" />
