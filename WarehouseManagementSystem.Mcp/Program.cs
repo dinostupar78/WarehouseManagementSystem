@@ -1,7 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var builder = Host.CreateEmptyApplicationBuilder(settings: null);
+var builder = Host.CreateApplicationBuilder(args);
+
+var wmsApiBaseUrl = builder.Configuration["WmsApi:BaseUrl"];
+
+if (!Uri.TryCreate(wmsApiBaseUrl, UriKind.Absolute, out var wmsApiUri))
+{
+    throw new InvalidOperationException(
+        "Set WmsApi:BaseUrl in WarehouseManagementSystem.Mcp/appsettings.json to the running Web API URL.");
+}
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
@@ -9,7 +17,7 @@ builder.Services.AddMcpServer()
 
 builder.Services.AddHttpClient("WmsApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:44377");
+    client.BaseAddress = wmsApiUri;
 });
 
 var app = builder.Build();

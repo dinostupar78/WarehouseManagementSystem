@@ -67,7 +67,7 @@ namespace WarehouseManagementSystem.Mcp.Tools
         {
             public int Id { get; set; }
             public int OrderNumber { get; set; }
-            public string Status { get; set; } = string.Empty;
+            public WarehouseManagementSystem.Model.OrderStatus Status { get; set; }
         }
     }
 }

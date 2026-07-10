@@ -47,8 +47,8 @@ namespace WarehouseManagementSystem.Mcp.Tools
 
             return purchaseOrders?
                 .Where(po =>
-                    po.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase) ||
-                    po.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
+                    po.Status == WarehouseManagementSystem.Model.OrderStatus.Pending ||
+                    po.Status == WarehouseManagementSystem.Model.OrderStatus.Approved)
                 .OrderBy(po => po.ExpectedDeliveryDate)
                 .ToList();
         }
@@ -58,7 +58,7 @@ namespace WarehouseManagementSystem.Mcp.Tools
             public int Id { get; set; }
             public int OrderNumber { get; set; }
             public decimal TotalAmount { get; set; }
-            public string Status { get; set; } = string.Empty;
+            public WarehouseManagementSystem.Model.OrderStatus Status { get; set; }
             public DateTime OrderDate { get; set; }
             public DateTime ExpectedDeliveryDate { get; set; }
 
