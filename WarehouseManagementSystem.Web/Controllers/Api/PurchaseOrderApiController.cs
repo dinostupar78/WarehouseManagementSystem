@@ -30,10 +30,14 @@ namespace WarehouseManagementSystem.Web.Controllers.Api
             if (!string.IsNullOrWhiteSpace(query))
             {
                 query = query.ToLower();
+                var hasStatusFilter = Enum.TryParse<WarehouseManagementSystem.Model.OrderStatus>(
+                    query,
+                    ignoreCase: true,
+                    out var statusFilter);
 
                 purchaseOrdersQuery = purchaseOrdersQuery.Where(po =>
                     po.OrderNumber.ToString().Contains(query) ||
-                    po.Status.ToString().ToLower().Contains(query) ||
+                    (hasStatusFilter && po.Status == statusFilter) ||
                     po.Supplier.Name.ToLower().Contains(query) ||
                     po.Warehouse.Name.ToLower().Contains(query));
             }
